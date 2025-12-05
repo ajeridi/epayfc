@@ -21,13 +21,33 @@
         <main class="main-content-margins">
             <div class="items_participated_in">
                 <h3 class="text-blue">Items I'm Participating In</h3>
+
+                <!-- tableau contenant les cartes des items -->
+                <div class="container">
+                    <div class="row text-white ">
+                        <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
+                        <?php
+                            foreach ($items as $item) {
+                                echo '<div class="col-3">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src='.$item[9].' class="card-img-top" alt="image item">
+                                                <div class="card-body">
+                                                    <p class="card-text">'.$item[1].'</p>
+                                                </div>
+                                            </div>
+                                        </div>';
+                            }
+                        ?>
+                </div>
             </div>
 
-            <div class="other_available_items">
+            <div class="other-available-items">
                 <h3 class="text-blue">Other Available Items</h3>
+
+                <!-- tableau contenant les cartes des items -->
+                <div class="container">
+                    <div class="row text-white"></div>
             </div>
-
-
         </main>
 
     </body>
