@@ -36,12 +36,12 @@
                                             <span class="badge text-bg-secondary"><i class="ti ti-gavel"></i> Bidder</span>
                                             <div class="float-end d-flex flex-column gap-2 h-50">
                                                 <?php 
-                                                    if ($item['is_auction'] == 1)?>
+                                                    if ($item['is_auction'] == 1){?>
                                                         <span class="badge" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
-                                                <?php  
-                                                    if ($item['is_direct_sale'] == 1)?>
+                                                <?php  }
+                                                    if ($item['is_direct_sale'] == 1){?>
                                                         <span class="badge text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
-                                            
+                                                    <?php } ?>    
                                                         <span class="badge text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item['number_of_pictures'] ?> images</span>
                                             </div>
                                         </div>

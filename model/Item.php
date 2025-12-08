@@ -4,7 +4,7 @@ require_once "framework/Model.php";
 
 class Item extends Model {
 
-    private static $items_participated_in_sql =  "SELECT  vit.*, 
+    private static $items_participated_in_sql =  "SELECT DISTINCT vit.*, 
                                     owners.full_name owner_full_name, 
                                     bidders.id bidder_id, 
                                     ip.priority,
@@ -18,6 +18,7 @@ class Item extends Model {
                                 JOIN bids b ON b.item = vit.id
                                 JOIN users as bidders ON bidders.id = b.owner
                                 WHERE   ip.priority = 1 AND
+                                vit.buy_now_reached != 1 AND
                                 bidders.id = :user_id";
 
 
@@ -38,6 +39,7 @@ class Item extends Model {
             JOIN item_pictures ip ON vit.id = ip.item 
             JOIN users as owners ON vit.owner = owners.id
             WHERE   ip.priority = 1
+            AND vit.buy_now_reached != 1
             AND owners.id != :user_id
             AND vit.id NOT IN (SELECT vit2.id
                                 FROM v_items_status vit2

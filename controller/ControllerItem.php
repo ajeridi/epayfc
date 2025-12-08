@@ -13,8 +13,8 @@ class ControllerItem extends Controller{
 
 
     public function browse() : void {
-        $items_participated_in = Item::get_items_participated_in(1);
-        $other_available_items = Item::get_other_available_items(1);
+        $items_participated_in = Item::get_items_participated_in(4);
+        $other_available_items = Item::get_other_available_items(4);
         (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items]);
     }
 
