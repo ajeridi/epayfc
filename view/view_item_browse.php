@@ -39,7 +39,7 @@
                                                     if ($item['is_auction'] == 1){?>
                                                         <span class="badge" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
                                                 <?php  }
-                                                    if ($item['is_direct_sale'] == 1){?>
+                                                    if ($item['is_direct_sale'] == 1 OR $item['has_buy_now'] == 1){?>
                                                         <span class="badge text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
                                                     <?php } ?>    
                                                         <span class="badge text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item['number_of_pictures'] ?> images</span>
@@ -81,7 +81,7 @@
                                                     if ($item['is_auction'] == 1){?>
                                                         <span class="badge" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
                                                 <?php } 
-                                                    if ($item['is_direct_sale'] == 1){?>
+                                                    if ($item['is_direct_sale'] == 1 OR $item['has_buy_now'] == 1){?>
                                                         <span class="badge text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
                                                 <?php } ?>
                                                         <span class="badge text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item['number_of_pictures'] ?> images</span>
