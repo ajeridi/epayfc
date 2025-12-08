@@ -1,7 +1,7 @@
 <?php
 require_once "framework/Model.php";
 class User extends Model {
-    public function __construct(public string $pseudo,public string $hashed_password,public string $email,public string $full_name, public string $role,public ?string $picture_path= null){
+    public function __construct(public int $id, public string $pseudo,public string $hashed_password,public string $email,public string $full_name, public string $role,public ?string $picture_path= null){
 
     }
     private static function check_password(string $clear_password, string $hash) : bool {
@@ -13,7 +13,7 @@ class User extends Model {
         if($query->rowCount()==0){
             return false ; 
         }else{
-            return new User($data["pseudo"],$data["password"],$data["email"],$data["full_name"],$data["role"],$data["picture_path"]);
+            return new User($data["id"], $data["pseudo"],$data["password"],$data["email"],$data["full_name"],$data["role"],$data["picture_path"]);
         }
     }
     public static function validate_login(string $email, string $password) : array {
