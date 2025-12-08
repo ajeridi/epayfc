@@ -28,8 +28,7 @@
                     <div class="row text-white g-3">
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
-                        foreach ($items as $item) {
-                            if ($item['bidder_id'] == 1) :?>
+                        foreach ($items_participated_in as $item) { ?>
                                 <div class="col-3">
                                     <div class="card" style="width: 18rem;">    
                                         <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
@@ -54,7 +53,6 @@
                                     </div>
                                 </div>
                             <?php 
-                        endif;    
                     }
                     ?>
                 </div>
@@ -64,8 +62,37 @@
                 <h3 class="text-blue">Other Available Items</h3>
 
                 <!-- tableau contenant les cartes des items -->
-                <div class="container">
-                    <div class="row text-white"></div>
+                <div class="container mt-4 mb-5">
+                    <div class="row text-white g-3">
+                        <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
+                        <?php
+                        foreach ($other_available_items as $item) { ?>
+                                <div class="col-3">
+                                    <div class="card" style="width: 18rem;">    
+                                        <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
+                                        <div class="card-img-overlay">
+                                            <div class="float-end d-flex flex-column gap-2 h-50">
+                                                <?php 
+                                                    if ($item['is_auction'] == 1)?>
+                                                        <span class="badge" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
+                                                <?php  
+                                                    if ($item['is_direct_sale'] == 1)?>
+                                                        <span class="badge text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
+                                            
+                                                        <span class="badge text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item['number_of_pictures'] ?> images</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text"><?=$item['title']?></p>
+                                            <p class="card-text">By <?= $item['owner_full_name']?></p>
+                                            <p class="card-text"><?= $item['max_bid']?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php 
+                    }
+                    ?>
+                </div>
             </div>
         </main>
 
