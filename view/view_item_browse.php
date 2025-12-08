@@ -46,9 +46,14 @@
                                             </div>
                                         </div>
                                         <div class="card-body">
-                                            <p class="card-text"><?=$item['title']?></p>
-                                            <p class="card-text">By <?= $item['owner_full_name']?></p>
-                                            <p class="card-text"><?= $item['max_bid']?></p>
+                                            <p class="card-text fw-bolder mb-0"><?=$item['title']?></p>
+                                            <p class="card-text fw-light fs-6">By <?= $item['owner_full_name']?></p>
+                                            <?php if ($item['max_bid'] == NULL){?>
+                                                <p class="card-text fw-bolder fs-5"><?= $item['starting_bid']?></p>
+                                            <?php }else{?>
+                                                <p class="card-text fw-bolder fs-5"><?= $item['starting_bid']?></p>
+                                            <?php }?>
+
                                         </div>
                                     </div>
                                 </div>
@@ -83,9 +88,13 @@
                                             </div>
                                         </div>
                                         <div class="card-body">
-                                            <p class="card-text"><?=$item['title']?></p>
-                                            <p class="card-text">By <?= $item['owner_full_name']?></p>
-                                            <p class="card-text"><?= $item['max_bid']?></p>
+                                            <p class="card-text fw-bolder mb-0"><?=$item['title']?></p>
+                                            <p class="card-text fw-light fs-6">By <?= $item['owner_full_name']?></p>
+                                            <?php if ($item['max_bid'] == NULL){?>
+                                                <p class="card-text fw-bolder fs-5"><?= $item['starting_bid']?></p>
+                                            <?php }else{?>
+                                                <p class="card-text fw-bolder fs-5"><?= $item['starting_bid']?></p>
+                                            <?php }?>
                                         </div>
                                     </div>
                                 </div>
