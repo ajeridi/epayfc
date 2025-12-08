@@ -1,0 +1,15 @@
+body{
+    background-color: #1e1231;
+  
+}
+.login {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.login-card {
+    background-color:#0d0d22;
+    border-radius: 16px ;
+}
+

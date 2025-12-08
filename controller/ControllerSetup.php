@@ -12,6 +12,9 @@ class ControllerSetup extends Controller {
     public function restore(): void {
         $this->install(true);
     }
+    public function backup(): void{
+        $this->export(true);
+    }
 
     // restaure l'original ou le backup privé (si $backup est true)
     public function install(bool $backup = false): void {
