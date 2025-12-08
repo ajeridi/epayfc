@@ -1,3 +1,4 @@
+
 body{
     background-color: #1e1231;
   
@@ -13,3 +14,20 @@ body{
     border-radius: 16px ;
 }
 
+
+.bg-navy {
+    background-color: #0e172a; 
+}
+
+.bg-navy-gray {
+    background-color: #1e293b;
+}
+
+.text-blue {
+    color: #3d89ff;
+}
+
+.main-content-margins{
+    margin-top: 10px;
+    margin-left: 30px;
+}
