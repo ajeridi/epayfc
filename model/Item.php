@@ -26,7 +26,6 @@ class Item extends Model {
     public static function get_other_available_items(int $user_id) : array{
         $sql = " SELECT DISTINCT vit.*, 
                 owners.full_name owner_full_name, 
-                ip.priority,
                 ip.picture_path,
                 (SELECT COUNT(*)
                 FROM item_pictures ip2
