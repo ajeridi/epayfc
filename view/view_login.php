@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>🛒 Log In</title>
+        <base href="<?= $web_root ?>"/>
         <link rel="stylesheet" href="css/bootstrap/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
     </head>
@@ -24,7 +25,7 @@
                 <h1 class="h4 text-center mb-4">Sign in</h1>
 
                 <!-- Formulaire de connexion -->
-                <form method="post" action="<?= $web_root ?>/login">
+                <form method="post" action="user/login">
 
                     <!-- Email -->
                     <div class="mb-3">
@@ -73,6 +74,17 @@
                     </div>
 
                 </form>
+                
+                 <?php if(count($errors)!=0): ?>
+                        <div >
+                            <p>Please correct the folowing error(s):</p>
+                            <ul>
+                                <?php foreach($errors as $error): ?>
+                                    <li><?= $error ?></li>
+                                <?php endforeach;?>    
+                            </ul>
+                        </div>
+                 <?php endif;?>    
                             <p class="text-center mt-2 mb-0">
                                 <a href="<?= $web_root?>/user/signup" class="link-light text-decoration-underline">New here ? Click here to subscribe ! </a>
                             </p>    
