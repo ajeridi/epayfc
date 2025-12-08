@@ -7,53 +7,72 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-        <div class="login">
-            <div class="w-100" style="max-width: 480px;">
-                <div class="text-center mb-4 text-light">
-                    <div class="fs-1 mb-2">🛒 EPayFC</div>
-                </div>
+       <div class="login">
 
-                <div class="card shadow login-card border-0 text-light mb-4">
-                    <div class="card-body p-4">
-                        <h1 class="h3 text-center mb-3">Sign in</h1>
-                        <hr>
-                            <form method="post" action="<?= $web_root?>/user">
-                                <div class="mb-4">
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-dark border-0  text-secondary">
-                                           &#128102;
-                                        </span>
-                                        <input
-                                        type="email"
-                                        name="mail"
-                                        class="from-control bg-dark text-light border-0"
-                                        placeholder="Mail"
-                                        required
-                                        >
+    <div class="w-100" style="max-width: 480px;">
 
-                                    </div>
-                                </div>
-                                <div class="mb-4">
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-dark border-0 text-secondary">
-                                            &#128273;
-                                        </span>
-                                        <input
-                                            type="password"
-                                            name="passeword"
-                                            class="form-control bg-dark text-light border-0"
-                                            placeholder="*********"
-                                            required
-                                        >
-                                    </div>
-                                </div>
-                                <div class="d-grid mb-3">
-                                    <button class="btn btn-primary fw-bold" type="submit">Login</button>
-                                </div>
-                                <div class="d-grid mb-3">
-                                    <a href="<?= $web_root?>/guest" class="btn btn-secondary">Continue as guest</a>
-                                </div>
-                            </form>
+        <!-- Logo + titre -->
+        <div class="text-center mb-4 text-light">
+            <div class="fs-1 mb-2">🛒EPayFC</div>
+            
+        </div>
+
+        <!-- Carte de login -->
+        <div class="card shadow login-card border-0 text-light mb-4">
+            <div class="card-body p-4">
+
+                <h1 class="h4 text-center mb-4">Sign in</h1>
+
+                <!-- Formulaire de connexion -->
+                <form method="post" action="<?= $web_root ?>/login">
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-0 text-secondary">
+                                &#128104;
+                            </span>
+                            <input
+                                type="email"
+                                name="mail"
+                                class="form-control bg-dark text-light border-0"
+                                placeholder="Mail"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="mb-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-0 text-secondary">
+                                &#128273;
+                            </span>
+                            <input
+                                type="password"
+                                name="password"
+                                class="form-control bg-dark text-light border-0"
+                                placeholder="******"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Bouton Login -->
+                    <div class="d-grid mb-3">
+                        <button class="btn btn-primary fw-semibold" type="submit">
+                            Login
+                        </button>
+                    </div>
+
+                    <!-- Bouton Continue as guest -->
+                    <div class="d-grid mb-3">
+                        <a href="<?= $web_root ?>/items" class="btn btn-secondary">
+                            Continue as guest
+                        </a>
+                    </div>
+
+                </form>
                             <p class="text-center mt-2 mb-0">
                                 <a href="<?= $web_root?>/user/signup" class="link-light text-decoration-underline">New here ? Click here to subscribe ! </a>
                             </p>    
@@ -62,10 +81,10 @@
                     <div class="text-center mb-4">
                         <h2 class="h6 text-warning fw-bold mb-3">For Debug Purpose</h2>
 
-                        <p><a href="<?= $web_root?>/user/boris" class="text-decoration-none  text-light">Lgin as <strong>bverhaegen@epfc.eu</strong></a></p>
-                        <p><a href="<?= $web_root?>/user/michel" class="text-decoration-none  text-light">Lgin as <strong>mamichel@epfc.eu</strong></a></p>
-                        <p><a href="<?= $web_root?>/user/ben" class="text-decoration-none text-light">Lgin as <strong>quhouben@epfc.eu</strong></a></p>
-                        <p><a href="<?= $web_root?>/user/xavier" class="text-decoration-none  text-light">Lgin as <strong>xapigeolet@epfc.eu</strong></a></p>
+                        <p><a href="<?= $web_root?>/item" class="text-decoration-none  text-light">Lgin as <strong>bverhaegen@epfc.eu</strong></a></p>
+                        <p><a href="<?= $web_root?>/item" class="text-decoration-none  text-light">Lgin as <strong>mamichel@epfc.eu</strong></a></p>
+                        <p><a href="<?= $web_root?>/item" class="text-decoration-none text-light">Lgin as <strong>quhouben@epfc.eu</strong></a></p>
+                        <p><a href="<?= $web_root?>/item" class="text-decoration-none  text-light">Lgin as <strong>xapigeolet@epfc.eu</strong></a></p>
                         <p><a href="setup/restore" class="text-decoration-none text-success">Restore original data</a></p>
                         <p><a href="setup/backup" class="text-decoration-none text-warning">Backup personal data</a></p>
                         <p><a href="setup/restore" class="text-decoration-none text-warning">Restore personal data</a></p>
