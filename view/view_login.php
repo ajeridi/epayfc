@@ -35,7 +35,7 @@
                             </span>
                             <input
                                 type="email"
-                                name="mail"
+                                name="email"
                                 class="form-control bg-dark text-light border-0"
                                 placeholder="Mail"
                                 required
@@ -75,7 +75,12 @@
 
                 </form>
                 
-                 <?php if(count($errors)!=0): ?>
+               
+                            <p class="text-center mt-2 mb-0">
+                                <a href="<?= $web_root?>/user/signup" class="link-light text-decoration-underline">New here ? Click here to subscribe ! </a>
+                            </p>    
+                    </div>
+                    <?php if(count($errors)!=0): ?>
                         <div >
                             <p>Please correct the folowing error(s):</p>
                             <ul>
@@ -85,10 +90,6 @@
                             </ul>
                         </div>
                  <?php endif;?>    
-                            <p class="text-center mt-2 mb-0">
-                                <a href="<?= $web_root?>/user/signup" class="link-light text-decoration-underline">New here ? Click here to subscribe ! </a>
-                            </p>    
-                    </div>
                     <hr>
                     <div class="text-center mb-4">
                         <h2 class="h6 text-warning fw-bold mb-3">For Debug Purpose</h2>
