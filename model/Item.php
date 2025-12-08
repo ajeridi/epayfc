@@ -3,6 +3,8 @@
 require_once "framework/Model.php";
 
 class Item extends Model {
+    public function __construct(public int $id ,public string $title,public ?string $description,public int $owner,public DateTime $created_at,public ?int $buy_now_price,public ? int $starting_bid ,public string $picture_path ){
+    }
 
     private static $items_participated_in_sql =  "SELECT DISTINCT vit.*, 
                                     owners.full_name owner_full_name, 
@@ -48,6 +50,16 @@ class Item extends Model {
                                 WHERE u.id = :user_id)";
        $query = self::execute($sql, ["user_id" => $user_id]); 
        return $query->fetchAll();
+    }
+    public static function get_item_by_id(int $item_id) :Item|false {
+        $query=self::execute("SELECT * FROM items join item_pictures ON items.id=item_pictures.item WHERE id= :id  ORDER BY item_pictures.priority",["id"=>$item_id]);
+        $data=$query->fetch();
+        if($query->rowCount()==0){
+            return false ;
+        } else{
+            return new Item($data["id"],$data["title"],$data["description"],$data["owner"],$data["created_at"],$data["buy_now_price"],$data["starting_bid"],$data["picture_path"]);
+        }
+
     }
 }
 ?>
