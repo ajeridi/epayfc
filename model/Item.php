@@ -1,6 +1,7 @@
 <?php
 
 require_once "framework/Model.php";
+require_once "utils/AppTime.php";
 
 class Item extends Model {
 
@@ -19,11 +20,12 @@ class Item extends Model {
                                 JOIN users as bidders ON bidders.id = b.owner
                                 WHERE   ip.priority = 1 AND
                                 vit.buy_now_reached != 1 AND
-                                bidders.id = :user_id";
+                                bidders.id = :user_id
+                                AND vit.end_at > :current_date_time";
 
 
     public static function get_items_participated_in(int $user_id) : array{
-        $query = self::execute(Item::$items_participated_in_sql, ["user_id" => $user_id]);
+        $query = self::execute(Item::$items_participated_in_sql, ["user_id" => $user_id, "current_date_time" => "2025-11-19 16:11:00"]);
         return $query->fetchAll();
     } 
 
@@ -40,13 +42,14 @@ class Item extends Model {
             JOIN users as owners ON vit.owner = owners.id
             WHERE   ip.priority = 1
             AND vit.buy_now_reached != 1
+            AND vit.end_at > :current_date_time
             AND owners.id != :user_id
             AND vit.id NOT IN (SELECT vit2.id
                                 FROM v_items_status vit2
                                 JOIN bids b2 ON b2.item = vit2.id
                                 JOIN users u ON u.id = b2.owner
                                 WHERE u.id = :user_id)";
-       $query = self::execute($sql, ["user_id" => $user_id]); 
+       $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" => "2025-11-19 16:11:00"]); 
        return $query->fetchAll();
     }
 }
