@@ -4,7 +4,7 @@ require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 
 class Item extends Model {
-    public function __construct(public int $id ,public string $title,public ?string $description,public int $owner,public DateTime $created_at,public ?int $buy_now_price,public ? int $starting_bid ,public string $picture_path ){
+    public function __construct(public int $id ,public string $title,public ?string $description,public int $owner,public string $created_at,public ?int $buy_now_price,public ? int $starting_bid ,public string $picture_path ){
     }
 
     private static $items_participated_in_sql =  "SELECT DISTINCT vit.*, owners.full_name owner_full_name, b.amount, ip.picture_path, (SELECT COUNT(*) FROM item_pictures ip2 WHERE ip2.item = vit.id) as number_of_pictures, 

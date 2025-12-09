@@ -20,9 +20,9 @@ class ControllerItem extends Controller{
         (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items]);
     }
     public function open() : void {
-        if(isset($_GET["param"])){
+        if(isset($_GET["param1"])){
 
-            $item =Item::get_item_by_id($_GET["param"]);
+            $item =Item::get_item_by_id($_GET["param1"]);
         }
         (new View("item_open"))->show(["item"=>$item]);
     }
