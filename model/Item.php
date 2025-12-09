@@ -47,14 +47,12 @@ class Item extends Model {
        $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" => "2025-11-19 16:11:00"]); 
        return $query->fetchAll();
     }
-    public static function get_item_by_id(int $item_id) :Item|false {
-        $query=self::execute("SELECT * FROM items join item_pictures ON items.id=item_pictures.item WHERE id= :id  ORDER BY item_pictures.priority",["id"=>$item_id]);
+    public static function get_item_by_id(int $item_id) : array {
+        $query=self::execute("SELECT * FROM items join item_pictures ON items.id=item_pictures.item join v_items_status on items.id=v_items_status.id WHERE items.id= :id  ORDER BY item_pictures.priority",["id"=>$item_id]);
         $data=$query->fetch();
-        if($query->rowCount()==0){
-            return false ;
-        } else{
-            return new Item($data["id"],$data["title"],$data["description"],$data["owner"],$data["created_at"],$data["buy_now_price"],$data["starting_bid"],$data["picture_path"]);
-        }
+       
+            return $data;
+        
 
     }
 }
