@@ -23,9 +23,9 @@ class ControllerItem extends Controller{
     public function list() : void {
         $user = $this->get_user_or_redirect();
         $active_items = Item::get_user_active_items($user->id);
-        $unsold_items = Item::get_user_closed_unsold_items($user->id);
+        $closed_unsold_items = Item::get_user_closed_unsold_items($user->id);
         $sold_items = Item::get_user_sold_items($user->id);
-        (new View("item_list"))->show(["active_items" => $active_items, "unsold_items" => $unsold_items, "sold_items" => $sold_items]);
+        (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items]);
     }
 
 }
