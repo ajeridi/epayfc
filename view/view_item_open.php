@@ -51,30 +51,34 @@
                                         </div>
                                     </div>
                                 </div>
-                            <hr>
+                                <hr>
+                            </div>    
                             <div class="mb-3">
-                        <div class="input-group border-1">
-                            <span class="input-group-text bg-dark border-1 text-light">
-                                &#x20ac;
-                            </span>
-                            <input
-                                type="text"
-                                name="min_bid"
-                                class="form-control  bg-dark text-light border-1"
-                                value="<?= $item['max_bid'] ?>"
-                                required
-                            >
+                            <div class="input-group border-1">
+                                <span class="input-group-text bg-dark border-1 text-light">
+                                    &#x20ac;
+                                </span>
+                                <input
+                                    type="text"
+                                    name="min_bid"
+                                    class="form-control  bg-dark text-light border-1"
+                                    value="<?= $item['max_bid']+1 ?>"
+                                    required
+                                >
+                            </div>
+                            <div class="d-grid grap2">
+                                <button class="btn btn-success border-1" type="submit">Place Bid</button>
+                                <button class="btn text-primary border-primary" type="submit">Buy NOw at <?= $item['buy_now_price'] ?></button>
+                            </div>
+                            
                         </div>
-                        <div class="d-grid grap2">
-                            <button class="btn btn-success border-1" type="submit">Place Bid</button>
-                            <button class="btn text-primary border-1" type="submit">Buy NOw at <?= $item['buy_now_price'] ?></button>
+                        <div class="bg-dark container-fluid margin: 1rem text-light ">
+                              <p class="opacity-75">Seller Information</p>
+                             <p> <?= $ $item['owner'] ?></p>
+                           
                         </div>
-                        <br>
-                
-                          
-                    
-                </div>
-        
+                        
+                 </div>
             </main>
         </header>
     </body>
