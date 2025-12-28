@@ -83,7 +83,7 @@
                         </div>
                         <div class="bg-dark container-fluid margin: 1rem text-light ">
                               <p class="opacity-75">Seller Information</p>
-                             <p> <?=  $item['owner'] ?></p>
+                             <p> <?= User:: get_full_name_by_id( $item['owner']) ?></p>
                            
                         </div>
                         
