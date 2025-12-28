@@ -62,7 +62,16 @@
                                     type="text"
                                     name="min_bid"
                                     class="form-control  bg-dark text-light border-1"
-                                    value="<?= $item['max_bid']+1 ?>"
+                                    <?php
+                                    if($item['max_bid']==null){if($item['starting_bid']!=0) { ?>
+                                       value="<?=$item['starting_bid']?>"
+                                       <?php } else {?>
+                                        value="1"
+                                        <?php } ?>
+                                    <?php } else{ ?>
+                                      value="<?= $item['max_bid']+1 ?>
+
+                                    <?php } ?>
                                     required
                                 >
                             </div>
@@ -74,7 +83,7 @@
                         </div>
                         <div class="bg-dark container-fluid margin: 1rem text-light ">
                               <p class="opacity-75">Seller Information</p>
-                             <p> <?= $ $item['owner'] ?></p>
+                             <p> <?=  $item['owner'] ?></p>
                            
                         </div>
                         
