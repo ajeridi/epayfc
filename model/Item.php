@@ -55,5 +55,10 @@ class Item extends Model {
         
 
     }
+    public static function get_other_pictures_by_id(int $item_id): array {
+        $query=self::execute("SELECT * FROM item_pictures WHERE item = :item and priority != 1 ",["item"=>$item_id]);
+        $data=$query->fetchAll();
+        return $data;
+    }
 }
 ?>

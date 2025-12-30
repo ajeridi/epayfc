@@ -29,10 +29,10 @@ class User extends Model {
         return $errors;
 
     }
-     public static function get_full_name_by_id(int $user_id) : string {
-        $query=self::execute("SELECT full_name from users WHERE id = :id",["id"=> $user_id]);
+     public static function get_full_name_by_id(int $user_id) : array  {
+        $query=self::execute("SELECT* from users WHERE id = :id",["id"=> $user_id]);
         $data=$query->fetch();
-        return $data['full_name'];
+        return $data;
     }
 
 }
