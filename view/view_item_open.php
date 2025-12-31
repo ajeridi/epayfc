@@ -13,7 +13,7 @@
          <header>
             <!-- Barre  -->
             <nav class="navbar bg-navy-gray" data-bs-theme="dark"> <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Item open 🛒 </div> </nav>
-           <main class="container-fluid px-3 page-wrap">
+           <main class="container-fluid px-3 bg-dark page-wrap">
   <div class="row g-3 align-items-start">
 
     <!-- GAUCHE -->
@@ -58,29 +58,30 @@
       <div class="card card-dark border-0 mt-3">
         <div class="d-flex align-items-center justify-content-between px-3 pt-3">
           <div class="section-title mb-0">Bid History</div>
-          <span class="badge badge-soft">3 entries</span>
+          <?php
+         $cmpt=0;
+          foreach(Item::get_bids($item['id']) as $bids){
+            ++$cmpt;
+          }
+          ?>
+          <span class="badge badge-dark"><?= $cmpt?> entries</span>
         </div>
 
-        <div class="list-group list-group-flush list-dark mt-2">
+        <div class="list-group list-group-flush list-dark mt-3">
           <div class="list-group-item">
             <div class="d-flex justify-content-between">
               <div>
-                <div class="fw-semibold">Boris</div>
-                <div class="small text-muted">11/11/2025 21:55:03</div>
-              </div>
-              <div class="price-green fw-semibold">€ 229,00</div>
+                <?php 
+                  foreach(Item::get_bids($item['id']) as $bids){
+                  echo "<div class=\"fw-semibold\">".User::get_full_name_by_id($bids['owner'])['pseudo']."</div>
+                          <div class=\"small text-muted\">".$bids['created_at']."</div>
+                        </div>
+                        <div class=\"price-green fw-semibold\">".$bids['amount']."</div>";
+                  }
+              ?>
             </div>
           </div>
 
-          <div class="list-group-item">
-            <div class="d-flex justify-content-between">
-              <div>
-                <div class="fw-semibold">Marc</div>
-                <div class="small text-muted">11/11/2025 10:25:18</div>
-              </div>
-              <div class="price-green fw-semibold">€ 214,00</div>
-            </div>
-          </div>
         </div>
 
         <div class="p-2"></div>

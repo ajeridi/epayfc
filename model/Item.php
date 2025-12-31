@@ -60,5 +60,10 @@ class Item extends Model {
         $data=$query->fetchAll();
         return $data;
     }
+    public static function get_bids(int $item_id):array {
+        $query=self::execute("SELECT * FROM bids WHERE item= :item",["item" =>$item_id]);
+        $data=$query->fetchAll();
+        return $data;
+    }
 }
 ?>
