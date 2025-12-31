@@ -34,3 +34,28 @@ body{
 .item-content {
     margin: 10px;
 }
+.thumbs .thumb{
+  width: 110px !important;
+  height: 70px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  border: 2px solid rgba(255,255,255,.18) !important;
+  overflow: hidden !important;
+  display: inline-block !important;
+  flex: 0 0 auto !important;
+  background: rgba(255,255,255,.05) !important;
+  text-decoration: none !important;
+}
+
+.thumbs .thumb img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  max-width: none !important;
+}
+
+.thumbs .thumb.active{
+  border-color: #2f8cff !important;
+}

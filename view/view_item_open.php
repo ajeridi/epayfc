@@ -7,7 +7,7 @@
          <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/style.css?v=1">
     </head>
     <body class="app-bg">
          <header>
@@ -45,12 +45,15 @@
       <!-- Additional Images (forme seulement) -->
       <div class="mt-3">
         <div class="section-title mb-2">Additional Images</div>
-        <div class="d-flex gap-2 flex-wrap">
+
+        <div class="thumbs d-flex gap-2 flex-wrap">
           <?php
-            foreach(Item::get_other_pictures_by_id($item['id']) as $path) { 
-               echo "<a class=\"thumb active\"><img src=\"".$path['picture_path']." alt=\"thumb\"></a>";
-            }
-          ?>
+            $pics = Item::get_other_pictures_by_id($item['id']);
+            foreach ($pics as $i => $p) { ?>
+              <a class="thumb <?= $i === 0 ? 'active' : '' ?>" href="#">
+                <img src="<?= $p['picture_path'] ?>" alt="thumb">
+              </a>
+          <?php } ?>
         </div>
       </div>
 
@@ -68,20 +71,17 @@
         </div>
 
         <div class="list-group list-group-flush list-dark mt-3">
-          <div class="list-group-item">
-            <div class="d-flex justify-content-between">
-              <div>
-                <?php 
-                  foreach(Item::get_bids($item['id']) as $bids){
-                  echo "<div class=\"fw-semibold\">".User::get_full_name_by_id($bids['owner'])['pseudo']."</div>
-                          <div class=\"small text-muted\">".$bids['created_at']."</div>
-                        </div>
-                        <div class=\"price-green fw-semibold\">".$bids['amount']."</div>";
-                  }
-              ?>
+          <?php foreach(Item::get_bids($item['id']) as $bid) { ?>
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="fw-semibold"><?= User::get_full_name_by_id($bid['owner'])['pseudo'] ?></div>
+                  <div class="small text-muted"><?= $bid['created_at'] ?></div>
+                </div>
+                <div class="price-green fw-semibold">€ <?= $bid['amount'] ?></div>
+              </div>
             </div>
-          </div>
-
+          <?php } ?>
         </div>
 
         <div class="p-2"></div>
@@ -152,5 +152,6 @@
 
   </div>
 </main>
+</header>
 </body>    
 </html>      
