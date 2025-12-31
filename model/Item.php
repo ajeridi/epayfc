@@ -4,6 +4,8 @@ require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 
 class Item extends Model {
+    public function __construct(public int $id ,public string $title,public ?string $description,public int $owner,public string $created_at,public ?int $buy_now_price,public ? int $starting_bid ,public string $picture_path ){
+    }
 
     private static $items_participated_in_sql =  "SELECT DISTINCT vit.*, owners.full_name owner_full_name, b.amount, ip.picture_path, (SELECT COUNT(*) FROM item_pictures ip2 WHERE ip2.item = vit.id) as number_of_pictures, 
     CONCAT(TIMESTAMPDIFF(DAY, :current_date_time, vit.end_at), 'd ', TIMESTAMPDIFF(HOUR, :current_date_time, vit.end_at) % 24, 'h') as time_left
@@ -102,5 +104,23 @@ class Item extends Model {
 
     }
 
+    public static function get_item_by_id(int $item_id) : array {
+        $query=self::execute("SELECT * FROM items join item_pictures ON items.id=item_pictures.item join v_items_status on items.id=v_items_status.id WHERE items.id= :id  ORDER BY item_pictures.priority",["id"=>$item_id]);
+        $data=$query->fetch();
+       
+            return $data;
+        
+
+    }
+    public static function get_other_pictures_by_id(int $item_id): array {
+        $query=self::execute("SELECT * FROM item_pictures WHERE item = :item ",["item"=>$item_id]);
+        $data=$query->fetchAll();
+        return $data;
+    }
+    public static function get_bids(int $item_id):array {
+        $query=self::execute("SELECT * FROM bids WHERE item= :item ORDER BY -created_at",["item" =>$item_id]);
+        $data=$query->fetchAll();
+        return $data;
+    }
 }
 ?>

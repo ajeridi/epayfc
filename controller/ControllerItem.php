@@ -19,6 +19,13 @@ class ControllerItem extends Controller{
         $other_available_items = Item::get_other_available_items($user->id);
         (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items]);
     }
+    public function open() : void {
+        if(isset($_GET["param1"])){
+
+            $item =Item::get_item_by_id($_GET["param1"]);
+        }
+        (new View("item_open"))->show(["item"=>$item]);
+    }
 
     public function list() : void {
         $user = $this->get_user_or_redirect();
