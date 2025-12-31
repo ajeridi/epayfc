@@ -12,14 +12,7 @@
     <body class="app-bg">
          <header>
             <!-- Barre  -->
-            <nav class="navbar topbar" data-bs-theme="dark">
-                <div class="container-fluid px-3 ">
-                    <div class="w-100 d-flex justify-content-center align-items-center gap-2 topbar-title">
-                        <span>Item open</span>
-                        <i class="bi bi-cart3"></i>
-                    </div>
-                </div>
-            </nav>
+            <nav class="navbar bg-navy-gray" data-bs-theme="dark"> <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Item open 🛒 </div> </nav>
            <main class="container-fluid px-3 page-wrap">
   <div class="row g-3 align-items-start">
 
