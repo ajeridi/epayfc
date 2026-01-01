@@ -95,23 +95,25 @@
       <div class="card card-dark border-0">
         <div class="card-body">
           <div class="section-title mb-3">Pricing</div>
+          <?php if($item['is_direct_sale']==0) {?>
           <div class="d-flex justify-content-between small mb-0">
             <span class="text-muted">Current Bid</span>
             <span class="price-green fw-semibold">
               <?php if($item['max_bid']==NULL){?>
               <i class="bi bi-currency-euro"></i><?= $item['starting_bid'] ?>
             </span>
-            </div>
+          </div>
             <div class="d-flex justify-content-between small mb-2">
             <span class="text-muted">starting at € <?= $item['starting_bid'] ?> </span>    
             </div>
               <?php }else {?>
                  <i class="bi bi-currency-euro"></i><?= $item['max_bid'] ?>
-            </span>     
-                 <?php } ?>
-
-
+            </span>
+          </div>       
+                 <?php } ?> 
+            <?php } ?>           
           <div class="d-flex justify-content-between small mb-3">
+            
             <?php if($item['has_buy_now']==1){ ?>
             <span class="text-muted">Buy Now</span>
             <span class="fw-semibold">
@@ -119,8 +121,9 @@
             </span>
             <?php } ?>    
           </div>
-
+         
           <hr class="hr-soft">
+          <?php  if($item['is_direct_sale']==0) {?>
           <?php if(Item::is_open_anonce($item['id'])){?>
           <form method="post" action="">
             <div class="input-group input-dark mb-3">
@@ -144,6 +147,13 @@
             </div>
           </form>
           <?php } ?>
+          <?php } ?>
+          <?php  if($item['is_direct_sale']==1) {?>
+            <div class="d-grid gap-2">
+              <button class="btn btn-success" type="submit" value="<?= $item['is_direct_sale'] ?>">Buy NOw</button>
+            </div>   
+           <?php } ?>   
+
         </div>
       </div>
 
