@@ -95,20 +95,29 @@
       <div class="card card-dark border-0">
         <div class="card-body">
           <div class="section-title mb-3">Pricing</div>
-          <div class="d-flex justify-content-between small mb-2">
-             <?php if(Item::status_items($item['id'])['is_auction']==1){?>
+          <div class="d-flex justify-content-between small mb-0">
             <span class="text-muted">Current Bid</span>
             <span class="price-green fw-semibold">
-              <i class="bi bi-currency-euro"></i><?= $item['max_bid'] ?>
+              <?php if($item['max_bid']==NULL){?>
+              <i class="bi bi-currency-euro"></i><?= $item['starting_bid'] ?>
             </span>
-            <?php } ?>
-          </div>
+            </div>
+            <div class="d-flex justify-content-between small mb-2">
+            <span class="text-muted">starting at € <?= $item['starting_bid'] ?> </span>    
+            </div>
+              <?php }else {?>
+                 <i class="bi bi-currency-euro"></i><?= $item['max_bid'] ?>
+            </span>     
+                 <?php } ?>
+
 
           <div class="d-flex justify-content-between small mb-3">
+            <?php if($item['has_buy_now']==1){ ?>
             <span class="text-muted">Buy Now</span>
             <span class="fw-semibold">
               <i class="bi bi-currency-euro"></i><?= $item['buy_now_price'] ?>
             </span>
+            <?php } ?>    
           </div>
 
           <hr class="hr-soft">
@@ -127,9 +136,11 @@
 
             <div class="d-grid gap-2">
               <button class="btn btn-success" type="submit">Place Bid</button>
+               <?php if($item['has_buy_now']==1){ ?>
               <a class="btn btn-outline-primary" href="#">
                 Buy Now at € <?= $item['buy_now_price'] ?>
               </a>
+              <?php } ?>
             </div>
           </form>
           <?php } ?>
