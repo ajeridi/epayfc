@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <!-- Additional Images (forme seulement) -->
+      <!-- Additional Images  -->
       <div class="mt-3">
         <div class="section-title mb-2">Additional Images</div>
 
@@ -57,7 +57,7 @@
         </div>
       </div>
 
-      <!-- Bid History (forme seulement) -->
+      <!-- Bid History -->
       <div class="card card-dark border-0 mt-3">
         <div class="d-flex align-items-center justify-content-between px-3 pt-3">
           <div class="section-title mb-0">Bid History</div>
@@ -112,7 +112,7 @@
           </div>
 
           <hr class="hr-soft">
-
+          <?php if(Item::is_open_anonce($item['id'])){?>
           <form method="post" action="">
             <div class="input-group input-dark mb-3">
               <span class="input-group-text">€</span>
@@ -132,6 +132,7 @@
               </a>
             </div>
           </form>
+          <?php } ?>
         </div>
       </div>
 
