@@ -70,5 +70,15 @@ class Item extends Model {
         $data=$query->fetch();
         return $data ;
     }
+    public static function is_open_anonce(int $item_id) {
+        $query=self::execute("SELECT * FROM v_items_status Where id= :id and ((is_auction= 1 and buy_now_reached = 1 and and_at > :current_date_time) or (is_direct_sale=1 and not_purchased_direct_sale=1)",["id"=>$item_id,"current_date_time"=> "2025-11-19 16:11:00"]);
+        
+        if($query->rowCount()==0){
+            return false ;
+        }else{
+            return true; 
+        }
+
+    }
 }
 ?>
