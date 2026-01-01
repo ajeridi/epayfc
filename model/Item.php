@@ -65,5 +65,10 @@ class Item extends Model {
         $data=$query->fetchAll();
         return $data;
     }
+    public static function status_items(int $item_id): array {
+        $query=self::execute("SELECT * FROM v_items_status WHERE id = :id",["id"=>$item_id]);
+        $data=$query->fetch();
+        return $data ;
+    }
 }
 ?>

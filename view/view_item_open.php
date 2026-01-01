@@ -95,12 +95,13 @@
       <div class="card card-dark border-0">
         <div class="card-body">
           <div class="section-title mb-3">Pricing</div>
-
           <div class="d-flex justify-content-between small mb-2">
+             <?php if(Item::status_items($item['id'])['is_auction']==1){?>
             <span class="text-muted">Current Bid</span>
             <span class="price-green fw-semibold">
               <i class="bi bi-currency-euro"></i><?= $item['max_bid'] ?>
             </span>
+            <?php } ?>
           </div>
 
           <div class="d-flex justify-content-between small mb-3">
