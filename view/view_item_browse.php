@@ -30,7 +30,7 @@
                         <?php
                         foreach ($items_participated_in as $item) { ?>
                                 <div class="col-3">
-                                    <a href="item/open/<?= $item['id']?>/from-browse" style="text-decoration: none;">
+                                    <a href="item/open/<?= $item['id']?>" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
                                             <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">

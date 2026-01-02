@@ -21,11 +21,15 @@ class ControllerItem extends Controller{
     }
     public function open() : void {
         if(isset($_GET["param1"])){
-
-            $item =Item::get_item_by_id($_GET["param1"]);
+            if(isset($_GET["param2"])){
+                 $item =Item::get_item_by_id($_GET["param1"],$_GET["param2"]);
+            }else{
+                $item =Item::get_item_by_id($_GET["param1"],1);
         }
+         }
         (new View("item_open"))->show(["item"=>$item]);
     }
+    
 
 }
 ?>

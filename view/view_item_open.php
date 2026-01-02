@@ -50,7 +50,7 @@
           <?php
             $pics = Item::get_other_pictures_by_id($item['id']);
             foreach ($pics as $i => $p) { ?>
-              <a class="thumb <?= $i === 0 ? 'active' : '' ?>" href="#">
+              <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item['id']?>/<?= $p['priority'] ?>">
                 <img src="<?= $p['picture_path'] ?>" alt="thumb">
               </a>
           <?php } ?>

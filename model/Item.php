@@ -47,8 +47,8 @@ class Item extends Model {
        $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" => "2025-11-19 16:11:00"]); 
        return $query->fetchAll();
     }
-    public static function get_item_by_id(int $item_id) : array {
-        $query=self::execute("SELECT * FROM items join item_pictures ON items.id=item_pictures.item join v_items_status on items.id=v_items_status.id WHERE items.id= :id  ORDER BY item_pictures.priority",["id"=>$item_id]);
+    public static function get_item_by_id(int $item_id,int $priority) : array {
+        $query=self::execute("SELECT * FROM items join item_pictures ON items.id=item_pictures.item join v_items_status on items.id=v_items_status.id WHERE items.id= :id  and item_pictures.priority= :priority",["id"=>$item_id,"priority"=>$priority]);
         $data=$query->fetch();
        
             return $data;
