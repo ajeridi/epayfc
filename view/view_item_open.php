@@ -140,17 +140,19 @@
             <div class="d-grid gap-2">
               <button class="btn btn-success" type="submit">Place Bid</button>
                <?php if($item['has_buy_now']==1){ ?>
-              <a class="btn btn-outline-primary" href="#">
+              <a class="btn btn-outline-primary" href="item/buy/<?= $item['id'] ?>">
                 Buy Now at € <?= $item['buy_now_price'] ?>
               </a>
-              <?php } ?>
+              <?php } ?>s
             </div>
           </form>
           <?php } ?>
           <?php } ?>
           <?php  if($item['is_direct_sale']==1 && Item::is_open_anonce($item['id']) ) {?>
             <div class="d-grid gap-2">
-              <button class="btn btn-success" type="submit" value="<?= $item['is_direct_sale'] ?>">Buy NOw</button>
+             <a class="btn btn-outline-success" href="item/buy/<?= $item['id'] ?>">
+                Buy Now 
+              </a>
             </div>   
            <?php } ?>   
 

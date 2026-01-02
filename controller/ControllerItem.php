@@ -29,6 +29,20 @@ class ControllerItem extends Controller{
          }
         (new View("item_open"))->show(["item"=>$item]);
     }
+    public function buy() : void {
+        $user=$this->get_user_or_redirect();
+        $now="2026-01-02 18:30:20";
+        
+
+        if(isset($_GET['param1'])  ){
+            $item =Item::get_item_by_id($_GET["param1"],1);
+            Item::buy($user->id,$_GET['param1'],"2026-01-02 18:30:20",$item['buy_now_price']);
+              
+        }
+        (new View("item_open"))->show(["item"=>$item]);
+        
+    }
+
     
 
 }
