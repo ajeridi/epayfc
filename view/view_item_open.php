@@ -148,7 +148,7 @@
           </form>
           <?php } ?>
           <?php } ?>
-          <?php  if($item['is_direct_sale']==1) {?>
+          <?php  if($item['is_direct_sale']==1 && Item::is_open_anonce($item['id']) ) {?>
             <div class="d-grid gap-2">
               <button class="btn btn-success" type="submit" value="<?= $item['is_direct_sale'] ?>">Buy NOw</button>
             </div>   
