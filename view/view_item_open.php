@@ -75,10 +75,10 @@
             <div class="list-group-item">
               <div class="d-flex justify-content-between align-items-start">
                 <div>
-                  <div class="fw-semibold"><?= User::get_full_name_by_id($bid['owner'])['pseudo'] ?></div>
-                  <div class="small text-muted"><?= $bid['created_at'] ?></div>
+                  <div class="fw-semibold"><?= $item['pseudo'] ?></div>
+                  <div class="small text-muted"><?= $item['bids_h'] ?></div>
                 </div>
-                <div class="price-green fw-semibold">€ <?= $bid['amount'] ?></div>
+                <div class="price-green fw-semibold">€ <?= $item['amount'] ?></div>
               </div>
             </div>
           <?php } ?>
@@ -166,8 +166,8 @@
           <div class="d-flex align-items-center gap-3">
             <div class="avatar"></div>
             <div>
-              <div class="fw-semibold"><?= User::get_full_name_by_id($item['owner'])['pseudo'] ?></div>
-              <div class="text-muted small"><?= User::get_full_name_by_id($item['owner'])['role'] ?></div>
+              <div class="fw-semibold"><?= $item['pseudo'] ?></div>
+              <div class="text-muted small"><?= $item['role'] ?></div>
             </div>
           </div>
         </div>

@@ -27,7 +27,7 @@ class ControllerItem extends Controller{
                 $item =Item::get_item_by_id($_GET["param1"],1);
         }
          }
-        (new View("item_open"))->show(["item"=>$item]);
+        (new View("item_open"))->show(["item"=>$item],);
     }
     public function buy() : void {
         $user=$this->get_user_or_redirect();
