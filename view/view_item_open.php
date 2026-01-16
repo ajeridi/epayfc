@@ -149,12 +149,14 @@
               </a>
             </div>   
            <?php }if(!$is_open){
-            
+            if($item['bid_count']!=0){
             if($user->id===$bids['0']['owner']){?>
             <p> Congratulation! You purchased this item for € <?= $item['max_bid'] ?> </p>
             <?php }else {?>
             <p><?= $bids['0']['pseudo'] ?> Won this item for € <?= $item['max_bid'] ?></p> 
-           <?php } }?>   
+           <?php } } } else {?>
+            <p>This listing ended whitout a buyer</p>
+            <?php } ?>   
 
         </div>
       </div>
