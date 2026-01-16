@@ -166,7 +166,7 @@
           <div class="section-title mb-3">Seller Information</div>
 
           <div class="d-flex align-items-center gap-3">
-            <div class="avatar"></div>
+            <div class="avatar rounded-circle"><img src="<?= $item['user_path'] ?>"  class="w-100"></div>
             <div>
               <div class="fw-semibold"><?= $item['pseudo'] ?></div>
               <div class="text-muted small"><?= $item['role'] ?></div>
