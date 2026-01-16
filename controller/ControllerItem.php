@@ -49,6 +49,16 @@ class ControllerItem extends Controller{
         $this->redirect("Item","open",$item_id);
         
     }
+    public function bid() : void {
+       $user=$this->get_user_or_redirect();
+       $now="2026-01-02 18:30:20";
+       if(isset($_GET['param1'])){
+        $item_id=$_GET['param1'];
+        $amount=$_POST['min_bid'];
+        Item::buy($user->id,$item_id,$now,$amount);
+       }
+       $this->redirect("item","open",$item_id);
+    }
 
     
 

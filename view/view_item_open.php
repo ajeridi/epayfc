@@ -119,7 +119,7 @@
           <hr class="hr-soft">
           <?php  if($item['is_direct_sale']==0) {?>
           <?php if($is_open){?>
-          <form method="post" action="">
+          <form method="post" action="item/bid/<?= $item['id']?>">
             <div class="input-group input-dark mb-3">
               <span class="input-group-text">€</span>
               <input
