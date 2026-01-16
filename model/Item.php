@@ -80,8 +80,10 @@ class Item extends Model {
 
     }
     public static function buy($owner,$item_id,$at,$amount): void {
-        $query=self::execute("INSERT INTO bids(owner,item,created_at,amount) VALUES (:owner,:item,:created_at,:amount)",["owner"=>$owner,"item"=>$item_id,"created_at"=>$at,"amount"=>$amount]);
-
+        $bids=item::get_bids($item_id);
+        if($amount>$bids['0']['amount']){
+                 $query=self::execute("INSERT INTO bids(owner,item,created_at,amount) VALUES (:owner,:item,:created_at,:amount)",["owner"=>$owner,"item"=>$item_id,"created_at"=>$at,"amount"=>$amount]);
+        }
 
     }
    
