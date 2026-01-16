@@ -48,12 +48,11 @@ class Item extends Model {
        return $query->fetchAll();
     }
     public static function get_item_by_id(int $item_id,int $priority) : array {
-        $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,item_pictures.picture_path ,priority,pseudo,users.picture_path as user_path ,role,bids.created_at as bids_h,amount
+        $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,item_pictures.picture_path ,priority,u1.pseudo,u1.picture_path as user_path ,u1.role
                                     FROM v_items_status join item_pictures on v_items_status.id=item_pictures.item
-                                            join users on v_items_status.owner=users.id
-                                            join bids on bids.item=v_items_status.id 
-                                            WHERE v_items_status.id= :id 
-                                            and item_pictures.priority= :priority",["id"=>$item_id,"priority"=>$priority]);
+                                            join users u1 on v_items_status.owner=u1.id
+                                            WHERE v_items_status.id= :id
+                                            and item_pictures.priority=:priority",["id"=>$item_id,"priority"=>$priority]);
         $data=$query->fetch();
        
             return $data;
@@ -66,7 +65,7 @@ class Item extends Model {
         return $data;
     }
     public static function get_bids(int $item_id):array {
-        $query=self::execute("SELECT * FROM bids WHERE item= :item ORDER BY -created_at",["item" =>$item_id]);
+        $query=self::execute("SELECT pseudo , created_at ,amount  FROM bids join users on bids.owner=users.id WHERE item= :item ORDER BY -created_at",["item" =>$item_id]);
         $data=$query->fetchAll();
         return $data;
     }

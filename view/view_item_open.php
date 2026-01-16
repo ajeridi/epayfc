@@ -48,8 +48,7 @@
 
         <div class="thumbs d-flex gap-2 flex-wrap">
           <?php
-            $pics = Item::get_other_pictures_by_id($item['id']);
-            foreach ($pics as $i => $p) { ?>
+            foreach ($pictures as $i => $p) { ?>
               <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item['id']?>/<?= $p['priority'] ?>">
                 <img src="<?= $p['picture_path'] ?>" alt="thumb">
               </a>
@@ -61,27 +60,22 @@
       <div class="card card-dark border-0 mt-3">
         <div class="d-flex align-items-center justify-content-between px-3 pt-3">
           <div class="section-title mb-0">Bid History</div>
-          <?php
-         $cmpt=0;
-          foreach(Item::get_bids($item['id']) as $bids){
-            ++$cmpt;
-          }
-          ?>
-          <span class="badge badge-dark"><?= $cmpt?> entries</span>
+       
+          <span class="badge badge-dark"><?= $item['bid_count']?> entries</span>
         </div>
 
         <div class="list-group list-group-flush list-dark mt-3">
-          <?php foreach(Item::get_bids($item['id']) as $bid) { ?>
+          <?php foreach ($bids as $bid){ ?>
             <div class="list-group-item">
               <div class="d-flex justify-content-between align-items-start">
                 <div>
-                  <div class="fw-semibold"><?= $item['pseudo'] ?></div>
-                  <div class="small text-muted"><?= $item['bids_h'] ?></div>
+                  <div class="fw-semibold"><?= $bid['pseudo'] ?></div>
+                  <div class="small text-muted"><?= $bid['created_at'] ?></div>
                 </div>
-                <div class="price-green fw-semibold">€ <?= $item['amount'] ?></div>
+                <div class="price-green fw-semibold">€ <?= $bid['amount'] ?></div>
               </div>
             </div>
-          <?php } ?>
+          <?php  } ?>
         </div>
 
         <div class="p-2"></div>
@@ -143,7 +137,7 @@
               <a class="btn btn-outline-primary" href="item/buy/<?= $item['id'] ?>">
                 Buy Now at € <?= $item['buy_now_price'] ?>
               </a>
-              <?php } ?>s
+              <?php } ?>
             </div>
           </form>
           <?php } ?>

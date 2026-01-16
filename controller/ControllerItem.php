@@ -21,13 +21,15 @@ class ControllerItem extends Controller{
     }
     public function open() : void {
         if(isset($_GET["param1"])){
-            if(isset($_GET["param2"])){
-                 $item =Item::get_item_by_id($_GET["param1"],$_GET["param2"]);
+            if(isset($_GET["param3"])){
+                 $item =Item::get_item_by_id($_GET["param1"],$_GET["param3"]);
             }else{
                 $item =Item::get_item_by_id($_GET["param1"],1);
         }
+        $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
+        $bids=Item::get_bids($_GET["param1"]);
          }
-        (new View("item_open"))->show(["item"=>$item],);
+        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids]);
     }
     public function buy() : void {
         $user=$this->get_user_or_redirect();
