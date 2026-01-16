@@ -65,7 +65,7 @@ class Item extends Model {
         return $data;
     }
     public static function get_bids(int $item_id):array {
-        $query=self::execute("SELECT pseudo , created_at ,amount  FROM bids join users on bids.owner=users.id WHERE item= :item ORDER BY -created_at",["item" =>$item_id]);
+        $query=self::execute("SELECT owner ,pseudo , created_at ,amount  FROM bids join users on bids.owner=users.id WHERE item= :item ORDER BY -created_at",["item" =>$item_id]);
         $data=$query->fetchAll();
         return $data;
     }

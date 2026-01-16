@@ -148,7 +148,13 @@
                 Buy Now 
               </a>
             </div>   
-           <?php } ?>   
+           <?php }if(!$is_open){
+            
+            if($user->id===$bids['0']['owner']){?>
+            <p> Congratulation! You purchased this item for € <?= $item['max_bid'] ?> </p>
+            <?php }else {?>
+            <p><?= $bids['0']['pseudo'] ?> Won this item for € <?= $item['max_bid'] ?></p> 
+           <?php } }?>   
 
         </div>
       </div>
