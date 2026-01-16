@@ -154,9 +154,9 @@
             <p> Congratulation! You purchased this item for € <?= $item['max_bid'] ?> </p>
             <?php }else {?>
             <p><?= $bids['0']['pseudo'] ?> Won this item for € <?= $item['max_bid'] ?></p> 
-           <?php } } } else {?>
+           <?php } }  else {?>
             <p>This listing ended whitout a buyer</p>
-            <?php } ?>   
+            <?php } }?>   
 
         </div>
       </div>
