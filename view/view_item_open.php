@@ -118,7 +118,7 @@
          
           <hr class="hr-soft">
           <?php  if($item['is_direct_sale']==0) {?>
-          <?php if(Item::is_open_anonce($item['id'])){?>
+          <?php if($is_open){?>
           <form method="post" action="">
             <div class="input-group input-dark mb-3">
               <span class="input-group-text">€</span>
@@ -142,7 +142,7 @@
           </form>
           <?php } ?>
           <?php } ?>
-          <?php  if($item['is_direct_sale']==1 && Item::is_open_anonce($item['id']) ) {?>
+          <?php  if($item['is_direct_sale']==1 && $is_open ) {?>
             <div class="d-grid gap-2">
              <a class="btn btn-outline-success" href="item/buy/<?= $item['id'] ?>">
                 Buy Now 

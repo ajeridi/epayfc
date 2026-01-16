@@ -20,8 +20,8 @@ class ControllerItem extends Controller{
         (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items]);
     }
     public function open() : void {
-        
         if(isset($_GET["param1"])){
+            $is_open=Item::is_open_anonce($_GET["param1"]);
             if(isset($_GET["param3"])){
                  $item =Item::get_item_by_id($_GET["param1"],$_GET["param3"]);
             }else{
@@ -33,7 +33,7 @@ class ControllerItem extends Controller{
             $this->index();
          }
 
-        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids]);
+        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids,"is_open"=>$is_open]);
     }
     public function buy() : void {
         $user=$this->get_user_or_redirect();
