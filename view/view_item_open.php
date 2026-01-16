@@ -174,6 +174,30 @@
           </div>
         </div>
       </div>
+      <div class="card card-dark border-0 mt-3">
+        <div class="card-body">
+          <div class="section-title mb-3">Manage Your Item</div>
+            <div class="row g-3">
+            <div class="d-grid gap-2">  
+              <a class="btn btn-outline-success" href="">
+                Edit item Details
+                </a>
+            </div>
+            <div class="d-grid gap-2">    
+                <a class="btn btn-outline-info" href="">
+                  Manage Images
+                </a>
+            </div>
+            <div class="d-grid gap-2">    
+                <a class="btn btn-outline-danger" href="">
+                  Delet Item 
+                </a>
+            </div>    
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
 
