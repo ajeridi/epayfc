@@ -49,7 +49,7 @@
         <div class="thumbs d-flex gap-2 flex-wrap">
           <?php
             foreach ($pictures as $i => $p) { ?>
-              <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item['id']?>/<?= $p['priority'] ?>">
+              <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item['id']?>/from-browse/<?= $p['priority'] ?>">
                 <img src="<?= $p['picture_path'] ?>" alt="thumb">
               </a>
           <?php } ?>

@@ -20,6 +20,7 @@ class ControllerItem extends Controller{
         (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items]);
     }
     public function open() : void {
+        
         if(isset($_GET["param1"])){
             if(isset($_GET["param3"])){
                  $item =Item::get_item_by_id($_GET["param1"],$_GET["param3"]);
@@ -28,7 +29,10 @@ class ControllerItem extends Controller{
         }
         $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
         $bids=Item::get_bids($_GET["param1"]);
+         } else{
+            $this->index();
          }
+
         (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids]);
     }
     public function buy() : void {
@@ -37,11 +41,12 @@ class ControllerItem extends Controller{
         
 
         if(isset($_GET['param1'])  ){
-            $item =Item::get_item_by_id($_GET["param1"],1);
+            $item_id=$_GET['param1'];
+            $item =Item::get_item_by_id($item_id,1);
             Item::buy($user->id,$_GET['param1'],"2026-01-02 18:30:20",$item['buy_now_price']);
               
         }
-        (new View("item_open"))->show(["item"=>$item]);
+        $this->redirect("Item","open",$item_id);
         
     }
 

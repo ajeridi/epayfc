@@ -48,7 +48,7 @@ class Item extends Model {
        return $query->fetchAll();
     }
     public static function get_item_by_id(int $item_id,int $priority) : array {
-        $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,item_pictures.picture_path ,priority,u1.pseudo,u1.picture_path as user_path ,u1.role
+        $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,item_pictures.picture_path ,priority,u1.pseudo,u1.picture_path as user_path ,u1.role,starting_bid
                                     FROM v_items_status join item_pictures on v_items_status.id=item_pictures.item
                                             join users u1 on v_items_status.owner=u1.id
                                             WHERE v_items_status.id= :id
