@@ -179,7 +179,7 @@
           <div class="section-title mb-3">Manage Your Item</div>
             <div class="row g-3">
             <div class="d-grid gap-2">  
-              <a class="btn btn-outline-success" href="">
+              <a class="btn btn-outline-success <?php if($item['bid_count']!=0){?>disabled <?php } ?> "  href="">
                 Edit item Details
                 </a>
             </div>
