@@ -20,7 +20,9 @@ class ControllerItem extends Controller{
         (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items]);
     }
     public function open() : void {
+
         $user=$this->get_user_or_redirect();
+        
         if(isset($_GET["param1"])){
             $is_open=Item::is_open_anonce($_GET["param1"]);
             if(isset($_GET["param3"])){
