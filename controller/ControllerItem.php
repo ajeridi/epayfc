@@ -66,6 +66,12 @@ class ControllerItem extends Controller{
        }
        $this->redirect("item","open",$item_id);
     }
+    public function edit() : void {
+        $user=$this->get_user_or_redirect();
+        (new View("item_edit"))->show();
+        
+
+    }
 
     
 
