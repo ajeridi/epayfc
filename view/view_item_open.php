@@ -84,7 +84,7 @@
     </div>
 
     <!-- DROITE -->
-    <div class="col-12 col-lg-4">
+    <div class="col-12 col-lg-4 ">
 
       <div class="card card-dark border-0">
         <div class="card-body">
@@ -132,9 +132,9 @@
             </div>
 
             <div class="d-grid gap-2">
-              <button class="btn btn-success" type="submit">Place Bid</button>
+              <button class="btn btn-success <?php if($from ==="from-items"){?> disabled <?php } ?>" type="submit">Place Bid</button>
                <?php if($item['has_buy_now']==1){ ?>
-              <a class="btn btn-outline-primary" href="item/buy/<?= $item['id'] ?>">
+              <a class="btn btn-outline-primary <?php if($from ==="from-items"){?> disabled <?php } ?> " href="item/buy/<?= $item['id'] ?>">
                 Buy Now at € <?= $item['buy_now_price'] ?>
               </a>
               <?php } ?>
@@ -144,7 +144,7 @@
           <?php } ?>
           <?php  if($item['is_direct_sale']==1 && $is_open ) {?>
             <div class="d-grid gap-2">
-             <a class="btn btn-outline-success" href="item/buy/<?= $item['id'] ?>">
+             <a class="btn btn-outline-success <?php if($from ==="from-items"){?> disabled <?php } ?>" href="item/buy/<?= $item['id'] ?>">
                 Buy Now 
               </a>
             </div>   
@@ -156,7 +156,10 @@
             <p><?= $bids['0']['pseudo'] ?> Won this item for € <?= $item['max_bid'] ?></p> 
            <?php } }  else {?>
             <p>This listing ended whitout a buyer</p>
-            <?php } }?>   
+            <?php } }?>  
+            <?php if($from ==="from-items"){?>
+            <p>You cannot bid on your own listing</p>
+            <?php } ?> 
 
         </div>
       </div>
