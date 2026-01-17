@@ -174,6 +174,7 @@
           </div>
         </div>
       </div>
+      <?php if($from ==="from-items"){?>
       <div class="card card-dark border-0 mt-3">
         <div class="card-body">
           <div class="section-title mb-3">Manage Your Item</div>
@@ -194,10 +195,9 @@
                 </a>
             </div>    
           </div>
-
         </div>
-
       </div>
+      <?php } ?>
 
     </div>
 

@@ -22,7 +22,11 @@ class ControllerItem extends Controller{
     public function open() : void {
 
         $user=$this->get_user_or_redirect();
-        
+        $from="";
+        if(isset($_GET["param2"])){
+            $from=$_GET["param2"];
+        }
+    
         if(isset($_GET["param1"])){
             $is_open=Item::is_open_anonce($_GET["param1"]);
             if(isset($_GET["param3"])){
@@ -36,7 +40,7 @@ class ControllerItem extends Controller{
             $this->index();
          }
 
-        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids,"is_open"=>$is_open,"user"=>$user]);
+        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids,"is_open"=>$is_open,"user"=>$user,"from"=>$from]);
     }
     public function buy() : void {
         $user=$this->get_user_or_redirect();
