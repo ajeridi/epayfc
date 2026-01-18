@@ -126,7 +126,7 @@
             </div>
         </main>
         <footer> 
-            <?php require 'navbar_user.html'; ?>
+            <?php require 'navbar_user.php'; ?>
         </footer>
     </body>
 </html>

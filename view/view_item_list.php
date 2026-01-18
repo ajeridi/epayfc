@@ -204,6 +204,8 @@
                 </div>
             </div>
         </main>
-
+        <footer> 
+            <?php require 'navbar_user.php'; ?>
+        </footer>
     </body>
 </html>
