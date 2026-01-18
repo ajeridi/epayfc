@@ -18,7 +18,7 @@
             <a class="nav-link" href="#">
                 <figure>
                     <i class="bi bi-plus"></i>
-                    <figcaption class="text-center">Add other</figcaption>
+                    <figcaption class="text-center">Add offer</figcaption>
                 </figure>
                 
             </a>
