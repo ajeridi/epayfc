@@ -83,5 +83,14 @@ class ControllerItem extends Controller{
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
     }
 
+    public function manage_images() : void{
+        $user = $this->get_user_or_redirect();
+        if (isset($_GET['param1'])){    // pas oublier de check aussi si l'objet appartient au user connecte
+            $item_id = $_GET['param1'];
+            // chercher l'item par son id, ainsi que toutes ses photos
+            // si item existe on instancie la vue, sinon on ne fait rien (afficher un message d'erreur peut etre)
+            (new View("manage_images"))->show(["user"=>$user]);    
+        }
+    }     
 }
 ?>
