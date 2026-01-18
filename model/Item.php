@@ -104,8 +104,12 @@ class Item extends Model {
 
     }
 
-    public static function get_item_by_id(int $item_id) : array {
-        $query=self::execute("SELECT * FROM items join item_pictures ON items.id=item_pictures.item join v_items_status on items.id=v_items_status.id WHERE items.id= :id  ORDER BY item_pictures.priority",["id"=>$item_id]);
+    public static function get_item_by_id(int $item_id,int $priority) : array {
+        $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,item_pictures.picture_path ,priority,u1.pseudo,u1.picture_path as user_path ,u1.role,starting_bid
+                                 FROM  v_items_status join item_pictures on v_items_status.id=item_pictures.item 
+                                  join users u1 on v_items_status.owner=u1.id
+                                            WHERE v_items_status.id= :id
+                                            and item_pictures.priority=:priority",["id"=>$item_id,"priority"=>$priority]);
         $data=$query->fetch();
        
             return $data;
@@ -118,9 +122,27 @@ class Item extends Model {
         return $data;
     }
     public static function get_bids(int $item_id):array {
-        $query=self::execute("SELECT * FROM bids WHERE item= :item ORDER BY -created_at",["item" =>$item_id]);
+        $query=self::execute("SELECT owner ,pseudo , created_at ,amount  FROM bids join users on bids.owner=users.id WHERE item= :item ORDER BY -created_at",["item" =>$item_id]);
         $data=$query->fetchAll();
         return $data;
     }
+       public static function is_open_anonce(int $item_id) {
+        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> "2025-11-10 16:11:00"]);
+
+        if($query->rowCount()==0){
+            return false ;
+        }else{
+            return true; 
+        }
+
+    }
+    public static function buy($owner,$item_id,$at,$amount): void {
+        $bids=item::get_item_by_id($item_id,1);
+        if($amount>$bids['max_bid'] && $amount>=$bids['starting_bid']){
+                 $query=self::execute("INSERT INTO bids(owner,item,created_at,amount) VALUES (:owner,:item,:created_at,:amount)",["owner"=>$owner,"item"=>$item_id,"created_at"=>$at,"amount"=>$amount]);
+        }
+
+    }
+   
 }
 ?>
