@@ -181,7 +181,7 @@
               </div>
             </div>
           </div>
-          <?php if($from ==="from-items"){?>
+          <?php if($from ==="from-items" && $is_open){?>
           <div class="card card-dark border-0 mt-3">
             <div class="card-body">
               <div class="section-title mb-3">Manage Your Item</div>
