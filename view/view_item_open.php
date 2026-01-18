@@ -161,7 +161,7 @@
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
 
-                <?php if($from ==="from-items"){?>
+                <?php if($from ==="from-items" && $is_open){?>
                 <p>You cannot bid on your own listing</p>
                 <?php } ?> 
 
