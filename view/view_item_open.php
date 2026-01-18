@@ -9,12 +9,17 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
         <link rel="stylesheet" href="css/style.css">
     </head>
-    <body class="app-bg page-item-open">
          <header>
             <!-- Barre  -->
-            <nav class="navbar bg-navy-gray" data-bs-theme="dark"> <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Item open 🛒 </div> </nav>
-         </header>   
+            <?php  require 'navbar_items.php'  ?>
+         </header>
+    <body class="app-bg page-item-open">
+      <br>
+      <br>
+          
+           
     <main class="container-fluid px-3 page-wrap">
+      <br>
       <div class="row g-3 align-items-start">
 
         <!-- GAUCHE -->
