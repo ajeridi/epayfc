@@ -83,7 +83,7 @@
             </div>
         <?php } ?>
             <div class="other-available-items float-start">
-                <h3 class="text-blue">Other Available Items</h3>
+                <h3 class="text-blue"><?=  ($user == false) ? "" : "Other" ?> Available Items</h3>
 
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4 mb-5">
