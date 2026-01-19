@@ -123,7 +123,7 @@
               </div>
             
               <hr class="hr-soft">
-              <fieldset <?php if($from ==="from-items"){?> disabled <?php } ?>>
+              <fieldset <?php if($from ==="from-items" || !$_SESSION['user']){?> disabled <?php } ?>>
               <?php  if($item['is_direct_sale']==0) {?>
               <?php if($is_open){?>
               <form method="post" action="item/bid/<?= $item['id']?>">

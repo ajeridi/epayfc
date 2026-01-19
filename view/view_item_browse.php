@@ -15,7 +15,7 @@
             <!-- Barre au dessus de la page -->
             <nav class="navbar bg-navy-gray" data-bs-theme="dark">
                 <div class="container-fluid justify-content-center">
-                    <span class="navbar-brand mb-0 h1 text-blue"">Browse <i class="bi bi-cart4 fs-4 text-white"></i></span>
+                    <span class="navbar-brand mb-0 h1 text-blue">Browse <i class="bi bi-cart4 fs-4 text-white"></i></span>
                 </div>
             </nav>
         </header>
