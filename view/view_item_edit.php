@@ -26,16 +26,16 @@
                     <div class="card-body text-light border-0 ">
                         <form>
                             <div class="mb-3">
-                                <label for="itemtitle" class="form-label">Item Title *</label>
-                                <input type="text" class="form-label d-block p-2 text-bg-dark" id="itemtitle" placeholder="Ex: iPhone 13 Pro Max 256GB" >
+                                <label for="itemtitle" class="form-label" >Item Title *</label>
+                                <input type="text" class="form-label d-block  text-bg-dark"  style ="padding-right:80%" id="itemtitle" placeholder="Ex: iPhone 13 Pro Max 256GB" >
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea class="form-label d-block p-2 text-bg-dark" id="itemtitle" placeholder="Describe your item in detail" rows="3"></textarea>
+                                <textarea class="form-label d-block  text-bg-dark" id="itemtitle" style ="padding-right:80%" placeholder="Describe your item in detail" rows="3"></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="saledays" class="form-label">Sale Duration (days)*</label>
-                                <input type="nomber" class="form-label d-block p-2 text-bg-dark" id="itemtitle" placeholder="7">
+                                <input type="nomber" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="itemtitle" placeholder="7">
                             </div>
                         </form>
                     </div>    
@@ -51,11 +51,11 @@
                                 <form>
                                     <div class="mb-3">
                                         <label for="startingbid" class="form-label text-white">Starting Bid</label>
-                                        <input type="text" class="form-label d-block p-2 text-bg-dar" id="startingbid" placeholder="e.g.,50.00">
+                                        <input type="text" class="form-label d-block  text-bg-dar" style ="padding-right:80%" id="startingbid" placeholder="e.g.,50.00">
                                     </div>
                                     <div class="mb-3">
                                         <label for="purchaseprice" class="form-label text-white">Instant Purchase Price</label><a class="text-light">(optional)</a>
-                                        <input type="text" class="form-label d-block p-2 text-bg-dar" id="purchaseprice" placeholder="e.g.,200">
+                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="purchaseprice" placeholder="e.g.,200">
                                     </div>
                                 </form>
                             </div>
@@ -66,7 +66,7 @@
                                 <form class="justify">
                                     <div class="mb-3">
                                         <label for="saleprice" class="form-label text-white">Sale Price</label>
-                                        <input type="text" class="form-label d-block p-2 text-bg-dar" id="saleprice" placeholder="e.g.,150.00">
+                                        <input type="text" class="form-label d-block text-bg-dar" style ="padding-right:80%" id="saleprice" placeholder="e.g.,150.00">
                                     </div>
                                 </form>
                             </div>

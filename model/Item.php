@@ -13,8 +13,9 @@ class Item extends Model {
                                 JOIN item_pictures ip ON vit.id = ip.item 
                                 JOIN users as owners ON vit.owner = owners.id
                                 JOIN bids b ON b.item = vit.id
-                                WHERE   ip.priority = 1 AND
-                                b.amount = vit.max_bid AND 
+                                WHERE 
+                                b.amount=vit.max_bid And
+                                  ip.priority = 1 AND
                                 vit.buy_now_reached = 0 AND
                                 b.owner = :user_id AND
                                 vit.end_at > :current_date_time
@@ -127,7 +128,7 @@ class Item extends Model {
         $data=$query->fetchAll();
         return $data;
     }
-       public static function is_open_anonce(int $item_id) {
+       public static function is_open_anonce(int $item_id): bool {
         $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> "2025-11-10 16:11:00"]);
 
         if($query->rowCount()==0){
