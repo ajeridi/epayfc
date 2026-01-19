@@ -14,8 +14,8 @@ class Item extends Model {
                                 JOIN users as owners ON vit.owner = owners.id
                                 JOIN bids b ON b.item = vit.id
                                 WHERE 
-                                b.amount=vit.max_bid And
-                                  ip.priority = 1 AND
+                                b.amount= (SELECT MAX(b2.amount) FROM bids b2 WHERE b2.owner = :user_id AND b2.item = b.item) AND
+                                ip.priority = 1 AND
                                 vit.buy_now_reached = 0 AND
                                 b.owner = :user_id AND
                                 vit.end_at > :current_date_time
