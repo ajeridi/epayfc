@@ -123,7 +123,7 @@
               </div>
             
               <hr class="hr-soft">
-              <fieldset <?php if($from ==="from-items" || !$_SESSION['user']){?> disabled <?php } ?>>
+              <fieldset <?php if($from ==="from-items" || $user == false){?> disabled <?php } ?>>
               <?php  if($item['is_direct_sale']==0) {?>
               <?php if($is_open){?>
               <form method="post" action="item/bid/<?= $item['id']?>">
@@ -168,6 +168,9 @@
 
                 <?php if($from ==="from-items" && $is_open){?>
                 <p>You cannot bid on your own listing</p>
+                <?php } ?> 
+                <?php if($user == false && $is_open){?>
+                <p>Option not available for guests</p>
                 <?php } ?> 
 
             </div>

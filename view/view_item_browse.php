@@ -20,6 +20,7 @@
             </nav>
         </header>
         <main class="main-content-margins">
+            <?php if ($user != false){ ?>
             <div class="items_participated_in float-start">
                 <h3 class="text-blue">Items I'm Participating In</h3>
 
@@ -80,8 +81,8 @@
                     ?>
                 </div>
             </div>
-
-            <div class="other-available-items">
+        <?php } ?>
+            <div class="other-available-items float-start">
                 <h3 class="text-blue">Other Available Items</h3>
 
                 <!-- tableau contenant les cartes des items -->

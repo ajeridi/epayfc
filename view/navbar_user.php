@@ -7,7 +7,7 @@
             </figure>
         </a>
 
-        <?php if ($user->role != "guest"){?>
+        <?php if ($user != false){?>
             <a class="nav-link " href="item/list">
                 <figure>
                     <i class="bi bi-house-door"></i>
