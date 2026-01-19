@@ -29,7 +29,7 @@
                 <div class="card-body text-white text-bg-dark">
                     <h6 class="card-title fw-bold">Select Images</h6>
                     <form method='post' action='item/manage_images/<?= $item_id?>' enctype='multipart/form-data'>
-                        <input type='file' class='form-control text-bg-dark' name='image' accept="image/x-png, image/gif, image/jpegm image/webp">
+                        <input type='file' class='form-control text-bg-dark' name='image' accept="image/x-png, image/gif, image/jpeg image/webp">
                         <p class="card-text text-secondary">You can select multiple images (JPG, PNG, GIF, WebP). Images will be added to the end of your current list.</p>
                         <input type='submit' class="btn btn-primary" value='Upload Images'>
                     </form>
