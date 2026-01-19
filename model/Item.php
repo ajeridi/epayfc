@@ -143,6 +143,18 @@ class Item extends Model {
         }
 
     }
+
+    public static function get_item_title(int $item_id) : string {
+        $query = self::execute("SELECT title from items WHERE id = :item_id", 
+        ["item_id" => $item_id]);
+        $result = $query->fetch();
+        return $result["title"];
+    }
+
+    public static function upload_image(int $item_id, string $picture_path) : void {
+        $query = self::execute("INSERT INTO item_pictures(item, priority, picture_path) VALUES (:item_id, (SELECT MAX(ip.priority)+1 FROM item_pictures as ip WHERE ip.item = :item_id), :picture_path)",
+        ["item_id" => $item_id, "picture_path" => $picture_path]);
+    }
    
 }
 ?>

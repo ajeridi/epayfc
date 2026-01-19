@@ -87,9 +87,20 @@ class ControllerItem extends Controller{
         $user = $this->get_user_or_redirect();
         if (isset($_GET['param1'])){    // pas oublier de check aussi si l'objet appartient au user connecte
             $item_id = $_GET['param1'];
+            if (isset($_FILES["image"]) && $_FILES["image"]["name"] != ""){ // si on a upload une image
+                $file_name = pathinfo($_FILES["image"]["name"], PATHINFO_FILENAME);
+                $picture_path = "uploads/items/$item_id/$file_name.jpg";
+                // on upload le fichier dans le repertoire uploads
+                // il faut aussi redimensionner l'image et prendre le thumbnail
+                move_uploaded_file($_FILES["image"]["tmp_name"], $picture_path);
+                // on l'insere dans la db
+                Item::upload_image($item_id, $picture_path);
+            }
+            $item_pictures = Item::get_other_pictures_by_id($item_id);
+            $item_title = Item::get_item_title($item_id);
             // chercher l'item par son id, ainsi que toutes ses photos
             // si item existe on instancie la vue, sinon on ne fait rien (afficher un message d'erreur peut etre)
-            (new View("manage_images"))->show(["user"=>$user]);    
+            (new View("manage_images"))->show(["user"=>$user, "item_id" => $item_id, "item_pictures" => $item_pictures, "item_title" => $item_title]);    
         }
     }     
 }

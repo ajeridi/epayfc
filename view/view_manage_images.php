@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Browse items</title>
+        <title>Manage Images</title>
         <base href="<?= $web_root ?>"?>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
@@ -20,23 +20,41 @@
             </nav>
         </header>
         <main class="container  text-white">
-            <h2 class="mt-4 mb-4">Manage images for "Item name"</h2>
-            
+            <h2 class="mt-4 mb-4">Manage images for "<?= $item_title ?>"</h2>
+            <!-- Partie input d'images !-->
             <div class="card text-white" style="max-width: 70rem;">
                 <div class="card-header bg-navy-gray ">
                     Add New Images
                 </div>
                 <div class="card-body text-white text-bg-dark">
                     <h6 class="card-title fw-bold">Select Images</h6>
-                    <div class="input-group">
-                        <input type="file" class="form-control text-bg-dark" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-                    </div>
-                    <p class="card-text text-secondary">You can select multiple images (JPG, PNG, GIF, WebP). Images will be added to the end of your current list.</p>
-                    <a href="#" class="btn btn-primary">Upload Images</a>
+                    <form method='post' action='item/manage_images/<?= $item_id?>' enctype='multipart/form-data'>
+                        <input type='file' class='form-control text-bg-dark' name='image' accept="image/x-png, image/gif, image/jpegm image/webp">
+                        <p class="card-text text-secondary">You can select multiple images (JPG, PNG, GIF, WebP). Images will be added to the end of your current list.</p>
+                        <input type='submit' class="btn btn-primary" value='Upload Images'>
+                    </form>
                 </div>
+            </div><br><br>
+
+            <!-- Partie affichage des images!-->
+            <div class="card text-white text-bg-dark">
+                <div class="card-header bg-navy-gray ">
+                    Current Images
+                </div>
+                <form method="post" action='item/manage_images/<?= $item_id?>'>
+                    <?php foreach($item_pictures as $row) {?>
+                        <figure class='d-inline-block' style="margin: 10px;">
+                            <img src='<?= $row["picture_path"]?>' class="rounded float-start" witdh="100"  height="100" style="margin-bottom: 8px;">
+                            <figcaption style="text-align: center;">
+                                <button type="submit" class="btn btn-secondary" name="left" value="<?= $row["priority"] ?>"><i class="bi bi-arrow-left"></i></button>
+                                <button type="submit" class="btn btn-secondary" name="right" value="<?= $row["priority"]  ?>"><i class="bi bi-arrow-right"></i></button>
+                                <button type="submit" class="btn btn-danger" name="delete" value="<?= $row["priority"] ?>"><i class="bi bi-x-lg"></i></button>
+                            </figcaption>
+                        </figure>
+
+                    <?php } ?>
+                </form>
             </div>
-
-
         </main>
         <footer> 
             <?php require 'navbar_user.php'; ?>
