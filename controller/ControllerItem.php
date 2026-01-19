@@ -14,14 +14,20 @@ class ControllerItem extends Controller{
 
 
     public function browse() : void {
-        $user = $this->get_user_or_redirect();
-        $items_participated_in = Item::get_items_participated_in($user->id);
-        $other_available_items = Item::get_other_available_items($user->id);
+        $user = $this->get_user_or_false();
+        if ($user != false){ // si $user == false nous sommes en mode invité
+            $items_participated_in = Item::get_items_participated_in($user->id);
+            $other_available_items = Item::get_other_available_items($user->id);
+        }
+        else {
+            $items_participated_in = [];
+            $other_available_items = Item::get_other_available_items(-1);    // aucun user a l'id -1
+        }
         (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items, "user"=>$user]);
     }
     public function open() : void {
 
-        $user=$this->get_user_or_redirect();
+        $user=$this->get_user_or_false();
         $from="";
         if(isset($_GET["param2"])){
             $from=$_GET["param2"];

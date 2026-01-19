@@ -14,6 +14,7 @@ class Item extends Model {
                                 JOIN users as owners ON vit.owner = owners.id
                                 JOIN bids b ON b.item = vit.id
                                 WHERE   ip.priority = 1 AND
+                                b.amount = vit.max_bid AND 
                                 vit.buy_now_reached = 0 AND
                                 b.owner = :user_id AND
                                 vit.end_at > :current_date_time
