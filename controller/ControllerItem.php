@@ -74,7 +74,10 @@ class ControllerItem extends Controller{
     }
     public function edit() : void {
         $user=$this->get_user_or_redirect();
-        (new View("item_edit"))->show();
+        $item_id=$_GET['param1'];
+        $info= Item::get_item_ino($item_id);
+        $errors=[];
+        (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors]);
         
 
     }
@@ -87,6 +90,25 @@ class ControllerItem extends Controller{
         $closed_unsold_items = Item::get_user_closed_unsold_items($user->id);
         $sold_items = Item::get_user_sold_items($user->id);
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
+    }
+    public function edit_item(){
+        $user=$this->get_user_or_redirect();
+        $id=$_GET['param1'];
+        $title=$_POST['title'];
+        $description=$_POST['description'];
+        $duration_days=$_POST['duration_days'];
+        $starting_bid=$_POST['starting_bid'];
+        $buy_now_price=$_POST['buy_now_price'];
+        $saleprice=$_POST['saleprice'];
+        $errors=Item::edit_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
+        if(count($errors)==0){
+            $this->redirect("item","open",$id,"from-items");
+        } else{
+             $info= Item::get_item_ino($id);
+             (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors ]);
+        }
+
+
     }
 
 }

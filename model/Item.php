@@ -138,11 +138,80 @@ class Item extends Model {
         }
 
     }
+    public static function get_item_ino(int $item_id): array {
+        $query=self::execute("SELECT id ,title,description ,duration_days,starting_bid,buy_now_price from items where id=:id",["id"=>$item_id]);
+        $data=$query->fetch();
+        return $data;
+    }
     public static function buy($owner,$item_id,$at,$amount): void {
         $bids=item::get_item_by_id($item_id,1);
         if($amount>$bids['max_bid'] && $amount>=$bids['starting_bid']){
                  $query=self::execute("INSERT INTO bids(owner,item,created_at,amount) VALUES (:owner,:item,:created_at,:amount)",["owner"=>$owner,"item"=>$item_id,"created_at"=>$at,"amount"=>$amount]);
         }
+
+    }
+    public static function edit_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
+        $both=false;
+        $errors=[];
+        
+       if(!Item::unicite_title_for_owner($owner,$title)){
+        $errors1[]="This title already exist, Please choose another one !";
+        $errors[]=$errors1;
+       }
+        if(strlen(Tools::sanitize($title))==0){
+            $errors1[]="Title is required";
+            $errors[]=$errors1;
+        }
+        if(strlen(Tools::sanitize($title))<3){
+            $errors1[]="Title lenght must be between 3 and 255 characters";
+            $errors[]=$errors1;
+        }
+        if($description!=null && strlen(Tools::sanitize($description))<3){
+            $errors2[]="Description lenght must be betwenn 3 and 255 characters";
+            $errors[]=$errors2;
+        }
+        if($starting_bid!=null && $starting_bid<=0){
+            $errors3[]="Starting bid must be positif ";
+            $errors[]=$errors3;
+        }
+        if($buy_now_price!=null && $buy_now_price<0 ){
+            $errors4[]="the buy now price must be positif";
+            $errors[]=$errors4;
+        }
+        if($starting_bid !=null && $buy_now_price<=$starting_bid){
+            $errors3[]="the buy now price most be sup then the starting bid";
+            $errors[]=$errors3;
+        }
+        if($starting_bid !=null || $buy_now_price!=null && $saleprice!=null){
+            $errors5[]="Cannot create both auction and direct sale";
+            $errors[]=$errors5;
+        }
+        if(count($errors)==0){
+            Item::put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);     
+        }
+
+        return $errors;
+
+
+    }
+    private static function unicite_title_for_owner($owner ,$title): bool {
+        $result=true ;
+        $query=self::execute("SELECT title from items where owner=:owner",["owner"=>$owner]);
+        $data=$query->fetchAll();
+        foreach($data as $tit){
+            if(Tools::sanitize($title)===$tit){
+                $result=false ;
+            }
+        }
+        return $result;
+
+
+    }
+    private static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): void{
+        if($buy_now_price == null){
+            $buy_now_price=$saleprice;
+        }
+        $query=self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,starting_bid=:starting_bid",['title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price]);
 
     }
    
