@@ -113,7 +113,6 @@ class ControllerItem extends Controller{
     private function swap_priority(int $item_id, int $old_priority, int $increment) : void {
         $new_priority = $old_priority + $increment;
         Item::swap_priority($item_id, $old_priority, $new_priority);
-
     }
 }
 ?>

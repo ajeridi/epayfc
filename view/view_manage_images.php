@@ -14,8 +14,9 @@
         <header>
             <!-- Barre au dessus de la page -->
             <nav class="navbar bg-navy-gray" data-bs-theme="dark">
-                <div class="container-fluid justify-content-center">
-                    <span class="navbar-brand mb-0 h1 text-blue"">Manage images <i class="bi bi-cart4 fs-4 text-white"></i></span>
+                <div class="container-fluid">
+                    <a class="navbar-brand text-blue" href="item/open/<?= $item_id ?>"><i class="bi bi-arrow-left"></i> </a>
+                    <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue"">Manage images <i class="bi bi-cart4 fs-4 text-white"></i></span>
                 </div>
             </nav>
         </header>
