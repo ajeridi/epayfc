@@ -96,6 +96,12 @@ class ControllerItem extends Controller{
                 // on l'insere dans la db
                 Item::upload_image($item_id, $picture_path);
             }
+            if (isset($_POST["left"])){ // si on a clique sur la fleche de gauche
+                $this->swap_priority($item_id, $_POST["left"], -1);
+            }
+            else if (isset($_POST["right"])){ // si on a clique sur la fleche de droite
+                $this->swap_priority($item_id, $_POST["right"], 1);
+            }
             $item_pictures = Item::get_other_pictures_by_id($item_id);
             $item_title = Item::get_item_title($item_id);
             // chercher l'item par son id, ainsi que toutes ses photos
@@ -103,5 +109,11 @@ class ControllerItem extends Controller{
             (new View("manage_images"))->show(["user"=>$user, "item_id" => $item_id, "item_pictures" => $item_pictures, "item_title" => $item_title]);    
         }
     }     
+
+    private function swap_priority(int $item_id, int $old_priority, int $increment) : void {
+        $new_priority = $old_priority + $increment;
+        Item::swap_priority($item_id, $old_priority, $new_priority);
+
+    }
 }
 ?>
