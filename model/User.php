@@ -35,5 +35,12 @@ class User extends Model {
         return $data;
     }
 
+
+    public function is_item_owner(int $item_id) : bool { //methode qui check si un user est l'owner d'un item
+        $query = self::execute("SELECT id FROM items WHERE owner = :owner_id AND id = :item_id", ["owner_id" => $this->id, "item_id" => $item_id]);
+        $res = $query->fetch();
+        return is_bool($res) ? $res : count($res) > 0; // si res est un bool, c'est que res est vide
+    }
+
 }
 ?>

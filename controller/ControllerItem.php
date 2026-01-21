@@ -85,16 +85,23 @@ class ControllerItem extends Controller{
 
     public function manage_images() : void{
         $user = $this->get_user_or_redirect();
-        if (isset($_GET['param1'])){    // pas oublier de check aussi si l'objet appartient au user connecte
+        $errors = [];
+        if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1'])){    // pas oublier de check aussi si l'objet appartient au user connecte
             $item_id = $_GET['param1'];
-            if (isset($_FILES["image"]) && $_FILES["image"]["name"] != ""){ // si on a upload une image
-                $file_name = pathinfo($_FILES["image"]["name"], PATHINFO_FILENAME);
-                $picture_path = "uploads/items/$item_id/$file_name.jpg";
-                // on upload le fichier dans le repertoire uploads
-                // il faut aussi redimensionner l'image et prendre le thumbnail
-                move_uploaded_file($_FILES["image"]["tmp_name"], $picture_path);
-                // on l'insere dans la db
-                Item::upload_image($item_id, $picture_path);
+            if (isset($_FILES["image"]) && $_FILES["image"]["name"] != ""){// si on a upload une image
+                $image = $_FILES["image"];                 
+                
+                // validation de l'image
+                $errors = $this->validate_image($image);
+                if (count($errors) == 0){ // si le fichier est valide on peut proceder a son upload
+                    $file_name = pathinfo($_FILES["image"]["name"], PATHINFO_FILENAME);
+                    $picture_path = "uploads/items/$item_id/$file_name.jpg";
+                    // on upload le fichier dans le repertoire uploads
+                    // il faut aussi redimensionner l'image et prendre le thumbnail
+                    move_uploaded_file($_FILES["image"]["tmp_name"], $picture_path);
+                    // on l'insere dans la db
+                    Item::upload_image($item_id, $picture_path);
+                }
             }
             if (isset($_POST["left"])){ // si on a clique sur la fleche de gauche
                 $this->swap_priority($item_id, $_POST["left"], -1);
@@ -102,17 +109,31 @@ class ControllerItem extends Controller{
             else if (isset($_POST["right"])){ // si on a clique sur la fleche de droite
                 $this->swap_priority($item_id, $_POST["right"], 1);
             }
+
+        
             $item_pictures = Item::get_other_pictures_by_id($item_id);
             $item_title = Item::get_item_title($item_id);
             // chercher l'item par son id, ainsi que toutes ses photos
             // si item existe on instancie la vue, sinon on ne fait rien (afficher un message d'erreur peut etre)
-            (new View("manage_images"))->show(["user"=>$user, "item_id" => $item_id, "item_pictures" => $item_pictures, "item_title" => $item_title]);    
+            (new View("manage_images"))->show(["user"=>$user, "item_id" => $item_id, "item_pictures" => $item_pictures, "item_title" => $item_title, "errors" => $errors]);    
         }
     }     
 
     private function swap_priority(int $item_id, int $old_priority, int $increment) : void {
         $new_priority = $old_priority + $increment;
         Item::swap_priority($item_id, $old_priority, $new_priority);
+    }
+
+    private function validate_image(array $image) : array{
+        $max_size = 5 * 1024 * 1024; // 5MB
+        $errors = [];
+        if ($image["size"] > $max_size){
+            $errors[] = "File size cannot exceed 5MB";
+        }
+        if (!in_array($image["type"], ["image/png", "image/gif", "image/jpeg", ".jpg", "image/webp"])){
+            $errors[] = "File type must be .png, .gif, .jpg, .webp";
+        }
+        return $errors;
     }
 }
 ?>

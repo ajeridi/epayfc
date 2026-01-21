@@ -33,7 +33,16 @@
                         <input type='file' class='form-control text-bg-dark' name='image' accept="image/x-png, image/gif, image/jpeg, .jpg, image/webp">
                         <p class="card-text text-secondary">You can select multiple images (JPG, PNG, GIF, WebP). Images will be added to the end of your current list.</p>
                         <input type='submit' class="btn btn-primary" value='Upload Images'>
-                    </form>
+                    </form><br>
+                    <div class="text-danger">
+                        <?php if (count($errors) > 0) {?>
+                            <ul>
+                                <?php foreach ($errors as $error){ ?>
+                                    <li><?= $error ?></li>
+                                <?php }
+                            }?>
+                            </ul>
+                    </div>
                 </div>
             </div><br><br>
 
