@@ -151,45 +151,42 @@ class Item extends Model {
 
     }
     public static function edit_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
-        $both=false;
+        
         $errors=[];
         
        if(!Item::unicite_title_for_owner($owner,$title)){
-        $errors1[]="This title already exist, Please choose another one !";
-        $errors[]=$errors1;
+        $errors[]="This title already exist, Please choose another one !";
+       
        }
         if(strlen(Tools::sanitize($title))==0){
-            $errors1[]="Title is required";
-            $errors[]=$errors1;
+            $errors[]="Title is required";
+            
         }
         if(strlen(Tools::sanitize($title))<3){
-            $errors1[]="Title lenght must be between 3 and 255 characters";
-            $errors[]=$errors1;
+            $errors[]="Title lenght must be between 3 and 255 characters";
+            
         }
         if($description!=null && strlen(Tools::sanitize($description))<3){
-            $errors2[]="Description lenght must be betwenn 3 and 255 characters";
-            $errors[]=$errors2;
+            $errors[]="Description lenght must be betwenn 3 and 255 characters";
+           
         }
-        if($starting_bid!=null && $starting_bid<=0){
-            $errors3[]="Starting bid must be positif ";
-            $errors[]=$errors3;
+        if($starting_bid < 0){
+            $errors[]="Starting bid must be positif ";
+            
         }
-        if($buy_now_price!=null && $buy_now_price<0 ){
-            $errors4[]="the buy now price must be positif";
-            $errors[]=$errors4;
+        if( $starting_bid>0 && $buy_now_price<0 ){
+            $errors[]="the buy now price must be positif";
+            
         }
-        if($starting_bid !=null && $buy_now_price<=$starting_bid){
-            $errors3[]="the buy now price most be sup then the starting bid";
-            $errors[]=$errors3;
+        if($starting_bid != 0 && $buy_now_price<=$starting_bid){
+            $errors[]="the buy now price most be sup then the starting bid";
+           
         }
-        if($starting_bid !=null || $buy_now_price!=null && $saleprice!=null){
-            $errors5[]="Cannot create both auction and direct sale";
-            $errors[]=$errors5;
+        if(($starting_bid !=0 || $buy_now_price!=null) && $saleprice!=null){
+            $errors[]="Cannot create both auction and direct sale";
+            
         }
-        if(count($errors)==0){
-            Item::put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);     
-        }
-
+       
         return $errors;
 
 
@@ -207,7 +204,7 @@ class Item extends Model {
 
 
     }
-    private static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): void{
+    public static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): void{
         if($buy_now_price == null){
             $buy_now_price=$saleprice;
         }

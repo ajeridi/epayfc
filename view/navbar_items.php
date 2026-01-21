@@ -2,7 +2,7 @@
 <nav class="navbar fixed-top  bg-navy-gray text-blue  nav-fill pt-3">
     <a class="nav-link" href="item/browse">
         <figure>
-            <i class="bi bi-arrow-left"></i>     
+            <i class="bi bi-arrow-left fs-4"></i>     
         </figure>
     </a>
     <a class="nav-link" >

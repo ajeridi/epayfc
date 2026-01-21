@@ -93,19 +93,27 @@ class ControllerItem extends Controller{
     }
     public function edit_item(){
         $user=$this->get_user_or_redirect();
+        $info=[];
         $id=$_GET['param1'];
+        $info['id']=$id;
         $title=$_POST['title'];
-        var_dump($title);
+        $info['title']=$title;
         $description=$_POST['description'];
+        $info['description']=$description;
         $duration_days=$_POST['duration_days'];
+        $info['duration_days']=$duration_days;
         $starting_bid=$_POST['starting_bid'];
+        $info['starting_bid']=$starting_bid;
         $buy_now_price=$_POST['buy_now_price'];
+        $info['buy_now_price']=$buy_now_price;
         $saleprice=$_POST['saleprice'];
+        
         $errors=Item::edit_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
         if(count($errors)==0){
+            Item::put_edition_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
             $this->redirect("item","open",$id,"from-items");
         } else{
-             $info= Item::get_item_ino($id);
+             
              (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors ]);
         }
 
