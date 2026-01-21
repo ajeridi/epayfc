@@ -78,7 +78,7 @@
                                
                                     <div class="mb-3">
                                         <label for="saleprice" class="form-label text-white">Sale Price</label>
-                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($info['starting_bid'] == 0) ? "value=".$info['buy_now_price'] : "placeholder=".$info['buy_now_price'] ?>>
+                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?=($ok==true) ? "value=".$info['saleprice'] : (($info['starting_bid'] == 0) ? "value=".$info['buy_now_price'] : "placeholder=".$info['buy_now_price']) ?>>
                                     </div>
                                
                             </div>

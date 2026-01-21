@@ -73,11 +73,12 @@ class ControllerItem extends Controller{
        $this->redirect("item","open",$item_id);
     }
     public function edit() : void {
+        $ok=false;
         $user=$this->get_user_or_redirect();
         $item_id=$_GET['param1'];
         $info= Item::get_item_ino($item_id);
         $errors=[];
-        (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors]);
+        (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors,'ok'=>$ok]);
         
 
     }
@@ -92,6 +93,7 @@ class ControllerItem extends Controller{
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
     }
     public function edit_item(){
+        $ok=true; 
         $user=$this->get_user_or_redirect();
         $info=[];
         $id=$_GET['param1'];
@@ -107,6 +109,7 @@ class ControllerItem extends Controller{
         $buy_now_price=$_POST['buy_now_price'];
         $info['buy_now_price']=$buy_now_price;
         $saleprice=$_POST['saleprice'];
+        $info['saleprice']=$saleprice;
         
         $errors=Item::edit_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
         if(count($errors)==0){
@@ -114,7 +117,7 @@ class ControllerItem extends Controller{
             $this->redirect("item","open",$id,"from-items");
         } else{
              
-             (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors ]);
+             (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors,'ok'=>$ok ]);
         }
 
 
