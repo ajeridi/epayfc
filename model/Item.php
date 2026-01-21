@@ -170,7 +170,7 @@ class Item extends Model {
             $errors[]="Description lenght must be betwenn 3 and 255 characters";
            
         }
-        if($starting_bid < 0){
+        if($starting_bid != null  && $starting_bid < 0){
             $errors[]="Starting bid must be positif ";
             
         }
@@ -178,11 +178,11 @@ class Item extends Model {
             $errors[]="the buy now price must be positif";
             
         }
-        if($starting_bid != 0 && $buy_now_price<=$starting_bid){
+        if($starting_bid != null && $buy_now_price<=$starting_bid){
             $errors[]="the buy now price most be sup then the starting bid";
            
         }
-        if(($starting_bid !=0 || $buy_now_price!=null) && $saleprice!=null){
+        if(($starting_bid !=null || $buy_now_price!=null) && $saleprice!=null){
             $errors[]="Cannot create both auction and direct sale";
             
         }
