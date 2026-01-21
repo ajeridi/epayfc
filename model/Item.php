@@ -150,6 +150,7 @@ class Item extends Model {
         }
 
     }
+    
     public static function edit_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
         
         $errors[]=[];
@@ -235,129 +236,8 @@ class Item extends Model {
          }
 
     }
-    public static function edit_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
-        
-        $errors[]=[];
-        $errors['title']=[];
-        $errors['description']=[];
-        $errors['buy_now_price']=[];
-        $errors['starting_bid']=[];
-        $errors['saleprice']=[];
 
-        
-       if(!Item::unicite_title_for_owner($owner,$title)){
-        $errors['title'][]="This title already exist, Please choose another one !";
-       }
-        if(strlen($title)==0){
-            $errors['title'][]="Title is required";
-        }
-        if(strlen($title)<3){
-            $errors['title'][]="Title lenght must be between 3 and 255 characters";
-            
-        }
-        if($description!=null && strlen($description)<3){
-            $errors['description'][]="Description lenght must be betwenn 3 and 255 characters";
-           
-        }
-        if($starting_bid != ""  &&  $starting_bid < 0){
-            $errors["starting_bid"][]="Starting bid must be positif ";
-            
-        }
-        if( $buy_now_price != "" &&  $buy_now_price <= 0 ){
-            $errors['buy_now_price'][]="the buy now price must be positif";
-            
-        }
-        if($starting_bid =="" && $saleprice==""){
-            $errors["buy_now_price"][]="Type requiered";
-             $errors["saleprice"][]="Type requiered";
-        }
-        if($starting_bid != "" && $buy_now_price!="" && $buy_now_price<$starting_bid ){
-            $errors["buy_now_price"][]="the buy now price most be sup then the starting bid";
-           
-        }
-        if($starting_bid != "" &&  $saleprice != ""){
-            $errors["buy_now_price"][]="Cannot create both auction and direct sale";
-            $errors["saleprice"][]="Cannot create both auction and direct sale";
-
-            
-        }
-       
-        return $errors;
-
-
-    }
-    private static function unicite_title_for_owner($owner ,$title): bool {
-        $result=true ;
-        $query=self::execute("SELECT title from items where owner=:owner",["owner"=>$owner]);
-        $data=$query->fetchAll();
-        foreach($data as $tit){
-            if(Tools::sanitize($title)===$tit){
-                $result=false ;
-            }
-        }
-        return $result;
-
-
-    }
-    public static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): void{
-        if($buy_now_price == ""){
-            if($starting_bid != "" && $starting_bid !=0){
-                $buy_now_price=null;
-            } else{
-            $buy_now_price=$saleprice;
-            }
-        }
-        $query=self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,starting_bid=:starting_bid WHERE id =:id",['title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price, 'id' => $id]);
-
-    }
-    public static function is_Direct_sale(int $item_id): bool {
-         $item=Item::get_item_by_id($item_id,1);
-
-         if($item['is_direct_sale']==1){
-            return true;
-         }else{
-            return false;
-         }
-
-    }
-
-    public static function get_item_title(int $item_id) : string {
-        $query = self::execute("SELECT title from items WHERE id = :item_id", 
-        ["item_id" => $item_id]);
-        $result = $query->fetch();
-        return $result["title"];
-    }
-
-    public static function upload_image(int $item_id, string $picture_path) : void {
-        $query = self::execute("INSERT INTO item_pictures(item, priority, picture_path) VALUES (:item_id, (SELECT MAX(ip.priority)+1 FROM item_pictures as ip WHERE ip.item = :item_id), :picture_path)",
-        ["item_id" => $item_id, "picture_path" => $picture_path]);
-    }
-
-    public static function swap_priority(int $item_id, int $old_priority, int $new_priority) : void {
-        // Pour update deux champs sous contrainte, il faut faire un assignation avec une variable temp
-        // si old = 1 et new = 2, old = -1, new = 1, old = 2, car sinon erreur
-        Item::update_priority($item_id, $old_priority, -1);
-        Item::update_priority($item_id, $new_priority, $old_priority);
-        Item::update_priority($item_id, -1, $new_priority);
-    }
-
-    public static function update_priority(int $item_id, int $old_priority, int $new_priority) : void {
-        $sql = "UPDATE item_pictures SET priority = :new_priority WHERE priority = :old_priority AND item = :item_id;";    
-        $query = self::execute($sql,["new_priority" => $new_priority, "old_priority" => $old_priority, "item_id" => $item_id]);
-    }
-
-    public static function delete_picture(int $item_id, int $priority) : void {
-        $sql = "DELETE FROM item_pictures WHERE item = :item_id AND priority = :priority";
-        $query = self::execute($sql, ["item_id" => $item_id, "priority" => $priority]);
-    }
-
-    public static function get_picture_path(int $item_id, int $priority) : string {
-        $sql = "SELECT picture_path FROM item_pictures WHERE item = :item_id AND priority = :priority";
-        $query = self::execute($sql, ["item_id" => $item_id, "priority" => $priority]);
-        $res = $query->fetch();
-        return $res["picture_path"];
-    }
-
+   
     public static function get_item_title(int $item_id) : string {
         $query = self::execute("SELECT title from items WHERE id = :item_id", 
         ["item_id" => $item_id]);
