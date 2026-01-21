@@ -182,7 +182,11 @@ class Item extends Model {
             $errors['buy_now_price'][]="the buy now price must be positif";
             
         }
-        if($starting_bid != "" &&  $starting_bid != "" ){
+        if($starting_bid =="" && $saleprice==""){
+            $errors["buy_now_price"][]="Type requiered";
+             $errors["saleprice"][]="Type requiered";
+        }
+        if($starting_bid != "" &&  $buy_now_price<$starting_bid ){
             $errors["buy_now_price"][]="the buy now price most be sup then the starting bid";
            
         }
