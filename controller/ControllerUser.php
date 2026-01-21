@@ -26,5 +26,11 @@ class ControllerUser extends Controller {
         }
         (new View("login"))->show(["email" => $email,"password" =>$password,"errors" => $errors]);
     }
+    public function profile() : void {
+        $user= $this->get_user_or_redirect();
+        $info=User::get_user_by_id($user->id);
+        (new View('user_profile'))->show(["info"=>$info]);
+        
+    }
 }
 ?>

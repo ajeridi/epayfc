@@ -34,6 +34,11 @@ class User extends Model {
         $data=$query->fetch();
         return $data;
     }
+    public static function get_user_by_id(int $user_id): array {
+        $query= self::execute("SELECT full_name , pseudo ,picture_path ,email FROM users where id=:id",["id"=>$user_id]);
+        $data=$query->fetch();
+        return $data; 
+    }
 
 }
 ?>

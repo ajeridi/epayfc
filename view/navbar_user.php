@@ -22,7 +22,7 @@
                 </figure>
                 
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="user/profile">
                 <figure>
                     <i class="bi bi-gear"></i>
                     <figcaption class="text-center">Profile</figcaption>
