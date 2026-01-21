@@ -77,7 +77,13 @@ class ControllerItem extends Controller{
         $user=$this->get_user_or_redirect();
         $item_id=$_GET['param1'];
         $info= Item::get_item_ino($item_id);
-        $errors=[];
+        $errors[]=[];
+        $errors['title']=[];
+        $errors['description']=[];
+        $errors['buy_now_price']=[];
+        $errors['starting_bid']=[];
+        $errors['saleprice']=[];
+
         (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors,'ok'=>$ok]);
         
 
@@ -98,18 +104,19 @@ class ControllerItem extends Controller{
         $info=[];
         $id=$_GET['param1'];
         $info['id']=$id;
-        $title=$_POST['title'];
+        $title=Tools::sanitize($_POST['title']);
         $info['title']=$title;
-        $description=$_POST['description'];
+        $description=Tools::sanitize($_POST['description']);
         $info['description']=$description;
-        $duration_days=$_POST['duration_days'];
+        $duration_days=Tools::sanitize($_POST['duration_days']);
         $info['duration_days']=$duration_days;
-        $starting_bid=$_POST['starting_bid'];
+        $starting_bid=Tools::sanitize($_POST['starting_bid']);
         $info['starting_bid']=$starting_bid;
-        $buy_now_price=$_POST['buy_now_price'];
+        $buy_now_price=Tools::sanitize($_POST['buy_now_price']);
         $info['buy_now_price']=$buy_now_price;
-        $saleprice=$_POST['saleprice'];
+        $saleprice=Tools::sanitize($_POST['saleprice']);
         $info['saleprice']=$saleprice;
+        
         
         $errors=Item::edit_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
         if(count($errors)==0){

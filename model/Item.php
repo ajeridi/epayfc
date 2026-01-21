@@ -152,38 +152,44 @@ class Item extends Model {
     }
     public static function edit_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
         
-        $errors=[];
+        $errors[]=[];
+        $errors['title']=[];
+        $errors['description']=[];
+        $errors['buy_now_price']=[];
+        $errors['starting_bid']=[];
+        $errors['saleprice']=[];
+
         
        if(!Item::unicite_title_for_owner($owner,$title)){
-        $errors[]="This title already exist, Please choose another one !";
-       
+        $errors['title'][]="This title already exist, Please choose another one !";
        }
-        if(strlen(Tools::sanitize($title))==0){
-            $errors[]="Title is required";
+        if(strlen($title)==0){
+            $errors['title'][]="Title is required";
+        }
+        if(strlen($title)<3){
+            $errors['title'][]="Title lenght must be between 3 and 255 characters";
             
         }
-        if(strlen(Tools::sanitize($title))<3){
-            $errors[]="Title lenght must be between 3 and 255 characters";
-            
-        }
-        if($description!=null && strlen(Tools::sanitize($description))<3){
-            $errors[]="Description lenght must be betwenn 3 and 255 characters";
+        if($description!=null && strlen($description)<3){
+            $errors['description'][]="Description lenght must be betwenn 3 and 255 characters";
            
         }
-        if($starting_bid != null  && $starting_bid < 0){
-            $errors[]="Starting bid must be positif ";
+        if($starting_bid != ""  &&  $starting_bid < 0){
+            $errors["starting_bid"][]="Starting bid must be positif ";
             
         }
-        if( $buy_now_price!=null &&  $buy_now_price<=0 ){
-            $errors[]="the buy now price must be positif";
+        if( $buy_now_price != "" &&  $buy_now_price <= 0 ){
+            $errors['buy_now_price'][]="the buy now price must be positif";
             
         }
-        if($starting_bid != null && $buy_now_price >0 && $buy_now_price<=$starting_bid){
-            $errors[]="the buy now price most be sup then the starting bid";
+        if($starting_bid != "" &&  $starting_bid != "" ){
+            $errors["buy_now_price"][]="the buy now price most be sup then the starting bid";
            
         }
-        if(($starting_bid !=null && $starting_bid >0 ) && ( $saleprice>0)){
-            $errors[]="Cannot create both auction and direct sale";
+        if($starting_bid != "" &&  $saleprice != ""){
+            $errors["buy_now_price"][]="Cannot create both auction and direct sale";
+            $errors["saleprice"][]="Cannot create both auction and direct sale";
+
             
         }
        
