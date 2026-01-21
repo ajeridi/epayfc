@@ -95,6 +95,7 @@ class ControllerItem extends Controller{
         $user=$this->get_user_or_redirect();
         $id=$_GET['param1'];
         $title=$_POST['title'];
+        var_dump($title);
         $description=$_POST['description'];
         $duration_days=$_POST['duration_days'];
         $starting_bid=$_POST['starting_bid'];
