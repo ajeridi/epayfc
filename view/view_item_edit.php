@@ -1,3 +1,9 @@
+<?php
+if($ok==true && $info['buy_now_price']==""){
+    $info['buy_now_price']=$info['saleprice'];
+}
+?>
+
 <!DOCTYPE html>
 <html>
     <head>

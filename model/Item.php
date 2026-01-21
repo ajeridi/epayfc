@@ -182,7 +182,7 @@ class Item extends Model {
             $errors[]="the buy now price most be sup then the starting bid";
            
         }
-        if(($starting_bid !=null || $starting_bid >0 ) && ( $saleprice>0)){
+        if(($starting_bid !=null && $starting_bid >0 ) && ( $saleprice>0)){
             $errors[]="Cannot create both auction and direct sale";
             
         }
