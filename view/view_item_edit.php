@@ -81,7 +81,7 @@ if($ok==true && $info['buy_now_price']==""){
                                
                                     <div class="mb-3">
                                         <label for="startingbid" class="form-label text-white">Starting Bid</label>
-                                        <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="starting_bid" name="starting_bid"  value="<?= $info['starting_bid'] ?>">
+                                        <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="starting_bid" name="starting_bid" <?= ($info['starting_bid']==0 && $info['buy_now_price']!=null) ? "placeholder=".$info['starting_bid'] : "value=".$info['starting_bid']?>>
                                          <div class="errors">
                                             <?php if(count($errors['starting_bid'])){?>
                                             <ul>
