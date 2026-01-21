@@ -174,15 +174,15 @@ class Item extends Model {
             $errors[]="Starting bid must be positif ";
             
         }
-        if( $starting_bid>0 && $buy_now_price<0 ){
+        if( $buy_now_price!=null &&  $buy_now_price<=0 ){
             $errors[]="the buy now price must be positif";
             
         }
-        if($starting_bid != null && $buy_now_price<=$starting_bid){
+        if($starting_bid != null && $buy_now_price >0 && $buy_now_price<=$starting_bid){
             $errors[]="the buy now price most be sup then the starting bid";
            
         }
-        if(($starting_bid !=null || $buy_now_price!=null) && $saleprice!=null){
+        if(($starting_bid !=null || $starting_bid >0 ) && ( $saleprice>0)){
             $errors[]="Cannot create both auction and direct sale";
             
         }
@@ -205,8 +205,12 @@ class Item extends Model {
 
     }
     public static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): void{
-        if($buy_now_price == null){
+        if($buy_now_price == ""){
+            if($starting_bid != "" && $starting_bid !=0){
+                $buy_now_price=null;
+            } else{
             $buy_now_price=$saleprice;
+            }
         }
         $query=self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,starting_bid=:starting_bid WHERE id =:id",['title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price, 'id' => $id]);
 
