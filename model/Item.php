@@ -168,6 +168,18 @@ class Item extends Model {
         $sql = "UPDATE item_pictures SET priority = :new_priority WHERE priority = :old_priority AND item = :item_id;";    
         $query = self::execute($sql,["new_priority" => $new_priority, "old_priority" => $old_priority, "item_id" => $item_id]);
     }
+
+    public static function delete_picture(int $item_id, int $priority) : void {
+        $sql = "DELETE FROM item_pictures WHERE item = :item_id AND priority = :priority";
+        $query = self::execute($sql, ["item_id" => $item_id, "priority" => $priority]);
+    }
+
+    public static function get_picture_path(int $item_id, int $priority) : string {
+        $sql = "SELECT picture_path FROM item_pictures WHERE item = :item_id AND priority = :priority";
+        $query = self::execute($sql, ["item_id" => $item_id, "priority" => $priority]);
+        $res = $query->fetch();
+        return $res["picture_path"];
+    }
    
 }
 ?>
