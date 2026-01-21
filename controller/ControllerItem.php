@@ -119,7 +119,7 @@ class ControllerItem extends Controller{
         
         
         $errors=Item::edit_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
-        if(count($errors)==0){
+        if(count($errors['title'])==0 && count($errors['description'])==0 && count($errors['buy_now_price'])==0 && count($errors['starting_bid'])==0){
             Item::put_edition_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
             $this->redirect("item","open",$id,"from-items");
         } else{

@@ -64,7 +64,7 @@ if($ok==true && $info['buy_now_price']==""){
                             </div>
                             <div class="mb-3">
                                 <label for="saledays" class="form-label">Sale Duration (days)*</label>
-                                <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days" value=<?= $info['duration_days'] ?>>
+                                <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days"  value=<?= $info['duration_days'] ?>>
 
                             </div>
                         

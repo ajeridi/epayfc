@@ -186,7 +186,7 @@ class Item extends Model {
             $errors["buy_now_price"][]="Type requiered";
              $errors["saleprice"][]="Type requiered";
         }
-        if($starting_bid != "" &&  $buy_now_price<$starting_bid ){
+        if($starting_bid != "" && $buy_now_price!="" && $buy_now_price<$starting_bid ){
             $errors["buy_now_price"][]="the buy now price most be sup then the starting bid";
            
         }
@@ -223,6 +223,16 @@ class Item extends Model {
             }
         }
         $query=self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,starting_bid=:starting_bid WHERE id =:id",['title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price, 'id' => $id]);
+
+    }
+    public static function is_Direct_sale(int $item_id): bool {
+         $item=Item::get_item_by_id($item_id,1);
+
+         if($item['is_direct_sale']==1){
+            return true;
+         }else{
+            return false;
+         }
 
     }
    
