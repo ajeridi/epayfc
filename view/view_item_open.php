@@ -28,7 +28,7 @@
           <!-- Card image + infos -->
           <div class="card card-dark border-0 overflow-hidden">
             <div class="ratio ratio-16x9 bg-black-30">
-              <img src="<?= $item['picture_path'] ?>" class="w-100 h-100 object-fit-cover" alt="item image">
+              <img <?= ($item['picture_path']=="") ? "src=uploads/items/test.jpg" :   "src=".$item['picture_path'] ?>  class="w-100 h-100 object-fit-cover" alt="item image">
             </div>
 
             <div class="card-body">

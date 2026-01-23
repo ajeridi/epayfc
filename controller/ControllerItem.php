@@ -38,12 +38,17 @@ class ControllerItem extends Controller{
             if(isset($_GET["param3"])){
                  $item =Item::get_item_by_id($_GET["param1"],$_GET["param3"]);
             }else{
+
                 $item =Item::get_item_by_id($_GET["param1"],1);
         }
         $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
         $bids=Item::get_bids($_GET["param1"]);
          } else{
             $this->index();
+         }
+         if(!$item){
+            $item=Item::get_item($_GET["param1"]);
+            $item['picture_path']="";
          }
 
         (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids,"is_open"=>$is_open,"user"=>$user,"from"=>$from]);
@@ -96,8 +101,8 @@ class ControllerItem extends Controller{
         if(count($errors['title'])==0 && count($errors['description'])==0 && count($errors['buy_now_price'])==0 && count($errors['starting_bid'])==0){
             $id=$_GET['param1'];
             $info['id']=$id;
-            Item::put_edition_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
-            $this->redirect("item","open",$id,"from-items");
+            $id_nv=Item::put_edition_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
+            $this->redirect("item","open",$id_nv,"from-items");
         } else{
              
              (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors,'ok'=>$ok ]);
