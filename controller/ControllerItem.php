@@ -82,7 +82,7 @@ class ControllerItem extends Controller{
             $ok=true; 
         $user=$this->get_user_or_redirect();
         $info=[];
-        
+        $info['id']=$_GET['param1'];
         $title=Tools::sanitize($_POST['title']);
         $info['title']=$title;
         $description=Tools::sanitize($_POST['description']);
