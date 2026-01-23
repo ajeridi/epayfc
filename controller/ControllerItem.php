@@ -122,10 +122,18 @@ class ControllerItem extends Controller{
         $errors['saleprice']=[];
 
         (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors,'ok'=>$ok]);
+    }     
     }
-
-        
-        
+    public function add(){
+        $user=$this->get_user_or_redirect();
+        $errors[]=[];
+        $errors['title']=[];
+        $errors['description']=[];
+        $errors['buy_now_price']=[];
+        $errors['starting_bid']=[];
+        $errors['saleprice']=[];
+        $info[]=[];
+        (new View("item_edit"))-> show(['errors'=>$errors]);
 
     }
 
