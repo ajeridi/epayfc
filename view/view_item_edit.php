@@ -1,8 +1,4 @@
-<?php
-if($ok==true && $info['buy_now_price']==""){
-    $info['buy_now_price']=$info['saleprice'];
-}
-?>
+
 
 <!DOCTYPE html>
 <html>
@@ -81,7 +77,7 @@ if($ok==true && $info['buy_now_price']==""){
                                
                                     <div class="mb-3">
                                         <label for="startingbid" class="form-label text-white">Starting Bid</label>
-                                        <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="starting_bid" name="starting_bid" <?= (Item::is_Direct_sale($info['id'])) ? "placeholder= \"e.g. 50 \"" : "value=".$info['starting_bid'] ?>>
+                                        <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="starting_bid" name="starting_bid" <?= ($info['starting_bid']==null) ? "placeholder=\"e.g. 50\"": "value=".$info['starting_bid'] ?>>
                                          <div class="errors">
                                             <?php if(count($errors['starting_bid'])){?>
                                             <ul>
@@ -96,7 +92,7 @@ if($ok==true && $info['buy_now_price']==""){
                                     </div>
                                     <div class="mb-3">
                                         <label for="purchaseprice" class="form-label text-white">Instant Purchase Price</label><a class="text-light">(optional)</a>
-                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= (Item::is_Direct_sale($info['id'])) ? "placeholder=\"e.g. 150 \"" : "value=".$info['buy_now_price']?> >
+                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($info['buy_now_price']==null) ? "placeholder=\"e.g. 200\"": "value=".$info['buy_now_price']?> >
                                          <div class="errors">
                                             <?php if(count($errors['buy_now_price'])){?>
                                             <ul>
@@ -118,7 +114,7 @@ if($ok==true && $info['buy_now_price']==""){
                                
                                     <div class="mb-3">
                                         <label for="saleprice" class="form-label text-white">Sale Price</label>
-                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= (Item::is_Direct_sale($info['id'])) ? "value=".$info['buy_now_price'] : "placeholder=\" e.g. 200\"" ?>>
+                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($info['saleprice']==null) ? "placeholder=\"e.g. 150\"": "value=".$info['saleprice'] ?>>
                                          <div class="errors">
                                                 <?php if(count($errors['saleprice'])){?>
                                                 <ul>

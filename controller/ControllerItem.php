@@ -77,6 +77,13 @@ class ControllerItem extends Controller{
         $user=$this->get_user_or_redirect();
         $item_id=$_GET['param1'];
         $info= Item::get_item_ino($item_id);
+        if(Item::is_Direct_sale($item_id)){
+            $info['starting_bid']=null;
+            $info['saleprice']=$info['buy_now_price'];
+            $info['buy_now_price']=null;
+        }else{
+            $info['saleprice']=null ;
+        }
         $errors[]=[];
         $errors['title']=[];
         $errors['description']=[];
