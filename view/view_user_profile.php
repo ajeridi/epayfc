@@ -39,29 +39,29 @@
                     <div class="card-header bg-primary text-white  " style="--bs-bg-opacity: .10">My activities</div>
                     <div class="card-body">
                         <!-- Sales!-->
-                        <nav class="navbar mb-3" style="border: 1px solid blue; border-radius: 5px;">
+                        <button class="btn btn-outline-light w-100 mb-3" style="border: 1px solid blue; border-radius: 5px;">
                             <div class="container-fluid">
-                                <a class="navbar-brand text-primary d-flex align-items-bottom" href="#">   
+                                <a class="navbar-brand text-primary d-flex align-items-bottom pt-2" href="item/sales">   
                                     <i class="bi bi-receipt-cutoff fs-3"></i>
-                                    <div style="margin-left: 10px;">
+                                    <div style="margin-left: 15px; text-align:left;">
                                         <p class="mb-0 fs-6 fw-bold" >Sales</p>
                                         <p class="text-secondary fw-bold" style="font-size: small;">Items you have sold</p>
                                     </div>
                                 </a>
                             </div>
-                        </nav>
+                        </button>
                         <!-- Purchases !-->
-                        <nav class="navbar" style="border: 1px solid blue; border-radius : 5px;">
+                        <button class="btn btn-outline-light w-100" style="border: 1px solid blue; border-radius : 5px;">
                             <div class="container-fluid">
-                                <a class="navbar-brand text-primary d-flex align-items-bottom" href="#">   
+                                <a class="navbar-brand text-primary d-flex align-items-bottom pt-2" href="item/purchases">   
                                     <i class="bi bi-cart3 fs-3"></i>
-                                    <div style="margin-left: 10px;">
+                                    <div style="margin-left: 15px; text-align:left;">
                                         <p class="mb-0 fs-6 fw-bold" >Purchases</p>
                                         <p class="text-secondary fw-bold" style="font-size: small;">Items you have purchased</p>
                                     </div>
                                 </a>
                             </div>
-                        </nav>
+                        </button>
                     </div>
                 </div> 
             </div>        
@@ -71,53 +71,55 @@
                     <div class="card-header bg-primary text-white  " style="--bs-bg-opacity: .10">Account Settings</div>
                     <div class="card-body">
                         <!-- Edit Profile !-->
-                        <nav class="navbar mb-3" style="border: 1px solid blue; border-radius: 5px;">
+                        <button class="btn btn-outline-light w-100 mb-3" style="border: 1px solid blue; border-radius: 5px;">
                             <div class="container-fluid">
-                                <a class="navbar-brand text-primary d-flex align-items-bottom" href="#">   
+                                <a class="navbar-brand text-primary d-flex align-items-bottom pt-2" href="user/edit_profile">   
                                     <i class="bi bi-person-gear fs-3"></i>
-                                    <div style="margin-left: 10px;">
+                                    <div style="margin-left: 15px; text-align:left;">
                                         <p class="mb-0 fs-6 fw-bold" >Edit Profile</p>
                                         <p class="text-secondary fw-bold" style="font-size: small;">Update your personal informations</p>
                                     </div>
                                 </a>
                             </div>
-                        </nav>
+                        </button>
                         <!-- Password !-->
-                        <nav class="navbar mb-3" style="border: 1px solid blue; border-radius : 5px;">
+                        <button class="btn btn-outline-light w-100 mb-3" style="border: 1px solid blue; border-radius : 5px;">
                             <div class="container-fluid">
-                                <a class="navbar-brand text-primary d-flex align-items-bottom" href="#">   
+                                <a class="navbar-brand text-primary d-flex align-items-bottom pt-2" href="user/change_password">   
                                     <i class="bi bi-key fs-3"></i>
-                                    <div style="margin-left: 10px;">
+                                    <div style="margin-left: 15px; text-align:left; ">
                                         <p class="mb-0 fs-6 fw-bold" >Password</p>
                                         <p class="text-secondary fw-bold" style="font-size: small;">Update your account security</p>
                                     </div>
                                 </a>
                             </div>
-                        </nav>
+                        </button>
                         <!-- Profile Picture !-->
-                        <nav class="navbar mb-3" style="border: 1px solid blue; border-radius : 5px;">
+                        <button class="btn btn-outline-light w-100 mb-3" style="border: 1px solid blue; border-radius : 5px;">
                             <div class="container-fluid">
-                                <a class="navbar-brand text-primary d-flex align-items-bottom" href="#">   
+                                <a class="navbar-brand text-primary d-flex align-items-bottom pt-2" href="user/manage_profile_picture">   
                                     <i class="bi bi-person-bounding-box fs-3"></i>
-                                    <div style="margin-left: 10px;">
+                                    <div style="margin-left: 15px; text-align: left;">
                                         <p class="mb-0 fs-6 fw-bold" >Profile Picture</p>
                                         <p class="text-secondary fw-bold" style="font-size: small;">Upload or change your profile picture</p>
                                     </div>
                                 </a>
                             </div>
-                        </nav>
+                        </button>
                         <!-- Logout !-->
-                        <nav class="navbar mb-3" style="border: 1px solid red; border-radius : 5px;">
-                            <div class="container-fluid">
-                                <a class="navbar-brand text-danger d-flex align-items-bottom" href="#">   
-                                    <i class="bi bi-box-arrow-left fs-3"></i>
-                                    <div style="margin-left: 10px;">
-                                        <p class="mb-0 fs-6 fw-bold" >Logout</p>
-                                        <p class="text-secondary fw-bold" style="font-size: small;">Sign out of your accout</p>
-                                    </div>
-                                </a>
-                            </div>
-                        </nav>
+                         <form method="post" action="user/login">
+                            <button type="submit" name="logout" value="true" class="btn btn-outline-light w-100 mb-3" style="border: 1px solid red; border-radius : 5px;">
+                                <div class="container-fluid">
+                                    <a class="navbar-brand text-danger d-flex align-items-bottom pt-2" href="user/login">   
+                                        <i class="bi bi-box-arrow-left fs-3"></i>
+                                        <div style="margin-left: 15px; text-align:left;">
+                                            <p class="mb-0 fs-6 fw-bold" >Logout</p>
+                                            <p class="text-secondary fw-bold" style="font-size: small;">Sign out of your account</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </button>
+                         </form>
                     </div>
                 </div> 
             </div>        
