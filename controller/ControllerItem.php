@@ -77,8 +77,7 @@ class ControllerItem extends Controller{
             $ok=true; 
         $user=$this->get_user_or_redirect();
         $info=[];
-        $id=$_GET['param1'];
-        $info['id']=$id;
+        
         $title=Tools::sanitize($_POST['title']);
         $info['title']=$title;
         $description=Tools::sanitize($_POST['description']);
@@ -93,8 +92,10 @@ class ControllerItem extends Controller{
         $info['saleprice']=$saleprice;
         
         
-        $errors=Item::edit_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
+        $errors=Item::validat_item($user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
         if(count($errors['title'])==0 && count($errors['description'])==0 && count($errors['buy_now_price'])==0 && count($errors['starting_bid'])==0){
+            $id=$_GET['param1'];
+            $info['id']=$id;
             Item::put_edition_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
             $this->redirect("item","open",$id,"from-items");
         } else{
@@ -132,8 +133,8 @@ class ControllerItem extends Controller{
         $errors['buy_now_price']=[];
         $errors['starting_bid']=[];
         $errors['saleprice']=[];
-        $info[]=[];
-        (new View("item_edit"))-> show(['errors'=>$errors]);
+        $info['id']=0;
+        (new View("item_edit"))-> show(['info'=>$info,'errors'=>$errors]);
 
     }
 

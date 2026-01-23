@@ -150,7 +150,7 @@ class Item extends Model {
         }
 
     }
-    public static function edit_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
+    public static function validat_item($owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
         
         $errors[]=[];
         $errors['title']=[];
@@ -158,8 +158,7 @@ class Item extends Model {
         $errors['buy_now_price']=[];
         $errors['starting_bid']=[];
         $errors['saleprice']=[];
-
-        
+ 
        if(!Item::unicite_title_for_owner($owner,$title)){
         $errors['title'][]="This title already exist, Please choose another one !";
        }
