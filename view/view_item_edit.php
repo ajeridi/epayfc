@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,7 +21,7 @@
     <body >
         <main class="container mb-3" >
             <br>
-          <form method="post" action="item/edit_item/<?= $info['id'] ?>">  
+          <form method="post" action="item/edit/<?= $info['id'] ?>">  
             <div class="container fw-bold ">
                 <div class= "card bg-dark mb-3  border-0 overflow-hidden">
                     <div class="card-header bg-primary text-white  " style="--bs-bg-opacity: .10">Basic Information</div>

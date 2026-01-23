@@ -73,40 +73,8 @@ class ControllerItem extends Controller{
        $this->redirect("item","open",$item_id);
     }
     public function edit() : void {
-        $ok=false;
-        $user=$this->get_user_or_redirect();
-        $item_id=$_GET['param1'];
-        $info= Item::get_item_ino($item_id);
-        if(Item::is_Direct_sale($item_id)){
-            $info['starting_bid']=null;
-            $info['saleprice']=$info['buy_now_price'];
-            $info['buy_now_price']=null;
-        }else{
-            $info['saleprice']=null ;
-        }
-        $errors[]=[];
-        $errors['title']=[];
-        $errors['description']=[];
-        $errors['buy_now_price']=[];
-        $errors['starting_bid']=[];
-        $errors['saleprice']=[];
-
-        (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors,'ok'=>$ok]);
-        
-
-    }
-
-    
-
-    public function list() : void {
-        $user = $this->get_user_or_redirect();
-        $active_items = Item::get_user_active_items($user->id);
-        $closed_unsold_items = Item::get_user_closed_unsold_items($user->id);
-        $sold_items = Item::get_user_sold_items($user->id);
-        (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
-    }
-    public function edit_item(){
-        $ok=true; 
+        if(count($_POST)){
+            $ok=true; 
         $user=$this->get_user_or_redirect();
         $info=[];
         $id=$_GET['param1'];
@@ -134,8 +102,43 @@ class ControllerItem extends Controller{
              (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors,'ok'=>$ok ]);
         }
 
+        } else {
+        $ok=false;
+        $user=$this->get_user_or_redirect();
+        $item_id=$_GET['param1'];
+        $info= Item::get_item_ino($item_id);
+        if(Item::is_Direct_sale($item_id)){
+            $info['starting_bid']=null;
+            $info['saleprice']=$info['buy_now_price'];
+            $info['buy_now_price']=null;
+        }else{
+            $info['saleprice']=null ;
+        }
+        $errors[]=[];
+        $errors['title']=[];
+        $errors['description']=[];
+        $errors['buy_now_price']=[];
+        $errors['starting_bid']=[];
+        $errors['saleprice']=[];
+
+        (new View("item_edit"))->show(['info'=>$info,'errors'=>$errors,'ok'=>$ok]);
+    }
+
+        
+        
 
     }
+
+    
+
+    public function list() : void {
+        $user = $this->get_user_or_redirect();
+        $active_items = Item::get_user_active_items($user->id);
+        $closed_unsold_items = Item::get_user_closed_unsold_items($user->id);
+        $sold_items = Item::get_user_sold_items($user->id);
+        (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
+    }
+   
 
 }
 ?>
