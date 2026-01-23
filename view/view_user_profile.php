@@ -110,13 +110,13 @@
                          <form method="post" action="user/login">
                             <button type="submit" name="logout" value="true" class="btn btn-outline-light w-100 mb-3" style="border: 1px solid red; border-radius : 5px;">
                                 <div class="container-fluid">
-                                    <a class="navbar-brand text-danger d-flex align-items-bottom pt-2" href="user/login">   
+                                    <div class="navbar-brand text-danger d-flex align-items-bottom pt-2">   
                                         <i class="bi bi-box-arrow-left fs-3"></i>
                                         <div style="margin-left: 15px; text-align:left;">
                                             <p class="mb-0 fs-6 fw-bold" >Logout</p>
                                             <p class="text-secondary fw-bold" style="font-size: small;">Sign out of your account</p>
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
                             </button>
                          </form>

@@ -13,18 +13,23 @@ class ControllerUser extends Controller {
         }
     }
     public function login() : void {
-        $email='';
-        $password='';
-        $errors=[];
-        if(isset($_POST['email']) && isset($_POST['password'])){
-            $email=$_POST['email'];
-            $password=$_POST['password'];
-            $errors=User::validate_login($email,$password);
-            if(empty($errors)){
-                $this->log_user(User::get_user_by_email($email),"item","browse");
-            }
+        if (isset($_POST["logout"])){
+            $this->logout();
         }
-        (new View("login"))->show(["email" => $email,"password" =>$password,"errors" => $errors]);
+        else {
+            $email='';
+            $password='';
+            $errors=[];
+            if(isset($_POST['email']) && isset($_POST['password'])){
+                $email=$_POST['email'];
+                $password=$_POST['password'];
+                $errors=User::validate_login($email,$password);
+                if(empty($errors)){
+                    $this->log_user(User::get_user_by_email($email),"item","browse");
+                }
+            }
+            (new View("login"))->show(["email" => $email,"password" =>$password,"errors" => $errors]);
+        }
     }
     public function profile() : void {
         $user= $this->get_user_or_redirect();
