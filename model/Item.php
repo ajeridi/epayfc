@@ -106,13 +106,26 @@ class Item extends Model {
 
     }
 
-    public static function get_item_by_id(int $item_id,int $priority) : array {
+    public static function get_item_by_id(int $item_id,int $priority) : array | bool {
         $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,item_pictures.picture_path ,priority,u1.pseudo,u1.picture_path as user_path ,u1.role,starting_bid
                                  FROM  v_items_status join item_pictures on v_items_status.id=item_pictures.item 
                                   join users u1 on v_items_status.owner=u1.id
                                             WHERE v_items_status.id= :id
                                             and item_pictures.priority=:priority",["id"=>$item_id,"priority"=>$priority]);
         $data=$query->fetch();
+       
+            return $data;
+        
+
+    }
+     public static function get_item(int $item_id) : array {
+        $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,u1.pseudo,u1.picture_path as user_path ,u1.role,starting_bid
+                                 FROM  v_items_status 
+                                  join users u1 on v_items_status.owner=u1.id
+                                            WHERE v_items_status.id= :id
+                                            ",["id"=>$item_id]);
+        $data=$query->fetch();
+    
        
             return $data;
         
@@ -150,8 +163,7 @@ class Item extends Model {
         }
 
     }
-    
-    public static function edit_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
+    public static function validat_item($owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
         
         $errors[]=[];
         $errors['title']=[];
@@ -159,8 +171,7 @@ class Item extends Model {
         $errors['buy_now_price']=[];
         $errors['starting_bid']=[];
         $errors['saleprice']=[];
-
-        
+ 
        if(!Item::unicite_title_for_owner($owner,$title)){
         $errors['title'][]="This title already exist, Please choose another one !";
        }
@@ -215,7 +226,7 @@ class Item extends Model {
 
 
     }
-    public static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): void{
+    public static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): int {
         if($buy_now_price == ""){
             if($starting_bid != "" && $starting_bid !=0){
                 $buy_now_price=null;
@@ -223,7 +234,15 @@ class Item extends Model {
             $buy_now_price=$saleprice;
             }
         }
-        $query=self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,starting_bid=:starting_bid WHERE id =:id",['title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price, 'id' => $id]);
+        if($id==0){
+            self::execute("INSERT INTO items (owner,title,description,duration_days,buy_now_price,starting_bid,created_at)  VALUE (:owner,:title,:description,:duration_days,:buy_now_price,:starting_bid,:created_at) ",['owner'=>$owner,'title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price,'created_at'=>"2026-01-02 18:30:20"]);
+            $id_nv=self::lastInsertId();
+            return $id_nv;
+        } else{
+            self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,starting_bid=:starting_bid WHERE id =:id ",['title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price, 'id' => $id]);
+            return $id;
+        }
+        
 
     }
     public static function is_Direct_sale(int $item_id): bool {
