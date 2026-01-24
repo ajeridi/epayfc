@@ -251,8 +251,9 @@ class ControllerItem extends Controller{
     public  function sales(){
         $user=$this->get_user_or_redirect();
         $salesItem=Item::get_salesItem_by_user($user->id);
+        $info=Item::cal_total_avg_nbrOfSales($salesItem);
      
-        (new View("item_closed"))->show(["salesItem"=>$salesItem]);
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,"info"=>$info]);
 
 
 

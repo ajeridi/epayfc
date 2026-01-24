@@ -22,7 +22,7 @@
                     <h5>  Completed Sales </h5>
                     <p class="card-text small">A snapshot of the deals you've wrapped up.</p>
                     </div>
-                <div class=" col-1 small text-bg-success text-center h-25 " style="border-radius:25px;height:auto;width: auto;">2 sales</div>    
+                <div class=" col-1 small text-bg-success text-center h-25 " style="border-radius:25px;height:auto;width: auto;"><?= $info['nbr'] ?> sales</div>    
                 </div>
             </div>
             <div class="row">
@@ -30,8 +30,8 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light">TOTAL REVENUE</h1>
-                            <p>820</p>
-                            <p>Across 2 sales</p>
+                            <p><?= $info['total'] ?></p>
+                            <p>Across <?= $info['nbr'] ?> sales</p>
                         </div>
                     </div>
                 </div>
@@ -39,8 +39,8 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light">Average Ticket</h1>
-                            <p>820</p>
-                            <p>Across 2 sales</p>
+                            <p><?= $info['avg'] ?></p>
+                            <p>Across <?= $info['nbr'] ?> sales</p>
                         </div>
                     </div>
                 </div>
@@ -54,15 +54,16 @@
                     </div>
                 </div>
             </div>
-           <div class="container mt-4 mb-5">
+           <div class="container mt-4 mb-5 " style="margin:0;max-width: 100%;">
                     <div class="row text-white g-3">
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
                         foreach ($salesItem as $item) { ?>
-                                <div class="col-3">
-                                    <a href="item/open/<?= $item['id']?>/from-browse" style="text-decoration: none;">
-                                        <div class="card" style="width: 18rem;">    
-                                            <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
+                                <div class="col-3  " >
+                                    <a href="item/open/<?= $item['id']?>/from-closed" style="text-decoration: none;">
+                                        <div class="card border-0" style="width: 18rem;">
+                                            <div class="card-head">    
+                                            <img src='<?=Item::get_picture_path($item['id'],1)?>' class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
@@ -75,7 +76,8 @@
                                                             <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item['number_of_pictures'] ?> images</span>
                                                 </div>
                                             </div>
-                                            <div class="card-body">
+                                            </div>
+                                            <div class="card-body bg-dark text-white">
                                                 <p class="card-text fw-bolder mb-0"><?=$item['title']?></p>
                                                 <p class="card-text fw-light fs-6">By <?= $item['pseudo']?></p>
                                                 <div class="container">
@@ -95,7 +97,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span class="card-text text-success fw-bold"><i class="bi bi-clock"> Closed</span>
+                                                <span class="card-text text-tertiary  fw-bold"><i class="bi bi-clock"></i> Closed</span>
+                                            </div>
+                                            <div class="card-footer text-light " style="background-color: #1e1231;" >
+                                                <p><span><i></i>Final price € <?= $item["amount"] ?> </span></p>
+                                                <p><span><i></i><?= $item["pseudo"] ?></span></p>
+                                                <p><span><i class="bi bi-clock fs-3"></i>Closed on </span></p>
+
                                             </div>
                                         </div>
                                     </a>
