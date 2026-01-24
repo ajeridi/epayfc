@@ -54,12 +54,12 @@
                     </div>
                 </div>
             </div>
-           <div class="container mt-4 mb-5 " style="margin:0;max-width: 100%;">
-                    <div class="row text-white g-3">
+           <div class="container mt-4 mb-1 " style="margin:0;max-width: 100%;">
+                    <div class="row text-white ">
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
                         foreach ($salesItem as $item) { ?>
-                                <div class="col-3  " >
+                                <div class="col-2  " >
                                     <a href="item/open/<?= $item['id']?>/from-closed" style="text-decoration: none;">
                                         <div class="card border-0" style="width: 18rem;">
                                             <div class="card-head">    
