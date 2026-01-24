@@ -305,6 +305,7 @@ class Item extends Model {
                                         (v.has_buy_now=1 and v.buy_now_reached=1))
                                         GROUP BY v.id,ip.item,v.has_buy_now,v.title,v.owner,b.amount,v.created_at,v.buy_now_price,v.end_at,v.is_direct_sale,v.bid_count,v.max_bid,v.is_auction,v.starting_bid,u.pseudo,buyer,created_at",["owner"=>$user_id,"current_date"=>"2026-02-01 10:00:00"]);
        $data=$query->fetchAll();
+       
        return $data ;
     }
     public static function cal_total_avg_nbrOfSales(array $salesItem) :  array{
@@ -318,6 +319,17 @@ class Item extends Model {
         $info['avg']=$total/$nbrOfSales;
         $info['nbr']=$nbrOfSales;
         return $info;
+
+    }
+    public static function find_loyer_bider(array $buyer): ? String {
+        if(empty($buyer)){
+            return null ;
+        }
+        $count = array_count_values($buyer);
+        $max = max($count);
+        $loyer_bider=array_keys($count,$max,true);
+        return $loyer_bider[0];
+
 
     }
     

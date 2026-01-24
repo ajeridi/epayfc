@@ -30,7 +30,7 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light">TOTAL REVENUE</h1>
-                            <p><?= $info['total'] ?></p>
+                            <p>€ <?= number_format($info['total'],2,',',' ') ?></p>
                             <p>Across <?= $info['nbr'] ?> sales</p>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light">Average Ticket</h1>
-                            <p><?= $info['avg'] ?></p>
+                            <p>€ <?= number_format($info['avg'],2,',',' ') ?></p>
                             <p>Across <?= $info['nbr'] ?> sales</p>
                         </div>
                     </div>
@@ -48,7 +48,7 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light">Loyal Bider</h1>
-                            <p>Marc</p>
+                            <p>marc</p>
                             <p>Across 2 sales</p>
                         </div>
                     </div>
@@ -92,7 +92,7 @@
                                                         <div class="col-md-6 text-end">
                                                             <div class="d-flex flex-column">
                                                                 <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
-                                                                <span class="card-text fs-6" style="color: green;">€ <?= $item['amount'] ?><span>
+                                                                <span class="card-text fs-6" style="color: green;">€ <?= number_format($item["amount"],2,',',' ') ?><span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -100,7 +100,7 @@
                                                 <span class="card-text text-tertiary  fw-bold"><i class="bi bi-clock"></i> Closed</span>
                                             </div>
                                             <div class="card-footer text-light " style="background-color: #1e1231;" >
-                                                <p><span><i></i>Final price € <?= $item["amount"] ?> </span></p>
+                                                <p><span><i></i>Final price € <?= number_format($item["amount"],2,',',' ') ?> </span></p>
                                                 <p><span><i></i><?= $item["buyer"] ?></span></p>
                                                 <p><span><i class="bi bi-clock fs-3"></i>Closed on <?= $item['created_at'] ?> </span></p>
 
