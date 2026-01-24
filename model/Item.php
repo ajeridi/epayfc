@@ -293,6 +293,18 @@ class Item extends Model {
         $res = $query->fetch();
         return $res["picture_path"];
     }
+     public static function get_salesItem_by_user(int $user_id): array{
+        
+        $query=self::execute("SELECT distinct v.id,v.title,v.owner,v.created_at,v.buy_now_price,v.end_at,v.bid_count,v.max_bid as amount,v.is_direct_sale,v.is_auction,v.starting_bid,u.pseudo,v.has_buy_now,ip.picture_path ,count(ip.picture_path) as number_of_pictures
+                              from v_items_status v join users u on v.owner=u.id 
+                                                            join item_pictures ip on ip.item=v.id
+                                                            join bids b on b.item=v.id
+                                       Where v.owner=:owner and ((v.is_auction=1 and v.end_at > :current_date) or
+                                        (v.has_buy_now=1 and v.buy_now_reached=1))
+                                        GROUP BY ip.item,v.has_buy_now,v.title,v.owner,b.amount,v.created_at,v.buy_now_price,v.end_at,v.is_direct_sale,v.bid_count,v.max_bid,v.is_auction,v.starting_bid,u.pseudo,ip.picture_path ",["owner"=>$user_id,"current_date"=>"2026-02-01 10:00:00"]);
+       $data=$query->fetchAll();
+       return $data ;
+}
    
 }
 ?>

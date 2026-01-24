@@ -247,5 +247,15 @@ class ControllerItem extends Controller{
             unlink($image_path);
             unlink($this->get_thumbnail_path($image_path));
     }
+   
+    public  function sales(){
+        $user=$this->get_user_or_redirect();
+        $salesItem=Item::get_salesItem_by_user($user->id);
+     
+        (new View("item_closed"))->show(["salesItem"=>$salesItem]);
+
+
+
+    }
 }
 ?>
