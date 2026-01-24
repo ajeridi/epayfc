@@ -101,8 +101,8 @@
                                             </div>
                                             <div class="card-footer text-light " style="background-color: #1e1231;" >
                                                 <p><span><i></i>Final price € <?= $item["amount"] ?> </span></p>
-                                                <p><span><i></i><?= $item["pseudo"] ?></span></p>
-                                                <p><span><i class="bi bi-clock fs-3"></i>Closed on </span></p>
+                                                <p><span><i></i><?= $item["buyer"] ?></span></p>
+                                                <p><span><i class="bi bi-clock fs-3"></i>Closed on <?= $item['created_at'] ?> </span></p>
 
                                             </div>
                                         </div>
