@@ -1,7 +1,7 @@
 <?php
 require_once "framework/Model.php";
 class User extends Model {
-    public function __construct(public int $id, public string $pseudo,public string $hashed_password,public string $email,public string $full_name, public string $role,public ?string $picture_path= null){
+    public function __construct(public int $id, public string $pseudo,public string $hashed_password,public string $email,public string $full_name, public string $role,public ?string $picture_path= null, public ?string $iban=null,){
 
     }
     private static function check_password(string $clear_password, string $hash) : bool {
@@ -13,7 +13,7 @@ class User extends Model {
         if($query->rowCount()==0){
             return false ; 
         }else{
-            return new User($data["id"], $data["pseudo"],$data["password"],$data["email"],$data["full_name"],$data["role"],$data["picture_path"]);
+            return new User($data["id"], $data["pseudo"],$data["password"],$data["email"],$data["full_name"],$data["role"],$data["picture_path"], $data["iban"]);
         }
     }
     public static function validate_login(string $email, string $password) : array {
@@ -47,5 +47,77 @@ class User extends Model {
         return is_bool($res) ? $res : count($res) > 0; // si res est un bool, c'est que res est vide
     }
 
+
+    public function validate() : array {
+        $errors = [];
+        
+        $errors["fullname"] = $this->validate_full_name();
+        $errors["username"] = $this->validate_username();
+        $errors["email"] = $this->validate_email();
+        $errors["iban"] = $this->validate_iban();
+
+        return $errors;
+    }
+
+    private function validate_full_name() : array {
+        $errors = [];
+        if (strlen($this->full_name) < 3){
+            $errors[] = "Name must be at least 3 characters long.";
+        }
+        return $errors;
+    }
+
+    private function validate_username() : array {
+        $errors = [];
+        if (strlen($this->pseudo) < 3 || strlen($this->pseudo) > 30){
+            $errors[] = "Username must be between 3 and 30 characters long.";
+        }
+        if (!$this->is_unique_pseudo($this->pseudo)){
+            $errors[] = "Username is not unique.";
+        }
+        return $errors;
+    }
+
+    private function validate_email() : array {
+        $errors = [];
+        if (!$this->is_unique_email()){
+            $errors[] = "Email is not unique";
+        }
+        return $errors;
+    }
+
+    public function is_unique_pseudo() : bool {
+        return $this->is_unique($this->pseudo, "pseudo");
+    }
+
+    public function is_unique_email() : bool {
+        return $this->is_unique($this->email, "email");
+    } 
+
+    private function is_unique(string $property, string $column) : bool {
+        $sql = "SELECT id FROM users WHERE $column = :property";
+        $query = self::execute($sql,["property" => $property]);
+        $res = $query->fetch();
+        // c'est unique lorsqu'aucun id existe avec cette propriete ou bien si l'id est le meme que le user
+        return $res == false || $res["id"] == $this->id;
+    }
+
+    private function validate_iban() : array {
+        $errors = [];
+        if ($this->iban != "" && !preg_match('/^BE\d{2}(?: \d{4}){3}$/', $this->iban)){
+            $errors[] = "IBAN format not valid.";
+        }
+        return $errors;
+    }
+
+    public function save_user() : void {
+        $sql = "UPDATE users SET 
+                    full_name = :full_name,
+                    email = :email,
+                    pseudo = :pseudo,
+                    iban = :iban
+                WHERE id = :id;";
+        $query = self::execute($sql, ["full_name" => $this->full_name, "pseudo" => $this->pseudo, "email" => $this->email, "iban" => $this->iban, "id" => $this->id]);
+    }
 }
 ?>

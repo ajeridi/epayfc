@@ -3,39 +3,89 @@ require_once 'model/User.php';
 require_once 'framework/View.php';
 require_once 'framework/Controller.php';
 
-class ControllerUser extends Controller {
+class ControllerUser extends Controller
+{
     public function index(): void
     {
-        if($this->user_logged()){
-            $this->redirect("item","browse");
-        } else{
+        if ($this->user_logged()) {
+            $this->redirect("item", "browse");
+        } else {
             (new View("login"))->show();
         }
     }
-    public function login() : void {
-        if (isset($_POST["logout"])){
+    public function login(): void
+    {
+        if (isset($_POST["logout"])) {
             $this->logout();
-        }
-        else {
-            $email='';
-            $password='';
-            $errors=[];
-            if(isset($_POST['email']) && isset($_POST['password'])){
-                $email=$_POST['email'];
-                $password=$_POST['password'];
-                $errors=User::validate_login($email,$password);
-                if(empty($errors)){
-                    $this->log_user(User::get_user_by_email($email),"item","browse");
+        } else {
+            $email = '';
+            $password = '';
+            $errors = [];
+            if (isset($_POST['email']) && isset($_POST['password'])) {
+                $email = $_POST['email'];
+                $password = $_POST['password'];
+                $errors = User::validate_login($email, $password);
+                if (empty($errors)) {
+                    $this->log_user(User::get_user_by_email($email), "item", "browse");
                 }
             }
-            (new View("login"))->show(["email" => $email,"password" =>$password,"errors" => $errors]);
+            (new View("login"))->show(["email" => $email, "password" => $password, "errors" => $errors]);
         }
     }
-    public function profile() : void {
-        $user= $this->get_user_or_redirect();
-        $info=User::get_user_by_id($user->id);
-        (new View('user_profile'))->show(["info"=>$info, "user" => $user]);
-        
+    public function profile(): void
+    {
+        $user = $this->get_user_or_redirect();
+        $info = User::get_user_by_id($user->id);
+        (new View('user_profile'))->show(["info" => $info, "user" => $user]);
+    }
+
+    public function edit_profile(): void
+    {
+        // check si user est connecte sinon redirect
+        $user = $this->get_user_or_redirect();
+        $errors = [];
+        $newUser = null;
+        // si on a submit via post 
+        if (isset($_POST["saveProfile"])) {
+            $fullname = "";
+            $username = "";
+            $email = "";
+            $iban = "";
+            if (isset($_POST["fullname"])) {
+                $fullname = $_POST["fullname"];
+            }
+            if (isset($_POST["username"])) {
+                $username = $_POST["username"];
+            }
+            if (isset($_POST["email"])) {
+                $email = $_POST["email"];
+            }
+            if (isset($_POST["iban"])) {
+                $iban = $_POST["iban"];
+            }
+            $newUser = new User($user->id, $username, $user->hashed_password, $email, $fullname, $user->role, $user->picture_path, $iban);
+            $errors = $newUser->validate();
+        }
+        // si on a aucune erreur et que le newUser n'est pas null, on doit le sauvegarder dans la db et rediriger vers profile
+        if ($this->has_no_errors($errors) && $newUser != null) {
+            $newUser->save_user();
+            $_SESSION["user"] = $newUser;
+            $this->profile();
+        } else {
+            (new View("edit_profile"))->show(["user" => $user, "newUser" => $newUser, "errors" => $errors]);
+        }
+    }
+
+    private function has_no_errors(array $errors): bool
+    {
+        if (empty($errors)) {
+            return true;
+        }
+        foreach ($errors as $error) {
+            if (!empty($error)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
-?>
