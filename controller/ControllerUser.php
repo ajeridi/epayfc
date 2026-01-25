@@ -37,5 +37,31 @@ class ControllerUser extends Controller {
         (new View('user_profile'))->show(["info"=>$info, "user" => $user]);
         
     }
+
+    public function edit_profile() : void {
+        // check si user est connecte sinon redirect
+        $user = $this->get_user_or_redirect();
+        $errors = [];
+        $newUser = null;
+        // si on a submit via post 
+        if (isset($_POST["saveProfile"])){
+            $fullname = ""; $username=""; $email = ""; $iban = "";
+            if (isset($_POST["fullname"])){
+                $fullname = $_POST["fullname"];
+            }
+            if (isset($_POST["username"])){
+                $username = $_POST["username"];
+            }
+            if (isset($_POST["email"])){
+                $email = $_POST["email"];
+            }
+            if (isset($_POST["iban"])){
+                $iban = $_POST["iban"];
+            }
+            $newUser = new User($user->id, $username, $user->hashed_password, $email, $fullname, $user->role, $user->picture_path, $iban);
+            $errors = $newUser->validate();
+        }
+        (new View("edit_profile"))->show(["user" => $user, "newUser" => $newUser, "errors" => $errors]);
+    }
 }
 ?>
