@@ -109,5 +109,15 @@ class User extends Model {
         }
         return $errors;
     }
+
+    public function save_user() : void {
+        $sql = "UPDATE users SET 
+                    full_name = :full_name,
+                    email = :email,
+                    pseudo = :pseudo,
+                    iban = :iban
+                WHERE id = :id;";
+        $query = self::execute($sql, ["full_name" => $this->full_name, "pseudo" => $this->pseudo, "email" => $this->email, "iban" => $this->iban, "id" => $this->id]);
+    }
 }
 ?>

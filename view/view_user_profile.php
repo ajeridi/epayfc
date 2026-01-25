@@ -17,13 +17,11 @@
          </header>   
 
     </header>
-    <body>
+    <body class="bg-navy"> 
         <main class="container mt-3" style="margin-bottom: 100px;">
             <!-- Information utilisateur !-->
             <div class="container mb-3">
                 <div class="card text-center bg-dark">
-                    <div class="card-header">
-                    </div>
                     <div class="card-body container-fluid justify-content-center text-white">
                         <img src="<?= $info['picture_path'] ?>"  class="avatar rounded-circle"> 
                         <h5 class="card-text"><?= $info['full_name'] ?></p>
