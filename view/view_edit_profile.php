@@ -34,7 +34,7 @@
                             <label for="inputFullName" class="form-label">Full Name *</label>
                             <input type="text" name="fullname" class="form-control" id="inputFullName" aria-describedby="fullNameHelp" value="<?= isset($newUser->full_name) ? $newUser->full_name : $user->full_name ?>">
                             <?php
-                            if (isset($errors["fullname"])) { ?>
+                            if (isset($errors["fullname"]) && count($errors["fullname"]) != 0) { ?> <!-- ajout du count pour ne pas avoir d'espace inutile !-->
                                 <ul class="text-danger">
                                     <?php foreach ($errors["fullname"] as $error) { ?>
                                         <li><?= $error ?></li>
@@ -47,7 +47,7 @@
                             <label for="inputUsername" class="form-label">Username *</label>
                             <input type="text" name="username" class="form-control" id="inputUsername" aria-describedby="usernameHelp" value="<?= isset($newUser->pseudo) ? $newUser->pseudo : $user->pseudo ?>">
                             <?php
-                            if (isset($errors["username"])) { ?>
+                            if (isset($errors["username"]) && count($errors["username"]) != 0) { ?> 
                                 <ul class="text-danger">
                                     <?php foreach ($errors["username"] as $error) { ?>
                                         <li><?= $error ?></li>
@@ -66,9 +66,9 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="inputEmail" class="form-label">Email Address *</label>
-                            <input type="email" name="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" value="<?= isset($newUser->email) ? $newUser->email : $user->email ?>">
+                            <input type="email" name="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" value="<?= isset($newUser->email) ? $newUser->email : $user->email ?>" required>
                             <?php
-                            if (isset($errors["email"])) { ?>
+                            if (isset($errors["email"]) && count($errors["email"]) != 0) { ?>
                                 <ul class="text-danger">
                                     <?php foreach ($errors["email"] as $error) { ?>
                                         <li><?= $error ?></li>
@@ -81,7 +81,7 @@
                             <label for="inputIBAN" class="form-label"><span>IBAN</span> <span class="text-secondary">(Optional)</span></label>
                             <input type="text" name="iban" placeholder="BE99 9999 9999 9999" class="form-control" id="inputIBAN" aria-describedby="IBANHelp" value="<?= isset($newUser->iban) ? $newUser->iban : $user->iban ?>">
                             <?php
-                            if (isset($errors["iban"])) { ?>
+                            if (isset($errors["iban"]) && count($errors["iban"]) != 0) { ?>
                                 <ul class="text-danger">
                                     <?php foreach ($errors["iban"] as $error) { ?>
                                         <li><?= $error ?></li>

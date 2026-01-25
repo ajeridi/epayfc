@@ -72,7 +72,7 @@ class User extends Model {
         if (strlen($this->pseudo) < 3 || strlen($this->pseudo) > 30){
             $errors[] = "Username must be between 3 and 30 characters long.";
         }
-        if (!User::is_unique_pseudo($this->pseudo)){
+        if (!$this->is_unique_pseudo($this->pseudo)){
             $errors[] = "Username is not unique.";
         }
         return $errors;
@@ -80,34 +80,34 @@ class User extends Model {
 
     private function validate_email() : array {
         $errors = [];
-        if (!User::is_unique_email($this->email)){
+        if (!$this->is_unique_email()){
             $errors[] = "Email is not unique";
         }
         return $errors;
     }
 
-    public static function is_unique_pseudo(string $pseudo) : bool {
-        return User::is_unique($pseudo, "pseudo");
+    public function is_unique_pseudo() : bool {
+        return $this->is_unique($this->pseudo, "pseudo");
     }
 
-    public static function is_unique_email(string $email) : bool {
-        return User::is_unique($email, "email");
+    public function is_unique_email() : bool {
+        return $this->is_unique($this->email, "email");
     } 
 
-    public static function is_unique(string $property, string $column) : bool {
-        $sql = "SELECT id FROM users WHERE :column = :property";
-        $query = self::execute($sql,["column" => $column, "property" => $property]);
+    private function is_unique(string $property, string $column) : bool {
+        $sql = "SELECT id FROM users WHERE $column = :property";
+        $query = self::execute($sql,["property" => $property]);
         $res = $query->fetch();
-        return $res == false;
+        // c'est unique lorsqu'aucun id existe avec cette propriete ou bien si l'id est le meme que le user
+        return $res == false || $res["id"] == $this->id;
     }
 
     private function validate_iban() : array {
         $errors = [];
-        if (!preg_match('/^BE\d{2}(?: \d{4}){3}$/', $this->iban)){
+        if ($this->iban != "" && !preg_match('/^BE\d{2}(?: \d{4}){3}$/', $this->iban)){
             $errors[] = "IBAN format not valid.";
         }
         return $errors;
     }
-
 }
 ?>
