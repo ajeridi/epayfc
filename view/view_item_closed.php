@@ -1,12 +1,3 @@
-<?php
-$nom="" ;
-foreach($loyer_buyer as $buyer){
-  $nom = ($nom == "" ? $buyer : $nom." et ".$buyer);
-} 
-
-?>
-
-
 
 <!DOCTYPE html>
 <html>
@@ -18,21 +9,32 @@ foreach($loyer_buyer as $buyer){
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
         <link rel="stylesheet" href="css/style.css">
-
     </head>
     <header>
             <!-- Barre  -->
-            <nav class="navbar bg-navy-gray" data-bs-theme="dark"> <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Sales 🛒 </div> </nav>
+            
+        <nav class="navbar fixed-top  bg-navy-gray text-blue  nav-fill pt-1">
+            <a class="nav-link" href="user/profile">
+                <figure>
+                    <i class="bi bi-arrow-left fs-4"></i>     
+                </figure>
+            </a>
+            <a class="nav-link" >
+                    <h5><?= $_GET['action'] ?> 🛒</h5>  
+            </a>
+        </nav>   
+
     </header>
      <body>
-        <main class="container-sm mt-3 text-white text-bold  " style="margin:0;max-width: 100%;">
-            <div class="container mb-3" style="max-width: 100%;">
+        <br>
+        <main class="container-sm mt-4 text-white text-bold mt-5  " style="margin:0;max-width: 100%;">
+            <div class="container mb-3" style=" margin-top:25px;max-width: 100%;">
                 <div class="row ">
                     <div class="col "  >
-                    <h5> <?= ($_GET['action']=="sales") ? "Completed Sales" : "My Purchases" ?>  </h5>          
+                    <h2> <?= ($_GET['action']=="sales") ? "Completed Sales" : "My Purchases" ?>  </h2>          
                     <p class="card-text small"><?= ($_GET['action']=="sales") ? "A snapshot of the deals you've wrapped up." : "Track the gear you've successfully secured." ?></p>
                     </div>
-                <div class=" col-1 small text-bg-success text-center h-25 " style="border-radius:25px;height:auto;width: auto;"><?=  $info['nbr'] ?> sales</div>    
+                <div class=" col-1 small text-bg-<?= ($_GET['action']=="sales") ?"success":"primary"?> text-center h-25 " style="border-radius:25px;height:auto;width: auto;"><?=  $info['nbr'] ?> <?= ($_GET['action']=="sales") ? "sales": "purchases" ?></div>    
                 </div>
             </div>
             <div class="row">
@@ -75,6 +77,9 @@ foreach($loyer_buyer as $buyer){
                                             <div class="card-head">    
                                             <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
+                                                <?php if ($_GET['action']=="purchases") { ?>
+                                                            <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
+                                                <?php }?>
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
                                                         if ($item['is_auction'] == 1){?>
@@ -110,9 +115,12 @@ foreach($loyer_buyer as $buyer){
                                                 <span class="card-text text-tertiary  fw-bold"><i class="bi bi-clock"></i> Closed</span>
                                             </div>
                                             <div class="card-footer text-light " style="background-color: #1e1231;" >
-                                                <p><span><i></i>Final price € <?= number_format($item["amount"],2,',',' ') ?> </span></p>
-                                                <p><span><i></i><?= $item["buyer"] ?></span></p>
-                                                <p><span><i class="bi bi-clock fs-3"></i>Closed on <?= $item['created_at'] ?> </span></p>
+                                             <?php if($_GET['action']=="sales"){?>  
+                                               <p><span><i class="bi bi-currency-dollar fs-5"> <?php } else {?><p><span><i class="bi bi-tag fs-5"><?php } ?> </i><?= ($_GET['action']=="sales") ? "Final price € ".number_format($item["amount"],2,',',' ') : "Paid ".number_format($item["amount"],2,',',' ') ?> </span></p>
+                                              <?php if($_GET['action']=="sales") {?>  <p><span><i class="bi bi-trophy"></i> <?= $item["buyer"] ?></span></p>
+                                                <?php } ?>
+                                                
+                                                <p><span><i class="bi bi-clock fs-5"></i> Closed on <?= $item['created_at'] ?> </span></p>
 
                                             </div>
                                         </div>

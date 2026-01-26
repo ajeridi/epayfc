@@ -253,8 +253,9 @@ class ControllerItem extends Controller{
         $salesItem=Item::get_salesItem_by_user($user->id);
         $info=Item::cal_total_avg_nbrOfSales($salesItem);
         $loyer_buyer=Item::find_loyer_bider($salesItem,"buyer");
+        $nom=$this::concate_names($loyer_buyer);
      
-        (new View("item_closed"))->show(["salesItem"=>$salesItem,"info"=>$info,"loyer_buyer"=>$loyer_buyer,'user'=>$user]);
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,"info"=>$info,"loyer_buyer"=>$loyer_buyer,"nom"=>$nom,'user'=>$user]);
 
 
 
@@ -264,9 +265,19 @@ class ControllerItem extends Controller{
          $salesItem=Item::get_purchases_item($user->id);
          $info=Item::cal_total_avg_nbrOfSales($salesItem);
          $top_seller=Item::find_loyer_bider($salesItem,"pseudo");
+         $nom=$this::concate_names($top_seller);
     
-        (new View("item_closed"))->show(["salesItem"=>$salesItem,'info'=>$info,'loyer_buyer'=>$top_seller,'user'=>$user]);
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,'info'=>$info,'loyer_buyer'=>$top_seller,"nom"=>$nom,'user'=>$user]);
         
+    }
+    private function concate_names(array $loyer_buyer): string{
+            $nom="" ;
+            foreach($loyer_buyer as $buyer){
+            $nom = ($nom == "" ? $buyer : $nom." et ".$buyer);
+            }
+            return $nom; 
+
+
     }
 }
 ?>
