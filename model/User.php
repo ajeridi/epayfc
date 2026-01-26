@@ -62,7 +62,10 @@ class User extends Model {
     private function validate_full_name() : array {
         $errors = [];
         if (strlen($this->full_name) < 3){
-            $errors[] = "Name must be at least 3 characters long.";
+            $errors[] = "Full name must be at least 3 characters long.";
+        }
+        if (!$this->is_unique_full_name($this->full_name)){
+            $errors[] = "Full name is not unique.";
         }
         return $errors;
     }
@@ -92,6 +95,10 @@ class User extends Model {
 
     public function is_unique_email() : bool {
         return $this->is_unique($this->email, "email");
+    } 
+
+public function is_unique_full_name() : bool {
+        return $this->is_unique($this->full_name, "full_name");
     } 
 
     private function is_unique(string $property, string $column) : bool {

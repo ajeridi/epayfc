@@ -52,16 +52,16 @@ class ControllerUser extends Controller
             $email = "";
             $iban = "";
             if (isset($_POST["fullname"])) {
-                $fullname = $_POST["fullname"];
+                $fullname = Tools::sanitize($_POST["fullname"]);
             }
             if (isset($_POST["username"])) {
-                $username = $_POST["username"];
+                $username = Tools::sanitize($_POST["username"]);
             }
             if (isset($_POST["email"])) {
-                $email = $_POST["email"];
+                $email = Tools::sanitize($_POST["email"]);
             }
             if (isset($_POST["iban"])) {
-                $iban = $_POST["iban"];
+                $iban = Tools::sanitize($_POST["iban"]);
             }
             $newUser = new User($user->id, $username, $user->hashed_password, $email, $fullname, $user->role, $user->picture_path, $iban);
             $errors = $newUser->validate();
@@ -70,7 +70,7 @@ class ControllerUser extends Controller
         if ($this->has_no_errors($errors) && $newUser != null) {
             $newUser->save_user();
             $_SESSION["user"] = $newUser;
-            $this->profile();
+            $this->redirect("user", "profile");
         } else {
             (new View("edit_profile"))->show(["user" => $user, "newUser" => $newUser, "errors" => $errors]);
         }
