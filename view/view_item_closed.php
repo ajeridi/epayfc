@@ -1,3 +1,13 @@
+<?php
+$nom="" ;
+foreach($loyer_buyer as $buyer){
+  $nom = ($nom == "" ? $buyer : $nom." et ".$buyer);
+} 
+
+?>
+
+
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,7 +32,7 @@
                     <h5> <?= ($_GET['action']=="sales") ? "Completed Sales" : "My Purchases" ?>  </h5>          
                     <p class="card-text small"><?= ($_GET['action']=="sales") ? "A snapshot of the deals you've wrapped up." : "Track the gear you've successfully secured." ?></p>
                     </div>
-                <div class=" col-1 small text-bg-success text-center h-25 " style="border-radius:25px;height:auto;width: auto;"><?= ($_GET['action']=="sales") ? $info['nbr']:1 ?> sales</div>    
+                <div class=" col-1 small text-bg-success text-center h-25 " style="border-radius:25px;height:auto;width: auto;"><?=  $info['nbr'] ?> sales</div>    
                 </div>
             </div>
             <div class="row">
@@ -30,7 +40,7 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light"><?= ($_GET['action']=="sales") ? "TOTAL REVENUE" : "TOTAL SPENT" ?></h1>
-                            <p>€ <?=($_GET['action']=="sales") ? number_format($info['total'],2,',',' '):"1800" ?></p>
+                            <p>€ <?=number_format($info['total'],2,',',' ')?></p>
                             <p>Across <?=($_GET['action']=="sales") ? $info['nbr']." sales": "pas encore" ?> </p>
                         </div>
                     </div>
@@ -39,7 +49,7 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light">Average Ticket</h1>
-                            <p>€ <?= ($_GET['action']=="sales") ? number_format($info['avg'],2,',',' '):"test" ?></p>
+                            <p>€ <?= number_format($info['avg'],2,',',' ') ?></p>
                             <p><?=($_GET['action']=="sales") ? "Median buyer appetite indicator": "Helps you plan future bids" ?></p>
                         </div>
                     </div>
@@ -48,7 +58,7 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light"><?=($_GET['action']=="sales") ? "LOYAL BIDER" : "TOP SELLER" ?></h1>
-                            <p><?=($_GET['action']=="sales") ? $loyer_buyer: "test " ?></p>
+                            <p><?= $nom ?></p>
                             <p><?=($_GET['action']=="sales") ? "Most recurring winning bidder" : "Who you've bought from the most" ?></p>
                         </div>
                     </div>

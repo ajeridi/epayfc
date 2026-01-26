@@ -33,7 +33,7 @@ class ControllerItem extends Controller{
             $from=$_GET["param2"];
         }
     
-        if(isset($_GET["param1"])){
+        if(isset($_GET["param1"]) && is_numeric($_GET["param1"])){
             $is_open=Item::is_open_anonce($_GET["param1"]);
             if(isset($_GET["param3"])){
                  $item =Item::get_item_by_id($_GET["param1"],$_GET["param3"]);
@@ -252,7 +252,7 @@ class ControllerItem extends Controller{
         $user=$this->get_user_or_redirect();
         $salesItem=Item::get_salesItem_by_user($user->id);
         $info=Item::cal_total_avg_nbrOfSales($salesItem);
-        $loyer_buyer=Item::find_loyer_bider($salesItem);
+        $loyer_buyer=Item::find_loyer_bider($salesItem,"buyer");
      
         (new View("item_closed"))->show(["salesItem"=>$salesItem,"info"=>$info,"loyer_buyer"=>$loyer_buyer,'user'=>$user]);
 
@@ -261,9 +261,11 @@ class ControllerItem extends Controller{
     }
     public function purchases() : void {
         $user=$this->get_user_or_redirect();
-        
-        $salesItem=Item::get_salesItem_by_user($user->id);
-        (new View("item_closed"))->show(["salesItem"=>$salesItem]);
+         $salesItem=Item::get_purchases_item($user->id);
+         $info=Item::cal_total_avg_nbrOfSales($salesItem);
+         $top_seller=Item::find_loyer_bider($salesItem,"pseudo");
+    
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,'info'=>$info,'loyer_buyer'=>$top_seller,'user'=>$user]);
         
     }
 }

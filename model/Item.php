@@ -142,7 +142,8 @@ class Item extends Model {
         return $data;
     }
        public static function is_open_anonce(int $item_id): bool {
-        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> "2025-11-10 16:11:00"]);
+         $current_date_time=AppTime::get_current_datetime();
+        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> $current_date_time]);
 
         if($query->rowCount()==0){
             return false ;
@@ -296,6 +297,7 @@ class Item extends Model {
 
     public static function get_salesItem_by_user(int $user_id): array {
         
+        $current_date_time=AppTime::get_current_datetime();
         $query=self::execute("SELECT distinct v.id,v.title,v.owner,v.created_at,v.buy_now_price,v.end_at,v.bid_count,v.max_bid as amount,v.is_direct_sale,v.is_auction,v.starting_bid,u.pseudo,v.has_buy_now,count(ip.picture_path) as number_of_pictures,(SELECT picture_path FROM item_pictures WHERE item = v.id AND priority = 1) as picture_path,
                                 (SELECT distinct u.pseudo  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as buyer , (SELECT distinct  b.created_at  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as created_at
                               from v_items_status v join users u on v.owner=u.id 
@@ -303,7 +305,7 @@ class Item extends Model {
                                                             join bids b on b.item=v.id
                                        Where v.owner=:owner and ((v.is_auction=1 and v.end_at < :current_date) or
                                         (v.has_buy_now=1 and v.buy_now_reached=1))
-                                        GROUP BY v.id,ip.item,v.has_buy_now,v.title,v.owner,b.amount,v.created_at,v.buy_now_price,v.end_at,v.is_direct_sale,v.bid_count,v.max_bid,v.is_auction,v.starting_bid,u.pseudo,buyer,created_at,picture_path",["owner"=>$user_id,"current_date"=>"2026-02-01 10:00:00"]);
+                                        GROUP BY v.id,ip.item,v.has_buy_now,v.title,v.owner,b.amount,v.created_at,v.buy_now_price,v.end_at,v.is_direct_sale,v.bid_count,v.max_bid,v.is_auction,v.starting_bid,u.pseudo,buyer,created_at,picture_path",["owner"=>$user_id,"current_date"=> $current_date_time]);
        $data=$query->fetchAll();
        
        
@@ -322,31 +324,33 @@ class Item extends Model {
         return $info;
 
     }
-    public static function find_loyer_bider(array $buyer): ? String {
+    public static function find_loyer_bider(array $buyer,String $indice): ? array {
         if(empty($buyer)){
             return null ;
         }
         $buyrArray=[];
         foreach($buyer  as $item) {
-            $buyrArray['buy']=$item['buyer'];
+            $buyrArray[]=$item[$indice];
 
         }
 
         $count = array_count_values($buyrArray);
         $max = max($count);
         $loyer_bider=array_keys($count,$max,true);
-        return $loyer_bider[0];
+        return $loyer_bider;
+        
 
 
     }
     public static function get_purchases_item(int $user_id) : array {
-        $query=self::execute(" SELECT distinct v.id,v.title,v.owner,v.created_at,v.buy_now_price,v.end_at,v.bid_count,v.max_bid as amount,v.is_direct_sale,v.is_auction,v.starting_bid,u.pseudo,v.has_buy_now,count(ip.picture_path) as number_of_pictures,(SELECT picture_path FROM item_pictures WHERE item = v.id AND priority = 1) as picture_path,
+        $current_date_time=AppTime::get_current_datetime();
+        $query=self::execute(" SELECT distinct v.id,v.title,v.owner,v.created_at,v.buy_now_price,v.end_at,v.bid_count,v.max_bid as amount,v.is_direct_sale,v.is_auction,v.starting_bid,u.pseudo,v.has_buy_now,( Select count(*) from item_pictures where item_pictures.item=v.id) as number_of_pictures,(SELECT picture_path FROM item_pictures WHERE item = v.id AND priority = 1) as picture_path,
                                 (SELECT distinct u.pseudo  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as buyer , (SELECT distinct  b.created_at  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as created_at 
                                                                from v_items_status v join users u on v.owner=u.id 
                                                             join item_pictures ip on ip.item=v.id
                                                             join bids b on b.item=v.id 
                                                             where ((v.is_auction=1 and v.end_at < :current_date) or
-                                        (v.has_buy_now=1 and v.buy_now_reached=1)) and  (SELECT b.owner from bids where b.item=v.id  order by DESC Limit 1)=:user_id",['user_id'=>$user_id]);
+                                        (v.has_buy_now=1 and v.buy_now_reached=1)) and  v.id = (SELECT b1.item from bids b1  where b1.amount=v.max_bid and b1.owner=:user_id )",['user_id'=>$user_id,"current_date"=>" $current_date_time"]);
       $data=$query->fetchAll();
       return $data ;   ;                                 
 
