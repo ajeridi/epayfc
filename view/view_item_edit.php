@@ -14,17 +14,17 @@
      <form method="post" action="item/edit/<?= $info['id'] ?>">  
            <header>
          
-            <nav class="navbar bg-navy-gray" data-bs-theme="dark">
+            <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand text-blue" href="item/open/<?= $info['id']?>/from-items"><i class="bi bi-arrow-left"></i> </a>
+                    <a class="navbar-brand text-blue" href="item/<?=($_GET['action']=="add") ? "browse" : "open/".$info['id']?>/from-items"><i class="bi bi-arrow-left"></i> </a>
                     <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Edit Item<i class=" bi bi-cart4 fs-4 text-white"></i></span>
                     <button type="submit" name="saveProfile" value="true" class="btn navbar-brand text-blue position-absolute top-50 end-0 translate-middle-y" ><i class="bi bi-floppy2-fill"></i></a>
                 </div>
             </nav>
         </header>
     <body >
-        <main class="container mb-3" >
-            <br>
+        <main class="container mb-3"  style="margin-top: 100px;" >
+    
 
             <div class="container fw-bold ">
                 <div class= "card bg-dark mb-3  border-0 overflow-hidden">
