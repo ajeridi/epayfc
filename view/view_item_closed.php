@@ -40,7 +40,7 @@
                         <div class="card-body">
                             <h5 class="text-light">Average Ticket</h1>
                             <p>€ <?= number_format($info['avg'],2,',',' ') ?></p>
-                            <p>Across <?= $info['nbr'] ?> sales</p>
+                            <p>Median buyer appetite indicator</p>
                         </div>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
                         <div class="card-body">
                             <h5 class="text-light">Loyal Bider</h1>
                             <p><?= $loyer_buyer ?></p>
-                            <p>Across 2 sales</p>
+                            <p>Most recurring winning bidder</p>
                         </div>
                     </div>
                 </div>

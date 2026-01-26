@@ -254,7 +254,7 @@ class ControllerItem extends Controller{
         $info=Item::cal_total_avg_nbrOfSales($salesItem);
         $loyer_buyer=Item::find_loyer_bider($salesItem);
      
-        (new View("item_closed"))->show(["salesItem"=>$salesItem,"info"=>$info,"loyer_buyer"=>$loyer_buyer]);
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,"info"=>$info,"loyer_buyer"=>$loyer_buyer,'user'=>$user]);
 
 
 
