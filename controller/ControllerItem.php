@@ -19,6 +19,7 @@ class ControllerItem extends Controller{
 
     public function browse() : void {
         $user = $this->get_user_or_false();
+        
         if ($user != false){ // si $user == false nous sommes en mode invité
             $items_participated_in = Item::get_items_participated_in($user->id);
             $other_available_items = Item::get_other_available_items($user->id);
@@ -31,7 +32,7 @@ class ControllerItem extends Controller{
     }
     public function open() : void {
 
-        $user=$this->get_user_or_false();
+        $user=$this->get_user_or_redirect();
         $from="";
         if(isset($_GET["param2"])){
             $from=substr(stristr($_GET["param2"],"-"),1);
@@ -55,8 +56,12 @@ class ControllerItem extends Controller{
             $item=Item::get_item($_GET["param1"]);
             $item['picture_path']="";
          }
-
+         if(!$is_open && $user->pseudo != $item['pseudo'] && $user->pseudo !=$bids['0']['pseudo']){
+             $this->index();
+         }else{
+        
         (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids,"is_open"=>$is_open,"user"=>$user,"from"=>$from]);
+         }
     }
     public function buy() : void {
         $user=$this->get_user_or_redirect();
@@ -83,6 +88,13 @@ class ControllerItem extends Controller{
        $this->redirect("item","open",$item_id);
     }
     public function edit() : void {
+        $user=$this->get_user_or_redirect();
+        $item=Item::get_item_by_id($_GET['param1'],1);
+        if(!isset($_GET['param1']) || !is_numeric($_GET['param1']) || $item['pseudo']!= $user->pseudo){
+            $this->index();
+            return;
+        }
+
         if(count($_POST)){
             $ok=true; 
         $user=$this->get_user_or_redirect();

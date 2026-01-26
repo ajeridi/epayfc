@@ -11,7 +11,7 @@
     </head>
          <header>
             <!-- Barre au dessus de la page -->
-            <nav class="navbar bg-navy-gray" data-bs-theme="dark">
+            <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark" >
                 <div class="container-fluid">
                     <a class="navbar-brand text-blue" href="item/<?= $from ?>"><i class="bi bi-arrow-left"></i> </a>
                     <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Open <i class=" bi bi-cart4 fs-4 text-white"></i></span>
@@ -19,7 +19,7 @@
             </nav>
         </header>
     <body class="app-bg page-item-open">             
-    <main class="container-fluid px-3 page-wrap">
+    <main class="container-fluid px-3 page-wrap" style="margin-top: 100px;">
       <br>
       <div class="row g-3 align-items-start">
 
