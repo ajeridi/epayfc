@@ -92,7 +92,8 @@ class ControllerItem extends Controller{
     public function edit() : void {
         $user=$this->get_user_or_redirect();
         $item=Item::get_item_by_id($_GET['param1'],1);
-        if(!isset($_GET['param1']) || !is_numeric($_GET['param1']) || $item['pseudo']!= $user->pseudo){
+        $is_open=Item::is_open_anonce($_GET['param1']);
+        if(!isset($_GET['param1']) || !is_numeric($_GET['param1']) || $item['pseudo']!= $user->pseudo || !$is_open ){
             $this->index();
             return;
         }
