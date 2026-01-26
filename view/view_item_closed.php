@@ -11,22 +11,14 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
     <header>
-            <!-- Barre  -->
-            
-        <nav class="navbar fixed-top  bg-navy-gray text-blue  nav-fill pt-1">
-            <a class="nav-link" href="user/profile">
-                <figure>
-                    <i class="bi bi-arrow-left fs-4"></i>     
-                </figure>
-            </a>
-            <a class="nav-link" >
-                    <h5><?= $_GET['action'] ?> 🛒</h5>  
-            </a>
-        </nav>   
-
-    </header>
+            <nav class="navbar bg-navy-gray" data-bs-theme="dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand text-blue" href="user/profile"><i class="bi bi-arrow-left"></i> </a>
+                    <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue"><?= $_GET['action'] ?><i class=" bi bi-cart4 fs-4 text-white"></i></span>
+                </div>
+            </nav>
+        </header>
      <body>
-        <br>
         <main class="container-sm mt-4 text-white text-bold mt-5  " style="margin:0;max-width: 100%;">
             <div class="container mb-3" style=" margin-top:25px;max-width: 100%;">
                 <div class="row ">
