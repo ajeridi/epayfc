@@ -58,7 +58,7 @@ class ControllerItem extends Controller{
             $item=Item::get_item($_GET["param1"]);
             $item['picture_path']="";
          }
-         if(!$is_open && $user->pseudo != $item['pseudo'] && $user->pseudo !=$bids['0']['pseudo']){
+         if(!$is_open && $user->pseudo != $item['pseudo'] &&  (count($bids)==0 || $user->pseudo != $bids['0']['pseudo'])){
              $this->index();
          }else{
         
@@ -67,13 +67,13 @@ class ControllerItem extends Controller{
     }
     public function buy() : void {
         $user=$this->get_user_or_redirect();
-        $now="2026-01-02 18:30:20";
+        $current_date=AppTime::get_current_datetime();
         
 
         if(isset($_GET['param1'])  ){
             $item_id=$_GET['param1'];
             $item =Item::get_item_by_id($item_id,1);
-            Item::buy($user->id,$_GET['param1'],"2026-01-02 18:30:20",$item['buy_now_price']);
+            Item::buy($user->id,$_GET['param1'],$current_date,$item['buy_now_price']);
               
         }
         $this->redirect("Item","open",$item_id);
@@ -81,11 +81,11 @@ class ControllerItem extends Controller{
     }
     public function bid() : void {
        $user=$this->get_user_or_redirect();
-       $now="2026-01-02 18:30:20";
+       $current_date=AppTime::get_current_datetime();
        if(isset($_GET['param1'])){
         $item_id=$_GET['param1'];
         $amount=$_POST['min_bid'];
-        Item::buy($user->id,$item_id,$now,$amount);
+        Item::buy($user->id,$item_id,$current_date,$amount);
        }
        $this->redirect("item","open",$item_id);
     }
