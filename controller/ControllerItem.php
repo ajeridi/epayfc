@@ -9,7 +9,7 @@ require_once "utils/ImageUtils.php";
 
 
 class ControllerItem extends Controller{
-
+  
     public function index() : void {
         $this->browse();
     }

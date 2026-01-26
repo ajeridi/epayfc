@@ -3,8 +3,8 @@ require_once 'model/User.php';
 require_once 'framework/View.php';
 require_once 'framework/Controller.php';
 
-class ControllerUser extends Controller
-{
+class ControllerUser extends Controller  {
+ 
     public function index(): void
     {
         if ($this->user_logged()) {
@@ -13,6 +13,20 @@ class ControllerUser extends Controller
             (new View("login"))->show();
         }
     }
+       public function debug(){
+        if($_GET['param1']==1){
+            $email="boverhaegen@epfc.eu";
+        } elseif($_GET['param1']==2){
+            $email="mamichel@epfc.eu";
+        }elseif($_GET['param1']==3){
+            $email="quhouben@epfc.eu";
+        }else {
+            $email="xapigeolet@epfc.eu";
+        }
+    
+         $this->log_user(User::get_user_by_email($email), "item", "browse");
+    }
+    
     public function login(): void
     {
         if (isset($_POST["logout"])) {
