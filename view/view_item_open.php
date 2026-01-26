@@ -15,7 +15,6 @@
                 <div class="container-fluid">
                     <a class="navbar-brand text-blue" href="item/<?= $from ?>"><i class="bi bi-arrow-left"></i> </a>
                     <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Open <i class=" bi bi-cart4 fs-4 text-white"></i></span>
-                    <button type="submit" name="saveProfile" value="true" class="btn navbar-brand text-blue position-absolute top-50 end-0 translate-middle-y" href="user/profile"><i class="bi bi-floppy2-fill"></i></a>
                 </div>
             </nav>
         </header>

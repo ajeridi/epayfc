@@ -64,7 +64,7 @@
                         <?php
                         foreach ($salesItem as $item) { ?>
                                 <div class="col-2  " >
-                                    <a href="item/open/<?= $item['id']?>/from-closed" style="text-decoration: none;">
+                                    <a href="item/open/<?= $item['id']?>/from-<?= $_GET['action'] ?>" style="text-decoration: none;">
                                         <div class="card border-0" style="width: 18rem;">
                                             <div class="card-head">    
                                             <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
