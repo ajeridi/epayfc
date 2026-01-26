@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
         <link rel="stylesheet" href="css/style.css">
     </head>
-    <body class="bg-navy">
+    <body class="bg-navy" data-bs-theme="dark">
         <header>
             <!-- Barre au dessus de la page -->
             <nav class="navbar bg-navy-gray" data-bs-theme="dark">
