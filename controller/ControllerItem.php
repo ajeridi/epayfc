@@ -259,5 +259,12 @@ class ControllerItem extends Controller{
 
 
     }
+    public function purchases() : void {
+        $user=$this->get_user_or_redirect();
+        
+        $salesItem=Item::get_salesItem_by_user($user->id);
+        (new View("item_closed"))->show(["salesItem"=>$salesItem]);
+        
+    }
 }
 ?>

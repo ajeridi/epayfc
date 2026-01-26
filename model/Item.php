@@ -339,6 +339,19 @@ class Item extends Model {
 
 
     }
+    public static function get_purchases_item(int $user_id) : array {
+        $query=self::execute(" SELECT distinct v.id,v.title,v.owner,v.created_at,v.buy_now_price,v.end_at,v.bid_count,v.max_bid as amount,v.is_direct_sale,v.is_auction,v.starting_bid,u.pseudo,v.has_buy_now,count(ip.picture_path) as number_of_pictures,(SELECT picture_path FROM item_pictures WHERE item = v.id AND priority = 1) as picture_path,
+                                (SELECT distinct u.pseudo  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as buyer , (SELECT distinct  b.created_at  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as created_at 
+                                                               from v_items_status v join users u on v.owner=u.id 
+                                                            join item_pictures ip on ip.item=v.id
+                                                            join bids b on b.item=v.id 
+                                                            where ((v.is_auction=1 and v.end_at < :current_date) or
+                                        (v.has_buy_now=1 and v.buy_now_reached=1)) and  (SELECT b.owner from bids where b.item=v.id  order by DESC Limit 1)=:user_id",['user_id'=>$user_id]);
+      $data=$query->fetchAll();
+      return $data ;   ;                                 
+
+                               
+    } 
     
     
 

@@ -19,19 +19,19 @@
             <div class="container mb-3" style="max-width: 100%;">
                 <div class="row ">
                     <div class="col "  >
-                    <h5>  Completed Sales </h5>
-                    <p class="card-text small">A snapshot of the deals you've wrapped up.</p>
+                    <h5> <?= ($_GET['action']=="sales") ? "Completed Sales" : "My Purchases" ?>  </h5>          
+                    <p class="card-text small"><?= ($_GET['action']=="sales") ? "A snapshot of the deals you've wrapped up." : "Track the gear you've successfully secured." ?></p>
                     </div>
-                <div class=" col-1 small text-bg-success text-center h-25 " style="border-radius:25px;height:auto;width: auto;"><?= $info['nbr'] ?> sales</div>    
+                <div class=" col-1 small text-bg-success text-center h-25 " style="border-radius:25px;height:auto;width: auto;"><?= ($_GET['action']=="sales") ? $info['nbr']:1 ?> sales</div>    
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-4 mb-3 mb-sm-0 ">
                     <div class="card bg-dark text-white">
                         <div class="card-body">
-                            <h5 class="text-light">TOTAL REVENUE</h1>
-                            <p>€ <?= number_format($info['total'],2,',',' ') ?></p>
-                            <p>Across <?= $info['nbr'] ?> sales</p>
+                            <h5 class="text-light"><?= ($_GET['action']=="sales") ? "TOTAL REVENUE" : "TOTAL SPENT" ?></h1>
+                            <p>€ <?=($_GET['action']=="sales") ? number_format($info['total'],2,',',' '):"1800" ?></p>
+                            <p>Across <?=($_GET['action']=="sales") ? $info['nbr']." sales": "pas encore" ?> </p>
                         </div>
                     </div>
                 </div>
@@ -39,17 +39,17 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light">Average Ticket</h1>
-                            <p>€ <?= number_format($info['avg'],2,',',' ') ?></p>
-                            <p>Median buyer appetite indicator</p>
+                            <p>€ <?= ($_GET['action']=="sales") ? number_format($info['avg'],2,',',' '):"test" ?></p>
+                            <p><?=($_GET['action']=="sales") ? "Median buyer appetite indicator": "Helps you plan future bids" ?></p>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-4 mb-3 mb-sm-0 ">   
                     <div class="card bg-dark text-white">
                         <div class="card-body">
-                            <h5 class="text-light">Loyal Bider</h1>
-                            <p><?= $loyer_buyer ?></p>
-                            <p>Most recurring winning bidder</p>
+                            <h5 class="text-light"><?=($_GET['action']=="sales") ? "LOYAL BIDER" : "TOP SELLER" ?></h1>
+                            <p><?=($_GET['action']=="sales") ? $loyer_buyer: "test " ?></p>
+                            <p><?=($_GET['action']=="sales") ? "Most recurring winning bidder" : "Who you've bought from the most" ?></p>
                         </div>
                     </div>
                 </div>
