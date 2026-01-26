@@ -48,7 +48,7 @@
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="text-light">Loyal Bider</h1>
-                            <p>marc</p>
+                            <p><?= $loyer_buyer ?></p>
                             <p>Across 2 sales</p>
                         </div>
                     </div>

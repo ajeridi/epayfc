@@ -325,7 +325,13 @@ class Item extends Model {
         if(empty($buyer)){
             return null ;
         }
-        $count = array_count_values($buyer);
+        $buyrArray=[];
+        foreach($buyer  as $item) {
+            $buyrArray['buy']=$item['buyer'];
+
+        }
+
+        $count = array_count_values($buyrArray);
         $max = max($count);
         $loyer_bider=array_keys($count,$max,true);
         return $loyer_bider[0];
