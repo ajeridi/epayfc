@@ -63,7 +63,7 @@
                                     <a href="item/open/<?= $item['id']?>/from-closed" style="text-decoration: none;">
                                         <div class="card border-0" style="width: 18rem;">
                                             <div class="card-head">    
-                                            <img src='<?=Item::get_picture_path($item['id'],1)?>' class="card-img-top" alt="image item">
+                                            <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
