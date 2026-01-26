@@ -1,8 +1,3 @@
-<?php
-if($ok==true && $info['buy_now_price']==""){
-    $info['buy_now_price']=$info['saleprice'];
-}
-?>
 
 <!DOCTYPE html>
 <html>
@@ -26,7 +21,7 @@ if($ok==true && $info['buy_now_price']==""){
     <body >
         <main class="container mb-3" >
             <br>
-          <form method="post" action="item/edit_item/<?= $info['id'] ?>">  
+          <form method="post" action="item/edit/<?= $info['id'] ?>">  
             <div class="container fw-bold ">
                 <div class= "card bg-dark mb-3  border-0 overflow-hidden">
                     <div class="card-header bg-primary text-white  " style="--bs-bg-opacity: .10">Basic Information</div>
@@ -34,7 +29,7 @@ if($ok==true && $info['buy_now_price']==""){
                         
                             <div class="mb-3">
                                 <label for="itemtitle" class="form-label" >Item Title *</label>
-                                <input type="text" class="form-control d-block  text-bg-dark"  style ="padding-right:80%" id="title" name="title"  value="<?= $info['title'] ?>">
+                                <input type="text" class="form-control d-block  text-bg-dark"  style ="padding-right:80%" id="title" name="title" <?= ($_GET['action']=="add") ? "placeholder=\"EX:Iphon 13 Pro Max 256GB\"" : "value=".$info['title'] ?>>
                                 <div class="errors">
                                 <?php if(count($errors['title'])){?>
                                    <ul>
@@ -49,7 +44,7 @@ if($ok==true && $info['buy_now_price']==""){
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea class="form-label d-block  text-bg-dark" id="description" name="description" style ="padding-right:80%"   rows="3"><?= $info['description'] ?></textarea>
+                                <textarea class="form-label d-block  text-bg-dark" id="description" name="description" style ="padding-right:80%"  <?= ($_GET['action']=="add") ? "placeholder=\"Describe your item in detail...\"  rows=\"3\">" : "rows=\"3\">".$info['description']?></textarea>
                                  <div class="errors">
                                 <?php if(count($errors['description'])){?>
                                    <ul>
@@ -64,7 +59,7 @@ if($ok==true && $info['buy_now_price']==""){
                             </div>
                             <div class="mb-3">
                                 <label for="saledays" class="form-label">Sale Duration (days)*</label>
-                                <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days"  value=<?= $info['duration_days'] ?>>
+                                <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days" <?=($_GET['action']=="add") ? "value=\"7\"" : "value=".$info['duration_days'] ?>>
 
                             </div>
                         
@@ -81,7 +76,7 @@ if($ok==true && $info['buy_now_price']==""){
                                
                                     <div class="mb-3">
                                         <label for="startingbid" class="form-label text-white">Starting Bid</label>
-                                        <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="starting_bid" name="starting_bid" <?= ($info['starting_bid']==0 && $info['buy_now_price']!=null) ? "placeholder=".$info['starting_bid'] : "value=".$info['starting_bid']?>>
+                                        <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="starting_bid" name="starting_bid" <?= ($_GET['action']=="add" || $info['starting_bid']==null) ? "placeholder=\"e.g. 50\"": "value=".$info['starting_bid'] ?>>
                                          <div class="errors">
                                             <?php if(count($errors['starting_bid'])){?>
                                             <ul>
@@ -96,7 +91,7 @@ if($ok==true && $info['buy_now_price']==""){
                                     </div>
                                     <div class="mb-3">
                                         <label for="purchaseprice" class="form-label text-white">Instant Purchase Price</label><a class="text-light">(optional)</a>
-                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($info['starting_bid'] == 0) ? "placeholder=".$info['buy_now_price'] : "value=".$info['buy_now_price'] ?> >
+                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($_GET['action']=="add" || $info['buy_now_price']==null) ? "placeholder=\"e.g. 200\"": "value=".$info['buy_now_price']?> >
                                          <div class="errors">
                                             <?php if(count($errors['buy_now_price'])){?>
                                             <ul>
@@ -118,7 +113,7 @@ if($ok==true && $info['buy_now_price']==""){
                                
                                     <div class="mb-3">
                                         <label for="saleprice" class="form-label text-white">Sale Price</label>
-                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?=($ok==true) ? "value=".$info['saleprice'] : (($info['starting_bid'] == 0) ? "value=".$info['buy_now_price'] : "placeholder=".$info['buy_now_price']) ?>>
+                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($_GET['action']=="add" || $info['saleprice']==null) ? "placeholder=\"e.g. 150\"": "value=".$info['saleprice'] ?>>
                                          <div class="errors">
                                                 <?php if(count($errors['saleprice'])){?>
                                                 <ul>

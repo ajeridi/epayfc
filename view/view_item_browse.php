@@ -86,7 +86,7 @@
                 <h3 class="text-blue"><?=  ($user == false) ? "" : "Other" ?> Available Items</h3>
 
                 <!-- tableau contenant les cartes des items -->
-                <div class="container mt-4 mb-5">
+                <div class="container mt-4" style="margin-bottom: 150px;">
                     <div class="row text-white g-3">
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php

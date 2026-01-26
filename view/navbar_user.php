@@ -15,14 +15,14 @@
                 </figure>
                 
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="item/add">
                 <figure>
                     <i class="bi bi-plus"></i>
                     <figcaption class="text-center">Add offer</figcaption>
                 </figure>
                 
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="user/profile">
                 <figure>
                     <i class="bi bi-gear"></i>
                     <figcaption class="text-center">Profile</figcaption>
