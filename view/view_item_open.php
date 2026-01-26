@@ -10,14 +10,16 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
          <header>
-            <!-- Barre  -->
-            <?php  require 'navbar_items.php'  ?>
-         </header>
-    <body class="app-bg page-item-open">
-      <br>
-      <br>
-          
-           
+            <!-- Barre au dessus de la page -->
+            <nav class="navbar bg-navy-gray" data-bs-theme="dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand text-blue" href="item/<?= $from ?>"><i class="bi bi-arrow-left"></i> </a>
+                    <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Open <i class=" bi bi-cart4 fs-4 text-white"></i></span>
+                    <button type="submit" name="saveProfile" value="true" class="btn navbar-brand text-blue position-absolute top-50 end-0 translate-middle-y" href="user/profile"><i class="bi bi-floppy2-fill"></i></a>
+                </div>
+            </nav>
+        </header>
+    <body class="app-bg page-item-open">             
     <main class="container-fluid px-3 page-wrap">
       <br>
       <div class="row g-3 align-items-start">

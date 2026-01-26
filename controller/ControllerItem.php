@@ -11,6 +11,10 @@ class ControllerItem extends Controller{
     public function index() : void {
         $this->browse();
     }
+    public function items() : void {
+        $this->redirect("item","list");
+        
+    }
 
 
     public function browse() : void {
@@ -30,8 +34,9 @@ class ControllerItem extends Controller{
         $user=$this->get_user_or_false();
         $from="";
         if(isset($_GET["param2"])){
-            $from=$_GET["param2"];
+            $from=substr(stristr($_GET["param2"],"-"),1);
         }
+        
     
         if(isset($_GET["param1"]) && is_numeric($_GET["param1"])){
             $is_open=Item::is_open_anonce($_GET["param1"]);
