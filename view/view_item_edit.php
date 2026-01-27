@@ -11,17 +11,21 @@
         <link rel="stylesheet" href="css/style.css">
 
     </head>
-    <header>
-        <header>
-            <!-- Barre  -->
-            <nav class="navbar bg-navy-gray" data-bs-theme="dark"> <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Edit item 🛒 </div> </nav>
-         </header>   
-
-    </header>
+     <form method="post" action="item/edit/<?=($_GET['action']=="add") ? "": $info['id']  ?>">  
+           <header>
+         
+            <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand text-blue" href="item/<?=($_GET['action']=="add") ? "browse" : "open/".$info['id']?>/from-items"><i class="bi bi-arrow-left"></i> </a>
+                    <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Edit Item<i class=" bi bi-cart4 fs-4 text-white"></i></span>
+                    <button type="submit" name="saveProfile" value="true" class="btn navbar-brand text-blue position-absolute top-50 end-0 translate-middle-y" ><i class="bi bi-floppy2-fill"></i></a>
+                </div>
+            </nav>
+        </header>
     <body >
-        <main class="container mb-3" >
-            <br>
-          <form method="post" action="item/edit/<?= $info['id'] ?>">  
+        <main class="container mb-3"  style="margin-top: 100px;" >
+    
+
             <div class="container fw-bold ">
                 <div class= "card bg-dark mb-3  border-0 overflow-hidden">
                     <div class="card-header bg-primary text-white  " style="--bs-bg-opacity: .10">Basic Information</div>
@@ -29,7 +33,7 @@
                         
                             <div class="mb-3">
                                 <label for="itemtitle" class="form-label" >Item Title *</label>
-                                <input type="text" class="form-control d-block  text-bg-dark"  style ="padding-right:80%" id="title" name="title" <?= ($_GET['action']=="add") ? "placeholder=\"EX:Iphon 13 Pro Max 256GB\"" : "value=".$info['title'] ?>>
+                                <input type="text" class="form-control d-block  text-bg-dark"  style ="padding-right:80%" id="title" name="title" <?= ($_GET['action']=="add") ? "placeholder=\"EX:Iphon 13 Pro Max 256GB\"" : "value=\"".$info['title']."\"" ?>>
                                 <div class="errors">
                                 <?php if(count($errors['title'])){?>
                                    <ul>
@@ -81,7 +85,7 @@
                                             <?php if(count($errors['starting_bid'])){?>
                                             <ul>
                                                 <?php
-                                                foreach($errors['tarting_bid'] as $str){?>
+                                                foreach($errors['starting_bid'] as $str){?>
                                                     <li><?= $str ?></li>
 
                                                 <?php } 
@@ -135,7 +139,7 @@
                 </div>
 
             </div>  
-            <button type="submit">valider</button>
+           
           </form> 
         </main>
     </body>   

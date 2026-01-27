@@ -10,15 +10,16 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
          <header>
-            <!-- Barre  -->
-            <?php  require 'navbar_items.php'  ?>
-         </header>
-    <body class="app-bg page-item-open">
-      <br>
-      <br>
-          
-           
-    <main class="container-fluid px-3 page-wrap">
+            <!-- Barre au dessus de la page -->
+            <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark" >
+                <div class="container-fluid">
+                    <a class="navbar-brand text-blue" href="item/<?= $from ?>"><i class="bi bi-arrow-left"></i> </a>
+                    <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Open <i class=" bi bi-cart4 fs-4 text-white"></i></span>
+                </div>
+            </nav>
+        </header>
+    <body class="app-bg page-item-open">             
+    <main class="container-fluid px-3 page-wrap" style="margin-top: 100px;">
       <br>
       <div class="row g-3 align-items-start">
 
@@ -123,7 +124,7 @@
               </div>
             
               <hr class="hr-soft">
-              <fieldset <?php if($from ==="from-items" || $user == false){?> disabled <?php } ?>>
+              <fieldset <?php if($user == false || $user->pseudo == $item['pseudo'] ){?> disabled <?php } ?>>
               <?php  if($item['is_direct_sale']==0) {?>
               <?php if($is_open){?>
               <form method="post" action="item/bid/<?= $item['id']?>">
@@ -166,7 +167,7 @@
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
 
-                <?php if($from ==="from-items" && $is_open){?>
+                <?php if($user == true && $user->pseudo === $item['pseudo'] && $is_open){?>
                 <p>You cannot bid on your own listing</p>
                 <?php } ?> 
                 <?php if($user == false && $is_open){?>
@@ -189,7 +190,7 @@
               </div>
             </div>
           </div>
-          <?php if($from ==="from-items" && $is_open){?>
+          <?php if($user == true && $user->pseudo === $item['pseudo']  && $is_open){?>
           <div class="card card-dark border-0 mt-3">
             <div class="card-body">
               <div class="section-title mb-3">Manage Your Item</div>
@@ -206,7 +207,7 @@
                 </div>
                 <div class="d-grid gap-2">    
                     <a class="btn btn-outline-danger" href="">
-                      Delet Item 
+                      Delete Item 
                     </a>
                 </div>    
               </div>

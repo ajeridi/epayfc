@@ -9,14 +9,19 @@ require_once "utils/ImageUtils.php";
 
 
 class ControllerItem extends Controller{
-
+  
     public function index() : void {
         $this->browse();
+    }
+    public function items() : void {
+        $this->redirect("item","list");
+        
     }
 
 
     public function browse() : void {
         $user = $this->get_user_or_false();
+        
         if ($user != false){ // si $user == false nous sommes en mode invité
             $items_participated_in = Item::get_items_participated_in($user->id);
             $other_available_items = Item::get_other_available_items($user->id);
@@ -29,13 +34,14 @@ class ControllerItem extends Controller{
     }
     public function open() : void {
 
-        $user=$this->get_user_or_false();
+        $user=$this->get_user_or_redirect();
         $from="";
         if(isset($_GET["param2"])){
-            $from=$_GET["param2"];
+            $from=substr(stristr($_GET["param2"],"-"),1);
         }
+        
     
-        if(isset($_GET["param1"])){
+        if(isset($_GET["param1"]) && is_numeric($_GET["param1"])){
             $is_open=Item::is_open_anonce($_GET["param1"]);
             if(isset($_GET["param3"])){
                  $item =Item::get_item_by_id($_GET["param1"],$_GET["param3"]);
@@ -52,18 +58,22 @@ class ControllerItem extends Controller{
             $item=Item::get_item($_GET["param1"]);
             $item['picture_path']="";
          }
-
+         if(!$is_open && $user->pseudo != $item['pseudo'] &&  (count($bids)==0 || $user->pseudo != $bids['0']['pseudo'])){
+             $this->index();
+         }else{
+        
         (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids,"is_open"=>$is_open,"user"=>$user,"from"=>$from]);
+         }
     }
     public function buy() : void {
         $user=$this->get_user_or_redirect();
-        $now="2026-01-02 18:30:20";
+        $current_date=AppTime::get_current_datetime();
         
 
         if(isset($_GET['param1'])  ){
             $item_id=$_GET['param1'];
             $item =Item::get_item_by_id($item_id,1);
-            Item::buy($user->id,$_GET['param1'],"2026-01-02 18:30:20",$item['buy_now_price']);
+            Item::buy($user->id,$_GET['param1'],$current_date,$item['buy_now_price']);
               
         }
         $this->redirect("Item","open",$item_id);
@@ -71,15 +81,26 @@ class ControllerItem extends Controller{
     }
     public function bid() : void {
        $user=$this->get_user_or_redirect();
-       $now="2026-01-02 18:30:20";
+       $current_date=AppTime::get_current_datetime();
        if(isset($_GET['param1'])){
         $item_id=$_GET['param1'];
         $amount=$_POST['min_bid'];
-        Item::buy($user->id,$item_id,$now,$amount);
+        Item::buy($user->id,$item_id,$current_date,$amount);
        }
        $this->redirect("item","open",$item_id);
     }
     public function edit() : void {
+         $user=$this->get_user_or_redirect();
+        if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
+        $item=Item::get_item_by_id($_GET['param1'],1);
+        $is_open=Item::is_open_anonce($_GET['param1']); 
+        if($item['pseudo']!= $user->pseudo || !$is_open ){
+            $this->index();
+            return;
+        }
+   
+    }
+
         if(count($_POST)){
             $ok=true; 
         $user=$this->get_user_or_redirect();
@@ -210,6 +231,38 @@ class ControllerItem extends Controller{
             $image_path = Item::get_picture_path($item_id, $priority);
             Item::delete_picture($item_id, $priority);
             ImageUtils::delete_image_files($image_path);
+    }
+   
+    public  function sales(){
+        $user=$this->get_user_or_redirect();
+        $salesItem=Item::get_salesItem_by_user($user->id);
+        $info=Item::cal_total_avg_nbrOfSales($salesItem);
+        $loyer_buyer=Item::find_loyer_bider($salesItem,"buyer");
+        $nom=$this::concate_names($loyer_buyer);
+     
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,"info"=>$info,"loyer_buyer"=>$loyer_buyer,"nom"=>$nom,'user'=>$user]);
+
+
+
+    }
+    public function purchases() : void {
+        $user=$this->get_user_or_redirect();
+         $salesItem=Item::get_purchases_item($user->id);
+         $info=Item::cal_total_avg_nbrOfSales($salesItem);
+         $top_seller=Item::find_loyer_bider($salesItem,"pseudo");
+         $nom=$this::concate_names($top_seller);
+    
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,'info'=>$info,'loyer_buyer'=>$top_seller,"nom"=>$nom,'user'=>$user]);
+        
+    }
+    private function concate_names(array $loyer_buyer): string{
+            $nom="" ;
+            foreach($loyer_buyer as $buyer){
+            $nom = ($nom == "" ? $buyer : $nom." et ".$buyer);
+            }
+            return $nom; 
+
+
     }
 }
 ?>

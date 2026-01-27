@@ -4,6 +4,7 @@ require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 
 class Item extends Model {
+     
     public function __construct(public int $id ,public string $title,public ?string $description,public int $owner,public string $created_at,public ?int $buy_now_price,public ? int $starting_bid ,public string $picture_path ){
     }
 
@@ -23,11 +24,13 @@ class Item extends Model {
 
 
     public static function get_items_participated_in(int $user_id) : array{
-        $query = self::execute(Item::$items_participated_in_sql, ["user_id" => $user_id, "current_date_time" => "2025-11-19 16:11:00"]);
+       $current_date_time =AppTime::get_current_datetime();
+        $query = self::execute(Item::$items_participated_in_sql, ["user_id" => $user_id, "current_date_time" => $current_date_time]);
         return $query->fetchAll();
     } 
 
     public static function get_other_available_items(int $user_id) : array{
+        $current_date_time =AppTime::get_current_datetime();
         $sql = " SELECT DISTINCT vit.*, 
                 owners.full_name owner_full_name, 
                 ip.picture_path,
@@ -46,12 +49,13 @@ class Item extends Model {
                                 FROM bids
                                 WHERE bids.owner = :user_id)
             ORDER BY vit.end_at";
-       $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" => "2025-11-19 16:11:00"]); 
+       $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" => $current_date_time]); 
        return $query->fetchAll();
     }
 
 
     public static function get_user_active_items(int $user_id) : array{
+        $current_date_time =AppTime::get_current_datetime();
         
 
         $sql = "SELECT vit.id, vit.title, owners.full_name, vit.starting_bid, vit.max_bid, vit.is_auction, vit.is_direct_sale, vit.buy_now_price, vit.has_buy_now, (SELECT COUNT(*) FROM item_pictures ip WHERE ip.item = vit.id) as number_of_pictures, ip.picture_path, CONCAT(TIMESTAMPDIFF(DAY, :current_date_time, vit.end_at), 'd ', TIMESTAMPDIFF(HOUR, :current_date_time, vit.end_at) % 24, 'h') as time_left
@@ -64,13 +68,14 @@ class Item extends Model {
                 ip.priority = 1
                 ORDER BY vit.end_at";
 
-       $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" => "2025-11-19 16:11:00"]); 
+       $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" => $current_date_time]); 
        return $query->fetchAll();
 
     }
 
 
     public static function get_user_closed_unsold_items(int $user_id) : array{
+        $current_date_time =AppTime::get_current_datetime();
         
 
         $sql = "SELECT vit.id, vit.title, owners.full_name, vit.starting_bid, vit.max_bid, vit.is_auction, vit.is_direct_sale, vit.buy_now_price, vit.has_buy_now, (SELECT COUNT(*) FROM item_pictures ip WHERE ip.item = vit.id) as number_of_pictures, ip.picture_path
@@ -83,7 +88,7 @@ class Item extends Model {
                 ip.priority = 1
                 ORDER BY vit.end_at";
 
-       $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" => "2025-11-19 16:11:00"]); 
+       $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" =>  $current_date_time]); 
        return $query->fetchAll();
 
     }
@@ -142,7 +147,8 @@ class Item extends Model {
         return $data;
     }
        public static function is_open_anonce(int $item_id): bool {
-        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> "2025-11-10 16:11:00"]);
+         $current_date_time=AppTime::get_current_datetime();
+        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> $current_date_time]);
 
         if($query->rowCount()==0){
             return false ;
@@ -293,6 +299,72 @@ class Item extends Model {
         $res = $query->fetch();
         return $res["picture_path"];
     }
+
+    public static function get_salesItem_by_user(int $user_id): array {
+        
+        $current_date_time=AppTime::get_current_datetime();
+        $query=self::execute("SELECT distinct v.id,v.title,v.owner,v.created_at,v.buy_now_price,v.end_at,v.bid_count,v.max_bid as amount,v.is_direct_sale,v.is_auction,v.starting_bid,u.pseudo,v.has_buy_now,count(ip.picture_path) as number_of_pictures,(SELECT picture_path FROM item_pictures WHERE item = v.id AND priority = 1) as picture_path,
+                                (SELECT distinct u.pseudo  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as buyer , (SELECT distinct  b.created_at  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as created_at
+                              from v_items_status v join users u on v.owner=u.id 
+                                                            join item_pictures ip on ip.item=v.id
+                                                            join bids b on b.item=v.id
+                                       Where v.owner=:owner and ((v.is_auction=1 and v.end_at < :current_date) or
+                                        (v.has_buy_now=1 and v.buy_now_reached=1))
+                                        GROUP BY v.id,ip.item,v.has_buy_now,v.title,v.owner,b.amount,v.created_at,v.buy_now_price,v.end_at,v.is_direct_sale,v.bid_count,v.max_bid,v.is_auction,v.starting_bid,u.pseudo,buyer,created_at,picture_path",["owner"=>$user_id,"current_date"=> $current_date_time]);
+       $data=$query->fetchAll();
+       
+       
+       return $data ;
+    }
+    public static function cal_total_avg_nbrOfSales(array $salesItem) :  array{
+        $total=0.0 ;
+        $nbrOfSales=0;
+        foreach($salesItem as $sale){
+            $total=$total + $sale['amount'];
+            $nbrOfSales=$nbrOfSales+1;
+        }
+        $info['total']=(double)$total;
+        $info['avg']=$total/$nbrOfSales;
+        $info['nbr']=$nbrOfSales;
+        return $info;
+
+    }
+    public static function find_loyer_bider(array $buyer,String $indice): ? array {
+        if(empty($buyer)){
+            return null ;
+        }
+        $buyrArray=[];
+        foreach($buyer  as $item) {
+            $buyrArray[]=$item[$indice];
+
+        }
+
+        $count = array_count_values($buyrArray);
+        $max = max($count);
+        $loyer_bider=array_keys($count,$max,true);
+        return $loyer_bider;
+        
+
+
+    }
+    public static function get_purchases_item(int $user_id) : array {
+        $current_date_time=AppTime::get_current_datetime();
+        $query=self::execute(" SELECT distinct v.id,v.title,v.owner,v.created_at,v.buy_now_price,v.end_at,v.bid_count,v.max_bid as amount,v.is_direct_sale,v.is_auction,v.starting_bid,u.pseudo,v.has_buy_now,( Select count(*) from item_pictures where item_pictures.item=v.id) as number_of_pictures,(SELECT picture_path FROM item_pictures WHERE item = v.id AND priority = 1) as picture_path,
+                                (SELECT distinct u.pseudo  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as buyer , (SELECT distinct  b.created_at  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as created_at 
+                                                               from v_items_status v join users u on v.owner=u.id 
+                                                            join item_pictures ip on ip.item=v.id
+                                                            join bids b on b.item=v.id 
+                                                            where ((v.is_auction=1 and v.end_at < :current_date) or
+                                        (v.has_buy_now=1 and v.buy_now_reached=1)) and  v.id = (SELECT b1.item from bids b1  where b1.amount=v.max_bid and b1.owner=:user_id )",['user_id'=>$user_id,"current_date"=>" $current_date_time"]);
+      $data=$query->fetchAll();
+      return $data ;   ;                                 
+
+                               
+    } 
+    
+    
+
+   
    
 }
 ?>
