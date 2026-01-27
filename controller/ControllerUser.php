@@ -4,8 +4,9 @@ require_once 'framework/View.php';
 require_once 'framework/Controller.php';
 require_once 'utils/ImageUtils.php';
 
-class ControllerUser extends Controller  {
- 
+class ControllerUser extends Controller
+{
+
     public function index(): void
     {
         if ($this->user_logged()) {
@@ -14,20 +15,21 @@ class ControllerUser extends Controller  {
             (new View("login"))->show();
         }
     }
-       public function debug(){
-        if($_GET['param1']==1){
-            $email="boverhaegen@epfc.eu";
-        } elseif($_GET['param1']==2){
-            $email="mamichel@epfc.eu";
-        }elseif($_GET['param1']==3){
-            $email="quhouben@epfc.eu";
-        }else {
-            $email="xapigeolet@epfc.eu";
+    public function debug()
+    {
+        if ($_GET['param1'] == 1) {
+            $email = "boverhaegen@epfc.eu";
+        } elseif ($_GET['param1'] == 2) {
+            $email = "mamichel@epfc.eu";
+        } elseif ($_GET['param1'] == 3) {
+            $email = "quhouben@epfc.eu";
+        } else {
+            $email = "xapigeolet@epfc.eu";
         }
-    
-         $this->log_user(User::get_user_by_email($email), "item", "browse");
+
+        $this->log_user(User::get_user_by_email($email), "item", "browse");
     }
-    
+
     public function login(): void
     {
         if (isset($_POST["logout"])) {
@@ -103,8 +105,9 @@ class ControllerUser extends Controller  {
         }
         return true;
     }
-    public function manage_profile_picture(){
-        $user=$this->get_user_or_redirect();
+    public function manage_profile_picture()
+    {
+        $user = $this->get_user_or_redirect();
         $errors=[];
         if(isset($_FILES['image']) &&  $_FILES['image']['name'] !=""){
             $image=$_FILES['image'];
@@ -123,6 +126,41 @@ class ControllerUser extends Controller  {
         }
 
         
-        (new View('manage_profile_picture'))->show(['user'=>$user,'errors'=>$errors]);
+        (new View('manage_profile_picture'))->show(['user' => $user,'errors'=>$errors]);
+    }
+
+    public function change_password(): void
+    {
+        $user = $this->get_user_or_redirect();
+
+        // si user sauvegarde en haut de la page
+        $errors = [];
+        if (isset($_POST["savePassword"])) {
+            // verification du mot de passe actuel
+            if (isset($_POST["currentPassword"])) {
+                $currentPassword = Tools::sanitize($_POST["currentPassword"]);
+                $errors["currentPassword"] = $user->checkPassword($currentPassword);
+                //verification du nouveau mot de passe
+                if ($this->has_no_errors($errors) && isset($_POST["newPassword"])) {
+                    $newPassword = Tools::sanitize($_POST["newPassword"]);
+                    $errors["newPassword"] = $user->validate_password($newPassword);
+                    if ($this->has_no_errors($errors["newPassword"])) {
+                        //confirmation 
+                        if (isset($_POST["confirmPassword"])) {
+                            $confirmPassword = Tools::sanitize($_POST["confirmPassword"]);
+                            if ($confirmPassword !== $newPassword) {
+                                $errors["newPassword"][] = "You have to enter twice the same password";
+                            }
+                        }
+                    }
+                    //sauvegarde du nouveau mot de passe
+                    if ($this->has_no_errors($errors)) {
+                        $user->save_new_password($newPassword);
+                        $this->redirect("user", "profile");
+                    }
+                }
+            }
+        }
+        (new View("change_password"))->show(["user" => $user, "errors" => $errors]);
     }
 }
