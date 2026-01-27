@@ -38,7 +38,7 @@
                 </div>
                 <div class="card-body text-white text-bg-dark">
                     <h6 class="card-title fw-bold">Select Images *</h6>
-                    <form method='post' action='' enctype='multipart/form-data'>
+                    <form method='post' action='user/manage_profile_picture' enctype='multipart/form-data'>
                         <input type='file' class='form-control text-bg-dark' name='image' accept="image/x-png, image/gif, image/jpeg, .jpg, image/webp">
                         <p class="card-text text-secondary">Supported formats:JPG, PNG, GIF, WebP. This well replace your current profile.</p>
                         <input type='submit' class="btn btn-primary" value='Upload Images'>
