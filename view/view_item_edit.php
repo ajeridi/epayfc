@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="css/style.css">
 
     </head>
-     <form method="post" action="item/edit/<?= $info['id'] ?>">  
+     <form method="post" action="item/edit/<?=($_GET['action']=="add") ? "": $info['id']  ?>">  
            <header>
          
             <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark">
@@ -85,7 +85,7 @@
                                             <?php if(count($errors['starting_bid'])){?>
                                             <ul>
                                                 <?php
-                                                foreach($errors['tarting_bid'] as $str){?>
+                                                foreach($errors['starting_bid'] as $str){?>
                                                     <li><?= $str ?></li>
 
                                                 <?php } 

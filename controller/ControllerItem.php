@@ -90,13 +90,16 @@ class ControllerItem extends Controller{
        $this->redirect("item","open",$item_id);
     }
     public function edit() : void {
-        $user=$this->get_user_or_redirect();
+         $user=$this->get_user_or_redirect();
+        if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
         $item=Item::get_item_by_id($_GET['param1'],1);
-        $is_open=Item::is_open_anonce($_GET['param1']);
-        if(!isset($_GET['param1']) || !is_numeric($_GET['param1']) || $item['pseudo']!= $user->pseudo || !$is_open ){
+        $is_open=Item::is_open_anonce($_GET['param1']); 
+        if($item['pseudo']!= $user->pseudo || !$is_open ){
             $this->index();
             return;
         }
+   
+    }
 
         if(count($_POST)){
             $ok=true; 
