@@ -2,6 +2,7 @@
 require_once 'model/User.php';
 require_once 'framework/View.php';
 require_once 'framework/Controller.php';
+require_once 'utils/ImageUtils.php';
 
 class ControllerUser extends Controller
 {
@@ -107,8 +108,25 @@ class ControllerUser extends Controller
     public function manage_profile_picture()
     {
         $user = $this->get_user_or_redirect();
+        $errors=[];
+        if(isset($_FILES['image']) &&  $_FILES['image']['name'] !=""){
+            $image=$_FILES['image'];
+            $errors=ImageUtils::validate_image($image);
 
-        (new View('manage_profile_picture'))->show(['user' => $user]);
+            if(count($errors)==0){
+            $full_image = ImageUtils::scale_image($image, 100);
+            $thumbnail = ImageUtils::scale_image($image, 100);
+            $file_name = pathinfo($image["name"], PATHINFO_FILENAME);
+            $picture_path = "uploads/users/$user->id/$file_name.jpg";
+            ImageUtils::save_image_file($full_image, $picture_path);
+            ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
+            $user->picture_path=$picture_path;
+            $user->edit_picture(); 
+            }
+        }
+
+        
+        (new View('manage_profile_picture'))->show(['user' => $user,'errors'=>$errors]);
     }
 
     public function change_password(): void
