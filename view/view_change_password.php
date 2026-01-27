@@ -13,14 +13,14 @@
 </head>
 
 <body class="bg-navy" data-bs-theme="dark">
-    <form method="post" action="user/edit_profile">
+    <form method="post" action="user/change_password">
         <header>
             <!-- Barre au dessus de la page -->
             <nav class="navbar bg-navy-gray" data-bs-theme="dark">
                 <div class="container-fluid">
                     <a class="navbar-brand text-blue" href="user/profile"><i class="bi bi-arrow-left"></i> </a>
                     <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Change Password <i class=" bi bi-cart4 fs-4 text-white"></i></span>
-                    <button type="submit" name="savePassword" value="true" class="btn navbar-brand text-blue position-absolute top-50 end-0 translate-middle-y" href="user/change_password"><i class="bi bi-floppy2-fill"></i></a>
+                    <button type="submit" name="savePassword" value="true" class="btn navbar-brand text-blue position-absolute top-50 end-0 translate-middle-y"><i class="bi bi-floppy2-fill"></i></a>
                 </div>
             </nav>
         </header>
@@ -33,6 +33,14 @@
                         <div class="mb-3">
                             <label for="inputCurrentPassword" class="form-label">Current Password *</label>
                             <input type="password" name="currentPassword" class="form-control" id="inputCurrentPassword" aria-describedby="currentPasswordHelp" placeholder="Enter your current password">
+                            <?php
+                            if (isset($errors["currentPassword"]) && count($errors["currentPassword"]) != 0) { ?> <!-- ajout du count pour ne pas avoir d'espace inutile !-->
+                                <ul class="text-danger">
+                                    <?php foreach ($errors["currentPassword"] as $error) { ?>
+                                        <li><?= $error ?></li>
+                                    <?php } ?>
+                                </ul>
+                            <?php } ?>
                             <div id="currentPasswordHelp" class="form-text text-secondary ">Enter your current password to verify your identity</div>
                         </div>
                     </div>
@@ -46,7 +54,15 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="inputNewPassword" class="form-label">New Password *</label>
-                            <input type="password" name="newPassword" class="form-control" id="inputNewPaassword" aria-describedby="newPasswordHelp" placeholder="Enter your new password">
+                            <input type="password" name="newPassword" class="form-control" id="inputNewPassword" aria-describedby="newPasswordHelp" placeholder="Enter your new password">
+                            <?php
+                            if (isset($errors["newPassword"]) && count($errors["newPassword"]) != 0) { ?> <!-- ajout du count pour ne pas avoir d'espace inutile !-->
+                                <ul class="text-danger">
+                                    <?php foreach ($errors["newPassword"] as $error) { ?>
+                                        <li><?= $error ?></li>
+                                    <?php } ?>
+                                </ul>
+                            <?php } ?>
                             <div id="newPasswordHelp" class="form-text text-secondary ">Password must be 8-16 characters long with uppercase, number and punctuation</div>
                         </div>
                         <div class="mb-3">

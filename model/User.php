@@ -7,6 +7,15 @@ class User extends Model {
     private static function check_password(string $clear_password, string $hash) : bool {
         return password_verify($clear_password,$hash);
     }
+
+    public function checkPassword(string $entered_password) : array {
+        $errors = [];
+        if (!$this->check_password($entered_password, $this->hashed_password)){
+            $errors[] = "Password incorrect.";
+        }
+        return $errors;
+    }
+
     public static function get_user_by_email(string $email): User | false{
         $query =self::execute("SELECT * FROM users where email= :email",["email"=>$email]);
         $data=$query->fetch();
@@ -125,6 +134,22 @@ public function is_unique_full_name() : bool {
                     iban = :iban
                 WHERE id = :id;";
         $query = self::execute($sql, ["full_name" => $this->full_name, "pseudo" => $this->pseudo, "email" => $this->email, "iban" => $this->iban, "id" => $this->id]);
+    }
+
+    public function validate_password(string $newPasssword) : array {
+        $errors = [];
+        $regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])[\x20-\x7E]{8,16}$/";
+        if (!preg_match($regex, $newPasssword)){
+            $errors[] = "New password not valid.";
+        }
+        return $errors;
+    }
+
+    public function save_new_password(string $newPasssword) : void {
+        $hashed_new_password = password_hash($newPasssword, PASSWORD_BCRYPT);
+        $sql = "UPDATE users SET password = :new_password WHERE id = :user_id";
+        $query = self::execute($sql, ["new_password" => $hashed_new_password, "user_id" => $this->id]);
+        $this->hashed_password = $hashed_new_password;
     }
 }
 ?>
