@@ -8,15 +8,14 @@ class Item extends Model {
     public function __construct(public int $id ,public string $title,public ?string $description,public int $owner,public string $created_at,public ?int $buy_now_price,public ? int $starting_bid ,public string $picture_path ){
     }
 
-    private static $items_participated_in_sql =  "SELECT DISTINCT vit.*, owners.full_name owner_full_name, b.amount, ip.picture_path, (SELECT COUNT(*) FROM item_pictures ip2 WHERE ip2.item = vit.id) as number_of_pictures, 
+    private static $items_participated_in_sql =  "SELECT DISTINCT vit.*, owners.full_name owner_full_name, b.amount, 
+   (SELECT ip.picture_path from item_pictures ip WHERE ip.priority = 1 AND ip.item = vit.id) as picture_path, (SELECT COUNT(*) FROM item_pictures ip2 WHERE ip2.item = vit.id) as number_of_pictures, 
     CONCAT(TIMESTAMPDIFF(DAY, :current_date_time, vit.end_at), 'd ', TIMESTAMPDIFF(HOUR, :current_date_time, vit.end_at) % 24, 'h') as time_left
                                 FROM v_items_status vit 
-                                JOIN item_pictures ip ON vit.id = ip.item 
                                 JOIN users as owners ON vit.owner = owners.id
                                 JOIN bids b ON b.item = vit.id
                                 WHERE 
                                 b.amount= (SELECT MAX(b2.amount) FROM bids b2 WHERE b2.owner = :user_id AND b2.item = b.item) AND
-                                ip.priority = 1 AND
                                 vit.buy_now_reached = 0 AND
                                 b.owner = :user_id AND
                                 vit.end_at > :current_date_time
@@ -33,16 +32,14 @@ class Item extends Model {
         $current_date_time =AppTime::get_current_datetime();
         $sql = " SELECT DISTINCT vit.*, 
                 owners.full_name owner_full_name, 
-                ip.picture_path,
+                (SELECT ip.picture_path from item_pictures ip WHERE ip.priority = 1 AND ip.item = vit.id) as picture_path,
                 (SELECT COUNT(*)
                 FROM item_pictures ip2
                 WHERE ip2.item = vit.id) as number_of_pictures,
                 CONCAT(TIMESTAMPDIFF(DAY, :current_date_time, vit.end_at), 'd ', TIMESTAMPDIFF(HOUR, :current_date_time, vit.end_at) % 24, 'h') as time_left
             FROM v_items_status vit 
-            JOIN item_pictures ip ON vit.id = ip.item 
             JOIN users as owners ON vit.owner = owners.id
-            WHERE   ip.priority = 1
-            AND vit.buy_now_reached = 0
+            WHERE vit.buy_now_reached = 0
             AND vit.end_at > :current_date_time
             AND owners.id != :user_id
             AND vit.id NOT IN (SELECT bids.item
