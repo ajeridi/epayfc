@@ -271,8 +271,17 @@ class Item extends Model {
     }
 
     public static function upload_image(int $item_id, string $picture_path) : void {
-        $query = self::execute("INSERT INTO item_pictures(item, priority, picture_path) VALUES (:item_id, (SELECT MAX(ip.priority)+1 FROM item_pictures as ip WHERE ip.item = :item_id), :picture_path)",
-        ["item_id" => $item_id, "picture_path" => $picture_path]);
+        // on regarde quelle est la priorite de la derniere image de l'item
+        $priority = Item::get_new_picture_priority($item_id);
+        $query = self::execute("INSERT INTO item_pictures(item, priority, picture_path) VALUES (:item_id, :priority, :picture_path)",
+        ["item_id" => $item_id, "priority" => $priority ,"picture_path" => $picture_path]);
+    }
+
+    public static function get_new_picture_priority(int $item_id) : int {
+        $sql = "SELECT (MAX(priority)+1) as next_priority FROM item_pictures WHERE item = :item_id";
+        $query = self::execute($sql, ["item_id" => $item_id]);
+        $res = $query->fetch();
+        return $res["next_priority"] == null ? 1 : $res["next_priority"];
     }
 
     public static function swap_priority(int $item_id, int $old_priority, int $new_priority) : void {
