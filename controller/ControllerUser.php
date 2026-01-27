@@ -104,7 +104,8 @@ class ControllerUser extends Controller  {
     }
     public function manage_profile_picture(){
         $user=$this->get_user_or_redirect();
+        $errors=[];
 
-        (new View('manage_profile_picture'))->show(['user'=>$user]);
+        (new View('manage_profile_picture'))->show(['user'=>$user,'errors'=>$errors]);
     }
 }

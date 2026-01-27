@@ -15,7 +15,7 @@
             <!-- Barre au dessus de la page -->
             <nav class="navbar bg-navy-gray" data-bs-theme="dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand text-blue" href="item/profile"><i class="bi bi-arrow-left"></i> </a>
+                    <a class="navbar-brand text-blue" href="user/profile"><i class="bi bi-arrow-left"></i> </a>
                     <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Manage profile picture <i class="bi bi-cart4 fs-4 text-white"></i></span>
                 </div>
             </nav>
@@ -40,7 +40,7 @@
                     <h6 class="card-title fw-bold">Select Images *</h6>
                     <form method='post' action='' enctype='multipart/form-data'>
                         <input type='file' class='form-control text-bg-dark' name='image' accept="image/x-png, image/gif, image/jpeg, .jpg, image/webp">
-                        <p class="card-text text-secondary">You can select multiple images (JPG, PNG, GIF, WebP). Images will be added to the end of your current list.</p>
+                        <p class="card-text text-secondary">Supported formats:JPG, PNG, GIF, WebP. This well replace your current profile.</p>
                         <input type='submit' class="btn btn-primary" value='Upload Images'>
                     </form><br>
                     <div class="text-danger">
@@ -53,6 +53,22 @@
                             </ul>
                     </div>
                 </div>
+                </div>
+                <?php if($user->picture_path){?>
+                <div class="card text-white text-bg-dark">
+                    <div class="card-header bg-navy-gray ">
+                        Remove Current Picture
+                    </div>
+                    <div class="card-body  text-white text-bg-dark">
+                        <div class=" bg-warning border  mb-3 " style="--bs-bg-opacity: .10;" >
+                            <p class=" text-warning " style="padding-top:10px;padding-left:10px;">This will permenenly delete your current profile picture.You can upload a new one anytime</p>
+                        </div>
+    
+                        <a class="btn btn-danger"  href="" role="button">Delete Picture</a>
+                    </div>
+                    
+                </div>
+                <?php } ?>
             </div><br><br>
                 </div>
             </div>
