@@ -135,8 +135,9 @@ public function is_unique_full_name() : bool {
                 WHERE id = :id;";
         $query = self::execute($sql, ["full_name" => $this->full_name, "pseudo" => $this->pseudo, "email" => $this->email, "iban" => $this->iban, "id" => $this->id]);
     }
-    public function edit_picture(): void {
-        self::execute("UPDATE users SET picture_path=:picture_path where id=:id",['id'=>$this->id,'picture_path'=>$this->picture_path]);
+   
+    public function delete_picture(): void{
+        self::execute("UPDATE users SET picture_path = :picture_path where id=:id",['id'=>$this->id,'picture_path'=>$this->picture_path]);
     }
 
     public function validate_password(string $newPasssword) : array {

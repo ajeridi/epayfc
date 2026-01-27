@@ -55,6 +55,7 @@
                 </div>
                 </div>
                 <?php if($user->picture_path){?>
+             <form method="post" action="user/manage_profile_picture" >
                 <div class="card text-white text-bg-dark">
                     <div class="card-header bg-navy-gray ">
                         Remove Current Picture
@@ -64,10 +65,11 @@
                             <p class=" text-warning " style="padding-top:10px;padding-left:10px;">This will permenenly delete your current profile picture.You can upload a new one anytime</p>
                         </div>
     
-                        <a class="btn btn-danger"  href="" role="button">Delete Picture</a>
+                        <button class="btn btn-danger"  type="submit"  name="delete">Delete Picture</button>
                     </div>
                     
                 </div>
+             </form>   
                 <?php } ?>
             </div><br><br>
                 </div>
