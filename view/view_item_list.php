@@ -147,7 +147,7 @@
                 <h3 class="text-blue">Sold Items</h3>
 
                 <!-- tableau contenant les cartes des items -->
-                <div class="container mt-4 mb-5">
+                <div class="container mt-4" style="margin-bottom: 150px;">
                     <div class="row text-white g-3">
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
@@ -183,7 +183,7 @@
                                                                 <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= $item['buy_now_price']?></p>
                                                             <?php }?>
                                                         </div>
-                                                        <?php if ($item['max_bid'] != NULL) { ?>
+                                                        <?php if ($item['max_bid'] != NULL && $item["is_direct_sale"] == 0) { ?>
                                                             <div class="col-md-6 text-end">
                                                                 <div class="d-flex flex-column">
                                                                     <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
@@ -204,6 +204,8 @@
                 </div>
             </div>
         </main>
-
+        <footer> 
+            <?php require 'navbar_user.php'; ?>
+        </footer>
     </body>
 </html>
