@@ -106,6 +106,7 @@ class ControllerUser extends Controller  {
     public function manage_profile_picture(){
         $user=$this->get_user_or_redirect();
         $errors=[];
+        $picture_path=null;
         if(isset($_FILES['image']) &&  $_FILES['image']['name'] !=""){
             $image=$_FILES['image'];
             $errors=ImageUtils::validate_image($image);
@@ -117,12 +118,28 @@ class ControllerUser extends Controller  {
             $picture_path = "uploads/users/$user->id/$file_name.jpg";
             ImageUtils::save_image_file($full_image, $picture_path);
             ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
-            $user->picture_path=$picture_path;
-            $user->edit_picture(); 
+             $this::actualise_path($user,$picture_path);
+            
             }
+
         }
+        if(isset($_POST['delete'])){
+             $this::actualise_path($user,$picture_path); 
+             
+        }
+       
+        
 
         
         (new View('manage_profile_picture'))->show(['user'=>$user,'errors'=>$errors]);
     }
+    private static function actualise_path($user,$picture_path) : void {
+         if($user->picture_path !== null){
+            ImageUtils::delete_image_files($user->picture_path);
+         }
+             $user->picture_path=$picture_path;
+             $user->delete_picture(); 
+           
+    }
+   
 }
