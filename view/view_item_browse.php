@@ -15,11 +15,12 @@
             <!-- Barre au dessus de la page -->
             <nav class="navbar bg-navy-gray" data-bs-theme="dark">
                 <div class="container-fluid justify-content-center">
-                    <span class="navbar-brand mb-0 h1 text-blue"">Browse <i class="bi bi-cart4 fs-4 text-white"></i></span>
+                    <span class="navbar-brand mb-0 h1 text-blue">Browse <i class="bi bi-cart4 fs-4 text-white"></i></span>
                 </div>
             </nav>
         </header>
         <main class="main-content-margins">
+            <?php if ($user != false){ ?>
             <div class="items_participated_in float-start">
                 <h3 class="text-blue">Items I'm Participating In</h3>
 
@@ -80,12 +81,12 @@
                     ?>
                 </div>
             </div>
-
-            <div class="other-available-items">
-                <h3 class="text-blue">Other Available Items</h3>
+        <?php } ?>
+            <div class="other-available-items float-start">
+                <h3 class="text-blue"><?=  ($user == false) ? "" : "Other" ?> Available Items</h3>
 
                 <!-- tableau contenant les cartes des items -->
-                <div class="container mt-4 mb-5">
+                <div class="container mt-4" style="margin-bottom: 150px;">
                     <div class="row text-white g-3">
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
@@ -125,6 +126,8 @@
                 </div>
             </div>
         </main>
-
+        <footer> 
+            <?php require 'navbar_user.php'; ?>
+        </footer>
     </body>
 </html>
