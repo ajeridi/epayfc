@@ -289,8 +289,12 @@ class Item extends Model {
     }
 
     public static function delete_picture(int $item_id, int $priority) : void {
+        // d'abord supprimer l'image    
         $sql = "DELETE FROM item_pictures WHERE item = :item_id AND priority = :priority";
         $query = self::execute($sql, ["item_id" => $item_id, "priority" => $priority]);
+        // ensuite il faut actualiser les priorites des images ayant une priorite > $priority, faire -1 a chaque priorite se trouvant apres
+        $sql = "UPDATE item_pictures SET priority = (priority - 1) WHERE priority > :priority AND item = :item_id";
+        $query = self::execute($sql, ["priority" => $priority, "item_id" => $item_id ]);
     }
 
     public static function get_picture_path(int $item_id, int $priority) : string {
