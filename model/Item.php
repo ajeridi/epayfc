@@ -80,7 +80,7 @@ class Item extends Model {
                 FROM v_items_status vit
                 JOIN users as owners on owners.id = vit.owner
                 WHERE owners.id = :user_id AND 
-                vit.buy_now_reached = 0 AND 
+                vit.bid_count = 0 AND 
                 vit.end_at <= :current_date_time 
                 ORDER BY vit.end_at";
 
