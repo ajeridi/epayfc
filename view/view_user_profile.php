@@ -23,10 +23,10 @@
             <div class="container mb-3">
                 <div class="card text-center bg-dark">
                     <div class="card-body container-fluid justify-content-center text-white">
-                        <img src="<?= $info['picture_path'] ?>"  class="avatar rounded-circle"> 
-                        <h5 class="card-text"><?= $info['full_name'] ?></p>
-                        <p class="card-text small">@<?= $info['pseudo'] ?></p>
-                        <p class="card-text small"><?= $info['email'] ?></p>
+                        <img src="<?= $user->get_picture_path() ?>"  class="avatar rounded-circle"> 
+                        <h5 class="card-text"><?= $user->get_full_name(); ?></p>
+                        <p class="card-text small">@<?= $user->get_pseudo() ?></p>
+                        <p class="card-text small"><?= $user->get_email()?></p>
                     </div>
                  
                 </div>

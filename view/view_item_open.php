@@ -124,7 +124,7 @@
               </div>
             
               <hr class="hr-soft">
-              <fieldset <?php if($user == false || $user->pseudo == $item['pseudo'] ){?> disabled <?php } ?>>
+              <fieldset <?php if($user == false || $user->get_pseudo() == $item['pseudo'] ){?> disabled <?php } ?>>
               <?php  if($item['is_direct_sale']==0) {?>
               <?php if($is_open){?>
               <form method="post" action="item/bid/<?= $item['id']?>">
@@ -159,7 +159,7 @@
               </fieldset>   
               <?php }if(!$is_open){
                 if($item['bid_count']!=0){
-                if($user->id===$bids['0']['owner']){?>
+                if($user->get_id()===$bids['0']['owner']){?>
                 <p> Congratulation! You purchased this item for € <?= $item['max_bid'] ?> </p>
                 <?php }else {?>
                 <p><?= $bids['0']['pseudo'] ?> Won this item for € <?= $item['max_bid'] ?></p> 
@@ -167,7 +167,7 @@
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
 
-                <?php if($user == true && $user->pseudo === $item['pseudo'] && $is_open){?>
+                <?php if($user == true && $user->get_pseudo() === $item['pseudo'] && $is_open){?>
                 <p>You cannot bid on your own listing</p>
                 <?php } ?> 
                 <?php if($user == false && $is_open){?>
@@ -190,7 +190,7 @@
               </div>
             </div>
           </div>
-          <?php if($user == true && $user->pseudo === $item['pseudo']  && $is_open){?>
+          <?php if($user == true && $user->get_pseudo() === $item['pseudo']  && $is_open){?>
           <div class="card card-dark border-0 mt-3">
             <div class="card-body">
               <div class="section-title mb-3">Manage Your Item</div>

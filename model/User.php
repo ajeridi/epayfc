@@ -1,9 +1,45 @@
 <?php
 require_once "framework/Model.php";
 class User extends Model {
-    public function __construct(public int $id, public string $pseudo,public string $hashed_password,public string $email,public string $full_name, public string $role,public ?string $picture_path= null, public ?string $iban=null,){
+    public function __construct(private int $id, private string $pseudo,private string $hashed_password,private string $email,private string $full_name, private string $role,private ?string $picture_path = null, private ?string $iban=null){}
 
+    public function get_id(): int {
+        return $this->id ;
     }
+
+    public function get_full_name(){
+        return $this->full_name;
+    }
+
+    public function get_email(){
+        return $this->email;
+    }
+
+    public function get_pseudo(){
+        return $this->pseudo;
+    }
+
+    public function get_password(){
+        return $this->hashed_password;
+    }
+
+    public function get_role(){
+        return $this->role;
+    }
+
+    public function get_picture_path(){
+        return $this->picture_path; 
+    }
+    
+    public function get_iban(){
+        return $this->iban;
+    }
+
+    public function set_picture_path($picture_path) : void {
+        $this->picture_path=$picture_path;     
+    }
+
+    
     private static function check_password(string $clear_password, string $hash) : bool {
         return password_verify($clear_password,$hash);
     }

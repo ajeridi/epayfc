@@ -229,6 +229,7 @@ class Item extends Model {
 
     }
     public static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): int {
+        $current_date_time=AppTime::get_current_datetime();
         if($buy_now_price == ""){
             if($starting_bid != "" && $starting_bid !=0){
                 $buy_now_price=null;
@@ -237,7 +238,7 @@ class Item extends Model {
             }
         }
         if($id==0){
-            self::execute("INSERT INTO items (owner,title,description,duration_days,buy_now_price,starting_bid,created_at)  VALUE (:owner,:title,:description,:duration_days,:buy_now_price,:starting_bid,:created_at) ",['owner'=>$owner,'title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price,'created_at'=>"2026-01-02 18:30:20"]);
+            self::execute("INSERT INTO items (owner,title,description,duration_days,buy_now_price,starting_bid,created_at)  VALUE (:owner,:title,:description,:duration_days,:buy_now_price,:starting_bid,:created_at) ",['owner'=>$owner,'title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price,'created_at'=>$current_date_time]);
             $id_nv=self::lastInsertId();
             return $id_nv;
         } else{
