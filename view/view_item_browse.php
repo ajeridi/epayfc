@@ -35,7 +35,7 @@
                             <div class="col-3">
                                 <a href="item/open/<?= $item['id'] ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img src='<?= $item['picture_path'] ?>' class="card-img-top" alt="image item">
+                                        <img <?=  ($item['picture_path']=="") ? "src=uploads/items/default.jpg" :   "src=".$item['picture_path'] ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
                                             <?php if ($item['max_bid'] == $item['amount']) { ?>
                                                 <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
@@ -99,7 +99,7 @@
                             <div class="col-3">
                                 <a href="item/open/<?= $item['id'] ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img src='<?= $item['picture_path'] ?>' class="card-img-top" alt="image item">
+                                        <img <?=  ($item['picture_path']=="") ? "src=uploads/items/default.jpg" :   "src=".$item['picture_path'] ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
                                             <div class="float-end d-flex flex-column gap-2 h-50">
                                                 <?php
