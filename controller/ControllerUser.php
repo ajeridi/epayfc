@@ -89,7 +89,7 @@ class ControllerUser extends Controller
                 $iban = Tools::sanitize($_POST["iban"]);
             }
 
-            $newUser = new User($user->get_id(), $username, $user->get_hashed_password(), $email, $fullname, $user->get_role(), $user->get_picture_path(), $iban);
+            $newUser = new User($user->get_id(), $username, $user->get_password(), $email, $fullname, $user->get_role(), $user->get_picture_path(), $iban);
             $errors = $newUser->validate();
         }
         // si on a aucune erreur et que le newUser n'est pas null, on doit le sauvegarder dans la db et rediriger vers profile
