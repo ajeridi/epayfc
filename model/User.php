@@ -180,9 +180,17 @@ public function is_unique_full_name() : bool {
         $errors = [];
         $regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])[\x20-\x7E]{8,16}$/";
         if (!preg_match($regex, $newPasssword)){
-            $errors[] = "New password not valid.";
+            $errors[] = "Password not valid.";
         }
         return $errors;
+    }
+
+    public static function confirm_password(string $password, string $confirmPassword) : array{
+        $error = [];
+        if ($password !== $confirmPassword){
+            $error[] = "Password do not match";
+        }
+        return $error;
     }
 
     public function save_new_password(string $newPasssword) : void {
@@ -190,6 +198,11 @@ public function is_unique_full_name() : bool {
         $sql = "UPDATE users SET password = :new_password WHERE id = :user_id";
         $query = self::execute($sql, ["new_password" => $hashed_new_password, "user_id" => $this->id]);
         $this->hashed_password = $hashed_new_password;
+    }
+
+    public function insert_new_user() : void {
+        $sql = "INSERT INTO users(full_name, email, pseudo, password, role) VALUES(:fullname, :email, :pseudo, :password, :role)";
+        $query = self::execute($sql, ["fullname" => $this->full_name, "email" => $this->email, "pseudo" => $this->pseudo, "password" => $this->hashed_password, "role" => $this->role]);
     }
 }
 ?>
