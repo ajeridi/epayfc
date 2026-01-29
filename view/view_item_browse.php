@@ -65,25 +65,25 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="card-text fw-bolder mb-0"><?= $item->title ?></p>
-                                            <p class="card-text fw-light fs-6">By <?= $user->get_full_name() ?></p>
+                                            <p class="card-text fw-light fs-6">By <?= $item->get_owner_full_name() ?></p>
                                             <div class="container">
                                                 <div class="row align-items-center">
                                                     <div class="col-md-6">
                                                         <?php if ($item->buy_now_price == NULL) { ?>
-                                                            <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= $item->starting_bid ?></p>
+                                                            <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= number_format($item->starting_bid, 2, ",", " ") ?></p>
                                                         <?php } else { ?>
-                                                            <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= $item->buy_now_price ?></p>
+                                                            <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ") ?></p>
                                                         <?php } ?>
                                                     </div>
                                                     <div class="col-md-6 text-end">
                                                         <div class="d-flex flex-column">
                                                             <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
-                                                            <span class="card-text fs-6" style="color: green;">€ <?= $item->get_max_bid() ?><span>
+                                                            <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->get_max_bid(), 2, ",", " ") ?><span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <span class="card-text text-success fw-bold"><i class="bi bi-clock"></i> <?php echo $current_date->diff($datedebut->add($durations))->format('%d d / %h h') ?> left</span>
+                                            <span class="card-text text-success fw-bold"><i class="bi bi-clock"></i> <?php echo $current_date->diff($datedebut->add($durations))->format('%dd  %hh') ?> left</span>
                                         </div>
                                     </div>
                                 </a>

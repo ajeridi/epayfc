@@ -39,13 +39,16 @@ class Item extends Model {
          return  count($this->get_pictures_by_id());
     }
 
-    public function get_max_bid(): int {
+    public function get_max_bid(): float {
         $query=self::execute("SELECT MAX(b.amount) as max FROM bids b where b.item = :item_id ",["item_id"=>$this->id]);
         $data=$query->fetch();
         return $data['max'] ;
     }
 
-
+    public function get_owner_full_name() : string {
+        $res = User::get_full_name_by_id($this->owner);
+        return $res["full_name"];
+    }
 
 
     private static $items_participated_in_sql =  "SELECT DISTINCT vit.*, owners.full_name owner_full_name, b.amount, 
