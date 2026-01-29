@@ -4,9 +4,49 @@ require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 
 class Item extends Model {
+    public int $id ;
+     public string $title ;
+     public int $owner;
+     public string $created_at;
+     public int $duration_days;
+     public ?string $description=null;
+     public ?int $buy_now_price=null;
+     public ? int $starting_bid=null;
      
-    public function __construct(public int $id ,public string $title,public ?string $description,public int $owner,public string $created_at,public ?int $buy_now_price,public ? int $starting_bid ,public string $picture_path ){
+    public function __construct(){
     }
+
+    public static function get_items_participatedIn(int $user_id) : array {
+
+        $current_date_time=AppTime::get_current_datetime();
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid FROM items i join bids b on i.id=b.item where  DATE_ADD(i.created_at, INTERVAL i.duration_days DAY ) > :current_date_time AND  b.owner = :user_id",[":user_id"=>$user_id,":current_date_time"=>$current_date_time]);
+        return $query->fetchAll(PDO::FETCH_CLASS,Item::class);        
+    }
+
+    public function get_path() : String {
+        $query = self::execute("SELECT ip.picture_path FROM item_pictures ip where ip.item = :item_id and ip.priority= :nb",["item_id"=>$this->id,"nb"=>"1"]);
+        $data=$query->fetch();
+        return $data['picture_path'];
+    }
+
+    public function get_pictures_by_id() : array {
+        $query=self::execute("SELECT ip.picture_path FROM item_pictures ip where ip.item=:item_id",["item_id"=>$this->id]);
+        $data=$query->fetchAll();
+        return $data; 
+    }
+
+    public function get_nomber_of_pictures(): int {
+         return  count($this->get_pictures_by_id());
+    }
+
+    public function get_max_bid(): int {
+        $query=self::execute("SELECT MAX(b.amount) as max FROM bids b where b.item = :item_id ",["item_id"=>$this->id]);
+        $data=$query->fetch();
+        return $data['max'] ;
+    }
+
+
+
 
     private static $items_participated_in_sql =  "SELECT DISTINCT vit.*, owners.full_name owner_full_name, b.amount, 
    (SELECT ip.picture_path from item_pictures ip WHERE ip.priority = 1 AND ip.item = vit.id) as picture_path, (SELECT COUNT(*) FROM item_pictures ip2 WHERE ip2.item = vit.id) as number_of_pictures, 
@@ -27,6 +67,7 @@ class Item extends Model {
         $query = self::execute(Item::$items_participated_in_sql, ["user_id" => $user_id, "current_date_time" => $current_date_time]);
         return $query->fetchAll();
     } 
+
 
     public static function get_other_available_items(int $user_id) : array{
         $current_date_time =AppTime::get_current_datetime();
