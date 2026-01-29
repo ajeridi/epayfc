@@ -179,4 +179,11 @@ class ControllerUser extends Controller
         $user->set_picture_path($picture_path);
         $user->delete_picture();
     }
+
+    public function signup() {
+        $user = $this->get_user_or_false();
+        if ($user != false)
+            $this->redirect("item");
+        (new View("signup"))-> show([]);
+    }
 }
