@@ -179,4 +179,33 @@ class ControllerUser extends Controller
         $user->set_picture_path($picture_path);
         $user->delete_picture();
     }
+
+    public function signup() {
+        $user = $this->get_user_or_false();
+        if ($user != false)
+            $this->redirect("item");
+
+        $newUser = null;
+        $errors = [];
+        if (isset($_POST["signup"])){
+            $email = Tools::sanitize($_POST["email"]);
+            $fullname = Tools::sanitize($_POST["fullname"]);
+            $pseudo = Tools::sanitize($_POST["pseudo"]);
+            $password = Tools::sanitize($_POST["password"]);
+            $confirmPassword = Tools::sanitize($_POST["confirmPassword"]);
+
+            $newUser = new User(-1, $pseudo, password_hash($password, PASSWORD_BCRYPT), $email, $fullname, "user");
+            $errors = $newUser->validate();
+            $errors["password"] = $newUser->validate_password($password);
+            $errors["confirmPassword"] = User::confirm_password($password, $confirmPassword);
+
+            if ($this->has_no_errors($errors)){
+                $newUser->insert_new_user();
+                $this->log_user(User::get_user_by_email($email), "item", "browse");
+                
+            }
+
+        }
+        (new View("signup"))-> show(["newUser" => $newUser, "errors" => $errors]);
+    }
 }
