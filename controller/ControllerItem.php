@@ -73,7 +73,7 @@ class ControllerItem extends Controller{
         if(isset($_GET['param1'])  ){
             $item_id=$_GET['param1'];
             $item =Item::get_item_by_id($item_id,1);
-            Item::buy($user->id,$_GET['param1'],$current_date,$item['buy_now_price']);
+            Item::buy($user->get_id(),$_GET['param1'],$current_date,$item['buy_now_price']);
               
         }
         $this->redirect("Item","open",$item_id);
@@ -85,7 +85,7 @@ class ControllerItem extends Controller{
        if(isset($_GET['param1'])){
         $item_id=$_GET['param1'];
         $amount=$_POST['min_bid'];
-        Item::buy($user->id,$item_id,$current_date,$amount);
+        Item::buy($user->get_id(),$item_id,$current_date,$amount);
        }
        $this->redirect("item","open",$item_id);
     }
