@@ -29,7 +29,7 @@
                 </figure>
             </a>
         <?php }else{?>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="user/signup">
                 <figure>
                     <i class="bi bi-person-raised-hand"></i>
                     <figcaption class="text-center">Join us!</figcaption>
