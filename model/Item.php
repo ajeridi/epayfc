@@ -246,12 +246,12 @@ class Item extends Model {
             $errors["buy_now_price"][]="the buy now price most be sup then the starting bid";
            
         }
-        if($starting_bid != "" &&  $saleprice != ""){
+        if(($starting_bid != "" &&  $saleprice != "")|| ($saleprice!="" && $buy_now_price!="")){
             $errors["buy_now_price"][]="Cannot create both auction and direct sale";
             $errors["saleprice"][]="Cannot create both auction and direct sale";
-
             
         }
+        
        
         return $errors;
     }
@@ -375,8 +375,6 @@ class Item extends Model {
         $loyer_bider=array_keys($count,$max,true);
         return $loyer_bider;
         
-
-
     }
 
     

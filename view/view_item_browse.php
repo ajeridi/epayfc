@@ -78,7 +78,7 @@
                                                     <div class="col-md-6 text-end">
                                                         <div class="d-flex flex-column">
                                                             <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
-                                                            <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->get_max_bid(), 2, ",", " ") ?><span>
+                                                            <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->bids['0']->amount, 2, ",", " ") ?><span>
                                                         </div>
                                                     </div>
                                                 </div>

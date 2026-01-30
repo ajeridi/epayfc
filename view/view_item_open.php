@@ -38,15 +38,14 @@
                   <div class="h5 mb-1"><?= $item->title ?></div>
                   <div class="text-muted small mb-2"><?= $item->description ?></div>
                   <?php
-                   
-                            
+                    
                             $durations=new DateInterval("P{$item->duration_days}D");
                             $datedebut=new DateTime($item->created_at);
                   ?>
 
                   <div class="text-muted small">
                     <div><span class="label">Start:</span> <?= $item->created_at ?></div>
-                    <div><span class="label">Ends:</span> <?php echo $datedebut->add($durations)->format('d/m/y h:m:s') ?></div>
+                    <div><span class="label">Ends:</span> <?php echo $datedebut->add($durations)->format('x-m-d h:m:s') ?></div>
                   </div>
                 </div>
 
