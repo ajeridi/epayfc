@@ -184,7 +184,7 @@ class ControllerItem extends Controller
     {
         $user = $this->get_user_or_redirect();
         $errors = [];
-        if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1'])) {    // pas oublier de check aussi si l'objet appartient au user connecte
+        if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1']) && Item::is_open_anonce($_GET["param1"])) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
             $item_id = $_GET['param1'];
             if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
                 $image = $_FILES["image"];
@@ -237,6 +237,9 @@ class ControllerItem extends Controller
                 $this->redirect("item", "manage_images", "$item_id");
             }
             (new View("manage_images"))->show(["user" => $user, "item_id" => $item_id, "item_pictures" => $item_pictures, "item_title" => $item_title, "errors" => $errors]);
+        }
+        else {
+            $this->redirect("item");
         }
     }
 
