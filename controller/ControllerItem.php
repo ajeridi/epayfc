@@ -52,10 +52,6 @@ class ControllerItem extends Controller{
          } else{
             $this->index();
          }
-         if(!$item){
-            $item=Item::get_item($_GET["param1"]);
-            $item['picture_path']="";
-         }
          if(!$is_open && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
              $this->index();
          }else{
@@ -234,7 +230,7 @@ class ControllerItem extends Controller{
    
     public  function sales(){
         $user=$this->get_user_or_redirect();
-        $salesItem=Item::get_salesItem_by_user($user->get_id());
+        $salesItem=Item::get_user_sold_item($user->get_id());
         $info=Item::cal_total_avg_nbrOfSales($salesItem);
         $loyer_buyer=Item::find_loyer_bider($salesItem,"buyer");
         $nom=$this::concate_names($loyer_buyer);

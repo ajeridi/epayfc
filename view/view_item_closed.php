@@ -109,7 +109,7 @@
                                             <div class="card-footer text-light " style="background-color: #1e1231;" >
                                              <?php if($_GET['action']=="sales"){?>  
                                                <p><span><i class="bi bi-currency-dollar fs-5"> <?php } else {?><p><span><i class="bi bi-tag fs-5"><?php } ?> </i><?= ($_GET['action']=="sales") ? "Final price € ".number_format($item->get_max_bid(),2,',',' ') : "Paid ".number_format($item->get_max_bid(),2,',',' ') ?> </span></p>
-                                              <?php if($_GET['action']=="sales") {?>  <p><span><i class="bi bi-trophy"></i> <?= $item["buyer"] ?></span></p>
+                                              <?php if($_GET['action']=="sales") {?>  <p><span><i class="bi bi-trophy"></i> <?= User::get_pseudo_by_id($item->bids['0']->owner) ?></span></p>
                                                 <?php } ?>
                                                 
                                                 <p><span><i class="bi bi-clock fs-5"></i> Closed on <?= $item->created_at ?> </span></p>

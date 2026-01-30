@@ -28,7 +28,7 @@ class Item extends Model {
     } 
     private static function build_Item(array $array) : Item {
         $item= new Item($array['id'],$array['title'],$array['owner'],$array['created_at'],$array['duration_days'],$array['description'],$array['buy_now_price'],$array['starting_bid']);
-        $item->bids[]=Bid::get_item_bids($item->id);
+        $item->bids=Bid::get_item_bids($item->id);
         return $item;
     }
    
@@ -174,23 +174,10 @@ class Item extends Model {
         $query=self::execute("SELECT  i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid FROM items i WHERE i.id= :id ",["id"=>$item_id]);
         $array=$query->fetch(); 
         $item=Item::build_Item($array);
-        $item->bids=Bid::get_item_bids($item->id);
+        
         return $item;     
     }
 
-     public static function get_item(int $item_id) : array {
-        $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,u1.pseudo,u1.picture_path as user_path ,u1.role,starting_bid
-                                 FROM  v_items_status 
-                                  join users u1 on v_items_status.owner=u1.id
-                                            WHERE v_items_status.id= :id
-                                            ",["id"=>$item_id]);
-        $data=$query->fetch();
-    
-       
-            return $data;
-        
-
-    }
     public static function get_other_pictures_by_id(int $item_id): array {
         $query=self::execute("SELECT * FROM item_pictures WHERE item = :item ",["item"=>$item_id]);
         $data=$query->fetchAll();
@@ -267,8 +254,6 @@ class Item extends Model {
         }
        
         return $errors;
-
-
     }
     private static function unicite_title_for_owner($owner ,$title): bool {
         $result=true ;
@@ -300,8 +285,6 @@ class Item extends Model {
             self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,starting_bid=:starting_bid WHERE id =:id ",['title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price, 'id' => $id]);
             return $id;
         }
-        
-
     }
     public static function is_Direct_sale(int $item_id): bool {
          $item=Item::get_item_by_id($item_id);
@@ -312,9 +295,7 @@ class Item extends Model {
             return false;
          }
 
-    }
-
-   
+    }   
     public static function get_item_title(int $item_id) : string {
         $query = self::execute("SELECT title from items WHERE id = :item_id", 
         ["item_id" => $item_id]);
@@ -365,22 +346,7 @@ class Item extends Model {
         return $res["picture_path"];
     }
 
-    public static function get_salesItem_by_user(int $user_id): array {
-        
-        $current_date_time=AppTime::get_current_datetime();
-        $query=self::execute("SELECT distinct v.id,v.title,v.owner,v.created_at,v.buy_now_price,v.end_at,v.bid_count,v.max_bid as amount,v.is_direct_sale,v.is_auction,v.starting_bid,u.pseudo,v.has_buy_now,count(ip.picture_path) as number_of_pictures,(SELECT picture_path FROM item_pictures WHERE item = v.id AND priority = 1) as picture_path,
-                                (SELECT distinct u.pseudo  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as buyer , (SELECT distinct  b.created_at  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as created_at
-                              from v_items_status v join users u on v.owner=u.id 
-                                                            join item_pictures ip on ip.item=v.id
-                                                            join bids b on b.item=v.id
-                                       Where v.owner=:owner and ((v.is_auction=1 and v.end_at < :current_date) or
-                                        (v.has_buy_now=1 and v.buy_now_reached=1))
-                                        GROUP BY v.id,ip.item,v.has_buy_now,v.title,v.owner,b.amount,v.created_at,v.buy_now_price,v.end_at,v.is_direct_sale,v.bid_count,v.max_bid,v.is_auction,v.starting_bid,u.pseudo,buyer,created_at,picture_path",["owner"=>$user_id,"current_date"=> $current_date_time]);
-       $data=$query->fetchAll();
-       
-       
-       return $data ;
-    }
+
     public static function cal_total_avg_nbrOfSales(array $salesItem) :  array{
         $total=0.0 ;
         $nbrOfSales=0;
