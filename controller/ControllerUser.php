@@ -143,33 +143,30 @@ class ControllerUser extends Controller
 
         if (isset($_POST["savePassword"])) {
             // verification du mot de passe actuel
-            if (isset($_POST["currentPassword"])) {
-                $currentPassword = Tools::sanitize($_POST["currentPassword"]);
-                $errors["currentPassword"] = $user->checkPassword($currentPassword);
-                //verification du nouveau mot de passe
-                if ($this->has_no_errors($errors) && isset($_POST["newPassword"])) {
-                    $newPassword = Tools::sanitize($_POST["newPassword"]);
-                    $errors["newPassword"] = $user->validate_password($newPassword);
-                    if ($this->has_no_errors($errors["newPassword"])) {
-                        //confirmation 
-                        if (isset($_POST["confirmPassword"])) {
-                            $confirmPassword = Tools::sanitize($_POST["confirmPassword"]);
-                            if ($confirmPassword !== $newPassword) {
-                                $errors["newPassword"][] = "You have to enter twice the same password";
-                            }
-                        }
-                    }
-                    //sauvegarde du nouveau mot de passe
-                    if ($this->has_no_errors($errors)) {
-                        $user->save_new_password($newPassword);
-                        $this->redirect("user", "profile");
-                    }
+            $currentPassword = Tools::sanitize($_POST["currentPassword"]);
+            $errors["currentPassword"] = $user->checkPassword($currentPassword);
+            //verification du nouveau mot de passe
+            if ($this->has_no_errors($errors)) {
+                $newPassword = Tools::sanitize($_POST["newPassword"]);
+                $errors["newPassword"] = $user->validate_password($newPassword);
+                // si nouveau mot de passe valide on passe a la confirmation
+                if ($this->has_no_errors($errors["newPassword"])) {
+                    //confirmation 
+                    $confirmPassword = Tools::sanitize($_POST["confirmPassword"]);
+                    $errors["confirmPassword"] = User::confirm_password($newPassword, $confirmPassword);
+                }
+                //sauvegarde du nouveau mot de passe
+                if ($this->has_no_errors($errors)) {
+                    $user->save_new_password($newPassword);
+                    $this->redirect("user", "profile");
                 }
             }
         }
 
         (new View("change_password"))->show(["user" => $user, "errors" => $errors]);
     }
+
+
     private static function actualise_path($user, $picture_path): void
     {
 
@@ -180,14 +177,15 @@ class ControllerUser extends Controller
         $user->delete_picture();
     }
 
-    public function signup() {
+    public function signup()
+    {
         $user = $this->get_user_or_false();
         if ($user != false)
             $this->redirect("item");
 
         $newUser = null;
         $errors = [];
-        if (isset($_POST["signup"])){
+        if (isset($_POST["signup"])) {
             $email = Tools::sanitize($_POST["email"]);
             $fullname = Tools::sanitize($_POST["fullname"]);
             $pseudo = Tools::sanitize($_POST["pseudo"]);
@@ -199,13 +197,11 @@ class ControllerUser extends Controller
             $errors["password"] = $newUser->validate_password($password);
             $errors["confirmPassword"] = User::confirm_password($password, $confirmPassword);
 
-            if ($this->has_no_errors($errors)){
+            if ($this->has_no_errors($errors)) {
                 $newUser->insert_new_user();
                 $this->log_user(User::get_user_by_email($email), "item", "browse");
-                
             }
-
         }
-        (new View("signup"))-> show(["newUser" => $newUser, "errors" => $errors]);
+        (new View("signup"))->show(["newUser" => $newUser, "errors" => $errors]);
     }
 }
