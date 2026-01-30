@@ -41,14 +41,14 @@ class ControllerItem extends Controller{
             $from=substr(stristr($_GET["param2"],"-"),1);
         }        
         if(isset($_GET["param1"]) && is_numeric($_GET["param1"])){
+            $priority=1;
             $is_open=Item::is_open_anonce($_GET["param1"]);
             if(isset($_GET["param3"])){
-                 $item =Item::get_item_by_id($_GET["param1"]);
-            }else{
-                $item =Item::get_item_by_id($_GET["param1"]);    
-        }
-        $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
-        $item =Item::get_item_by_id($_GET["param1"]);
+                $priority=$_GET["param3"] ;    
+            }
+            $item =Item::get_item_by_id($_GET["param1"]);     
+            $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
+            $item =Item::get_item_by_id($_GET["param1"]);
          } else{
             $this->index();
          }
@@ -57,7 +57,7 @@ class ControllerItem extends Controller{
          }else{
         
         
-        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"is_open"=>$is_open,"user"=>$user,"from"=>$from]);
+        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"is_open"=>$is_open,"user"=>$user,"from"=>$from,"priority"=>$priority]);
          }
     }
     public function buy() : void {

@@ -29,7 +29,7 @@
           <!-- Card image + infos -->
           <div class="card card-dark border-0 overflow-hidden">
             <div class="ratio ratio-16x9 bg-black-30">
-              <img <?= ($item->get_path()== null) ? "src=uploads/items/default.jpg" :   "src=".$item->get_path() ?>  class="w-100 h-100 object-fit-cover" alt="item image">
+              <img <?= ($item->get_path($priority)== null) ? "src=uploads/items/default.jpg" :   "src=".$item->get_path($priority) ?>  class="w-100 h-100 object-fit-cover" alt="item image">
             </div>
 
             <div class="card-body">
@@ -62,7 +62,7 @@
             <div class="thumbs d-flex gap-2 flex-wrap">
               <?php
                 foreach ($pictures as $i => $p) { ?>
-                  <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item->id?>/from-browse/">
+                  <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item->id?>/from-browse/<?= $p['priority'] ?>">
                     <img src="<?= $p['picture_path'] ?>" alt="thumb">
                   </a>
               <?php } ?>
