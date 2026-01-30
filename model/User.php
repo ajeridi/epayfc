@@ -1,9 +1,45 @@
 <?php
 require_once "framework/Model.php";
 class User extends Model {
-    public function __construct(public int $id, public string $pseudo,public string $hashed_password,public string $email,public string $full_name, public string $role,public ?string $picture_path= null, public ?string $iban=null,){
+    public function __construct(private int $id, private string $pseudo,private string $hashed_password,private string $email,private string $full_name, private string $role,private ?string $picture_path = null, private ?string $iban=null){}
 
+    public function get_id(): int {
+        return $this->id ;
     }
+
+    public function get_full_name(){
+        return $this->full_name;
+    }
+
+    public function get_email(){
+        return $this->email;
+    }
+
+    public function get_pseudo(){
+        return $this->pseudo;
+    }
+
+    public function get_password(){
+        return $this->hashed_password;
+    }
+
+    public function get_role(){
+        return $this->role;
+    }
+
+    public function get_picture_path(){
+        return $this->picture_path; 
+    }
+    
+    public function get_iban(){
+        return $this->iban;
+    }
+
+    public function set_picture_path($picture_path) : void {
+        $this->picture_path=$picture_path;     
+    }
+
+    
     private static function check_password(string $clear_password, string $hash) : bool {
         return password_verify($clear_password,$hash);
     }
@@ -135,17 +171,26 @@ public function is_unique_full_name() : bool {
                 WHERE id = :id;";
         $query = self::execute($sql, ["full_name" => $this->full_name, "pseudo" => $this->pseudo, "email" => $this->email, "iban" => $this->iban, "id" => $this->id]);
     }
-    public function edit_picture(): void {
-        self::execute("UPDATE users SET picture_path=:picture_path where id=:id",['id'=>$this->id,'picture_path'=>$this->picture_path]);
+   
+    public function delete_picture(): void{
+        self::execute("UPDATE users SET picture_path = :picture_path where id=:id",['id'=>$this->id,'picture_path'=>$this->picture_path]);
     }
 
     public function validate_password(string $newPasssword) : array {
         $errors = [];
         $regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])[\x20-\x7E]{8,16}$/";
         if (!preg_match($regex, $newPasssword)){
-            $errors[] = "New password not valid.";
+            $errors[] = "Password not valid.";
         }
         return $errors;
+    }
+
+    public static function confirm_password(string $password, string $confirmPassword) : array{
+        $error = [];
+        if ($password !== $confirmPassword){
+            $error[] = "Password do not match";
+        }
+        return $error;
     }
 
     public function save_new_password(string $newPasssword) : void {
@@ -153,6 +198,11 @@ public function is_unique_full_name() : bool {
         $sql = "UPDATE users SET password = :new_password WHERE id = :user_id";
         $query = self::execute($sql, ["new_password" => $hashed_new_password, "user_id" => $this->id]);
         $this->hashed_password = $hashed_new_password;
+    }
+
+    public function insert_new_user() : void {
+        $sql = "INSERT INTO users(full_name, email, pseudo, password, role) VALUES(:fullname, :email, :pseudo, :password, :role)";
+        $query = self::execute($sql, ["fullname" => $this->full_name, "email" => $this->email, "pseudo" => $this->pseudo, "password" => $this->hashed_password, "role" => $this->role]);
     }
 }
 ?>

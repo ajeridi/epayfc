@@ -35,25 +35,31 @@ class ControllerUser extends Controller
         if (isset($_POST["logout"])) {
             $this->logout();
         } else {
+
             $email = '';
             $password = '';
             $errors = [];
+
             if (isset($_POST['email']) && isset($_POST['password'])) {
+
                 $email = $_POST['email'];
                 $password = $_POST['password'];
                 $errors = User::validate_login($email, $password);
+
                 if (empty($errors)) {
                     $this->log_user(User::get_user_by_email($email), "item", "browse");
                 }
             }
+
             (new View("login"))->show(["email" => $email, "password" => $password, "errors" => $errors]);
         }
     }
     public function profile(): void
     {
         $user = $this->get_user_or_redirect();
-        $info = User::get_user_by_id($user->id);
-        (new View('user_profile'))->show(["info" => $info, "user" => $user]);
+
+
+        (new View('user_profile'))->show(["user" => $user]);
     }
 
     public function edit_profile(): void
@@ -64,33 +70,22 @@ class ControllerUser extends Controller
         $newUser = null;
         // si on a submit via post 
         if (isset($_POST["saveProfile"])) {
-            $fullname = "";
-            $username = "";
-            $email = "";
-            $iban = "";
-            if (isset($_POST["fullname"])) {
-                $fullname = Tools::sanitize($_POST["fullname"]);
-            }
-            if (isset($_POST["username"])) {
-                $username = Tools::sanitize($_POST["username"]);
-            }
-            if (isset($_POST["email"])) {
-                $email = Tools::sanitize($_POST["email"]);
-            }
-            if (isset($_POST["iban"])) {
-                $iban = Tools::sanitize($_POST["iban"]);
-            }
-            $newUser = new User($user->id, $username, $user->hashed_password, $email, $fullname, $user->role, $user->picture_path, $iban);
+
+            $fullname = Tools::sanitize($_POST["fullname"]);
+            $username = Tools::sanitize($_POST["username"]);
+            $email = Tools::sanitize($_POST["email"]);
+            $iban = Tools::sanitize($_POST["iban"]);
+
+            $newUser = new User($user->get_id(), $username, $user->get_password(), $email, $fullname, $user->get_role(), $user->get_picture_path(), $iban);
             $errors = $newUser->validate();
+            // si on a aucune erreur et que le newUser n'est pas null, on doit le sauvegarder dans la db et rediriger vers profile
+            if ($this->has_no_errors($errors)) {
+                $newUser->save_user();
+                $_SESSION["user"] = $newUser;
+                $this->redirect("user", "profile");
+            }
         }
-        // si on a aucune erreur et que le newUser n'est pas null, on doit le sauvegarder dans la db et rediriger vers profile
-        if ($this->has_no_errors($errors) && $newUser != null) {
-            $newUser->save_user();
-            $_SESSION["user"] = $newUser;
-            $this->redirect("user", "profile");
-        } else {
-            (new View("edit_profile"))->show(["user" => $user, "newUser" => $newUser, "errors" => $errors]);
-        }
+        (new View("edit_profile"))->show(["user" => $user, "newUser" => $newUser, "errors" => $errors]);
     }
 
     private function has_no_errors(array $errors): bool
@@ -100,6 +95,7 @@ class ControllerUser extends Controller
         }
         foreach ($errors as $error) {
             if (!empty($error)) {
+
                 return false;
             }
         }
@@ -107,34 +103,44 @@ class ControllerUser extends Controller
     }
     public function manage_profile_picture()
     {
-        $user = $this->get_user_or_redirect();
-        $errors=[];
-        if(isset($_FILES['image']) &&  $_FILES['image']['name'] !=""){
-            $image=$_FILES['image'];
-            $errors=ImageUtils::validate_image($image);
 
-            if(count($errors)==0){
-            $full_image = ImageUtils::scale_image($image, 100);
-            $thumbnail = ImageUtils::scale_image($image, 100);
-            $file_name = pathinfo($image["name"], PATHINFO_FILENAME);
-            $picture_path = "uploads/users/$user->id/$file_name.jpg";
-            ImageUtils::save_image_file($full_image, $picture_path);
-            ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
-            $user->picture_path=$picture_path;
-            $user->edit_picture(); 
+        $user = $this->get_user_or_redirect();
+        $errors = [];
+        $picture_path = null;
+
+        if (isset($_FILES['image']) &&  $_FILES['image']['name'] != "") {
+
+            $image = $_FILES['image'];
+            $errors = ImageUtils::validate_image($image);
+
+            if (count($errors) == 0) {
+
+                $full_image = ImageUtils::scale_image($image, 100, 101);
+                $thumbnail = ImageUtils::scale_image($image, 100, 101);
+                $file_name = pathinfo($image["name"], PATHINFO_FILENAME);
+                $user_id = $user->get_id();
+                $picture_path = "uploads/users/$user_id/$file_name.jpg";
+                ImageUtils::save_image_file($full_image, $picture_path);
+                ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
+
+                $this::actualise_path($user, $picture_path);
             }
         }
 
-        
-        (new View('manage_profile_picture'))->show(['user' => $user,'errors'=>$errors]);
+        if (isset($_POST['delete'])) {
+            $this::actualise_path($user, $picture_path);
+        }
+        (new View('manage_profile_picture'))->show(['user' => $user, 'errors' => $errors]);
     }
 
     public function change_password(): void
     {
+
         $user = $this->get_user_or_redirect();
 
         // si user sauvegarde en haut de la page
         $errors = [];
+
         if (isset($_POST["savePassword"])) {
             // verification du mot de passe actuel
             if (isset($_POST["currentPassword"])) {
@@ -161,6 +167,45 @@ class ControllerUser extends Controller
                 }
             }
         }
+
         (new View("change_password"))->show(["user" => $user, "errors" => $errors]);
+    }
+    private static function actualise_path($user, $picture_path): void
+    {
+
+        if ($user->get_picture_path() !== null) {
+            ImageUtils::delete_image_files($user->get_picture_path());
+        }
+        $user->set_picture_path($picture_path);
+        $user->delete_picture();
+    }
+
+    public function signup() {
+        $user = $this->get_user_or_false();
+        if ($user != false)
+            $this->redirect("item");
+
+        $newUser = null;
+        $errors = [];
+        if (isset($_POST["signup"])){
+            $email = Tools::sanitize($_POST["email"]);
+            $fullname = Tools::sanitize($_POST["fullname"]);
+            $pseudo = Tools::sanitize($_POST["pseudo"]);
+            $password = Tools::sanitize($_POST["password"]);
+            $confirmPassword = Tools::sanitize($_POST["confirmPassword"]);
+
+            $newUser = new User(-1, $pseudo, password_hash($password, PASSWORD_BCRYPT), $email, $fullname, "user");
+            $errors = $newUser->validate();
+            $errors["password"] = $newUser->validate_password($password);
+            $errors["confirmPassword"] = User::confirm_password($password, $confirmPassword);
+
+            if ($this->has_no_errors($errors)){
+                $newUser->insert_new_user();
+                $this->log_user(User::get_user_by_email($email), "item", "browse");
+                
+            }
+
+        }
+        (new View("signup"))-> show(["newUser" => $newUser, "errors" => $errors]);
     }
 }

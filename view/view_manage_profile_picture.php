@@ -27,9 +27,9 @@
                     <div class="card-header bg-primary fw-bold " style="--bs-bg-opacity: .10 ;" >Current Profile Picture</div>
                     
                     <div class="card-body container-fluid justify-content-center text-white text-center ">
-                        <img src="<?= $user->picture_path ?>"  class="avatar rounded-circle"> 
-                        <h5 class="card-text "><?= $user->full_name ?></p>
-                        <p class="card-text small ">@ <?= $user->pseudo ?></p>
+                        <img src="<?= $user->get_picture_path() ?>"  class="avatar rounded-circle"> 
+                        <h5 class="card-text "><?= $user->get_full_name() ?></p>
+                        <p class="card-text small ">@ <?= $user->get_pseudo() ?></p>
                     </div>
                 </div>    
                 <div class="card mb-3 text-white" >
@@ -54,7 +54,8 @@
                     </div>
                 </div>
                 </div>
-                <?php if($user->picture_path){?>
+                <?php if($user->get_picture_path()){?>
+             <form method="post" action="user/manage_profile_picture" >
                 <div class="card text-white text-bg-dark">
                     <div class="card-header bg-navy-gray ">
                         Remove Current Picture
@@ -64,10 +65,11 @@
                             <p class=" text-warning " style="padding-top:10px;padding-left:10px;">This will permenenly delete your current profile picture.You can upload a new one anytime</p>
                         </div>
     
-                        <a class="btn btn-danger"  href="" role="button">Delete Picture</a>
+                        <button class="btn btn-danger"  type="submit"  name="delete">Delete Picture</button>
                     </div>
                     
                 </div>
+             </form>   
                 <?php } ?>
             </div><br><br>
                 </div>
