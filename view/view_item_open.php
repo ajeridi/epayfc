@@ -2,7 +2,7 @@
 <html lang="en">
      <head>
         <meta charset="UTF-8">
-        <title>🛒 </title>
+        <title>🛒 <?= $item->title ?> </title>
         <base href="<?= $web_root ?>">
          <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -188,10 +188,10 @@
               <div class="section-title mb-3">Seller Information</div>
 
               <div class="d-flex align-items-center gap-3">
-                <div class="avatar rounded-circle"><img src="<?= $item->get_bath() ?>"  class="w-100"></div>
+                <div class="avatar rounded-circle"><img src="<?= User::get_path_picture($item->owner) ?>"  class="w-100"></div>
                 <div>
-                  <div class="fw-semibold"><?= $item->owner ?></div>
-                  <div class="text-muted small"><?= $item->owner ?></div>
+                  <div class="fw-semibold"><?= User::get_pseudo_by_id($item->owner)  ?></div>
+                  <div class="text-muted small"><?=User::get_role_by_id( $item->owner) ?></div>
                 </div>
               </div>
             </div>

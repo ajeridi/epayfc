@@ -206,5 +206,15 @@ public function is_unique_full_name() : bool {
         $data=$query->fetch();
         return $data['pseudo'];
     }
+    public static function get_path_picture(int $id) :  string {
+         $query=self::execute("SELECT u.picture_path FROM users u WHERE u.id = :id ",["id"=>$id]);
+        $data=$query->fetch();
+        return $data['picture_path'];
+    }
+    public static function get_role_by_id(int $id) : string {
+         $query=self::execute("SELECT u.role FROM users u WHERE u.id = :id ",["id"=>$id]);
+        $data=$query->fetch();
+        return $data['role'];
+    }
 }
 ?>
