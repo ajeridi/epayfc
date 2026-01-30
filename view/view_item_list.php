@@ -157,41 +157,41 @@
                         <?php
                         foreach ($sold_items as $item) { ?>
                                 <div class="col-3">
-                                    <a href="item/open/<?= $item['id']?>/from-items" style="text-decoration: none;">
+                                    <a href="item/open/<?= $item->id?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img <?= ($item['picture_path']=="") ? "src=uploads/items/default.jpg" :   "src=".$item['picture_path']?> class="card-img-top" alt="image item">
+                                            <img <?= ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".$item->get_path()?> class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
-                                                        if ($item['is_auction'] == 1){?>
+                                                        if ($item->starting_bid != null){?>
                                                             <span class="badge" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
                                                     <?php } 
-                                                        if ($item['is_direct_sale'] == 1 OR $item['has_buy_now'] == 1){?>
+                                                        if ($item->buy_now_price != null){?>
                                                             <span class="badge text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
                                                         <?php } 
-                                                        if ($item['number_of_pictures'] > 1) {
+                                                        if ($item->get_nomber_of_pictures() > 1) {
                                                         ?>    
-                                                            <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item['number_of_pictures'] ?> images</span>
+                                                            <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_nomber_of_pictures()?> images</span>
                                                         <?php }?>    
                                                 </div>
                                             </div>
                                             <div class="card-body">
-                                                <p class="card-text fw-bolder mb-0"><?=$item['title']?></p>
-                                                <p class="card-text fw-light fs-6">By <?= $item['full_name']?></p>
+                                                <p class="card-text fw-bolder mb-0"><?=$item->title?></p>
+                                                <p class="card-text fw-light fs-6">By <?= User::get_full_name_by_id($item->owner)?></p>
                                                 <div class="container">
                                                     <div class="row align-items-center">
                                                         <div class="col-md-6">
-                                                            <?php if ($item['buy_now_price'] == ""){?>
-                                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= $item['starting_bid']?></p>
+                                                            <?php if ($item->buy_now_price == null){?>
+                                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= $item->starting_bid?></p>
                                                             <?php }else{?>
-                                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= $item['buy_now_price']?></p>
+                                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= $item->buy_now_price?></p>
                                                             <?php }?>
                                                         </div>
-                                                        <?php if ($item['max_bid'] != NULL && $item["is_direct_sale"] == 0) { ?>
+                                                        <?php if ($item->get_max_bid() != NULL && $item->starting_bid != null) { ?>
                                                             <div class="col-md-6 text-end">
                                                                 <div class="d-flex flex-column">
                                                                     <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
-                                                                    <span class="card-text fs-6" style="color: green;">€ <?= $item['max_bid'] ?><span>
+                                                                    <span class="card-text fs-6" style="color: green;">€ <?= $item->get_max_bid() ?><span>
                                                                 </div>
                                                             </div>
                                                         <?php } ?>

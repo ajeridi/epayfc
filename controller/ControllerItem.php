@@ -173,7 +173,7 @@ class ControllerItem extends Controller{
         $user = $this->get_user_or_redirect();
         $active_items = Item::get_user_active_item($user->get_id());
         $closed_unsold_items = Item::get_user_closed_unsold_item($user->get_id());
-        $sold_items = Item::get_user_sold_items($user->get_id());
+        $sold_items = Item::get_user_sold_item($user->get_id());
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
     }
    
