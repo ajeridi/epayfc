@@ -17,10 +17,58 @@ class Item extends Model {
     }
 
     public static function get_items_participatedIn(int $user_id) : array {
+        $items=Item::get_other_items($user_id);
+        $data=[];
+        foreach($items as $item){
+            if($item->is_open_item() && $item->is_participated($user_id)){
+                $data[]=$item;
+            }
+        }
+        return $data;         
+    }
+    public static function get_other_available_item(int $user_id) : array {
+        $items=Item::get_other_items($user_id);
+        $data=[];
+        foreach($items as $item){
+            if($item->is_open_item() && !$item->is_participated($user_id)){
+                $data[]=$item;
+            }
+        }
+        return $data;
+    }
 
-        $current_date_time=AppTime::get_current_datetime();
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid FROM items i join bids b on i.id=b.item where (SELECT MAX(b.amount) as max FROM bids b where b.item = i.id) < i.buy_now_price AND DATE_ADD(i.created_at, INTERVAL i.duration_days DAY ) > :current_date_time AND  b.owner = :user_id",[":user_id"=>$user_id,":current_date_time"=>$current_date_time]);
+    private static function get_other_items(int $user_id) : array {
+        
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid 
+        FROM items i Where i.owner != :user_id",[":user_id"=>$user_id]);
         return $query->fetchAll(PDO::FETCH_CLASS,Item::class);        
+    }
+
+    private static function get_my_items(int $user_id) : array {
+       
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid
+         FROM items i Where i.owner = :user_id",[":user_id"=>$user_id]);
+        return $query->fetchAll(PDO::FETCH_CLASS,Item::class);
+    }
+
+    private function is_participated(int $user_id) : bool {
+        $query=self::execute("SELECT * FROM bids b WHERE  b.owner = :user_id AND b.item= :item_id",["user_id"=>$user_id,"item_id"=>$this->id]);
+        if($query->rowCount() == 0){
+            return false;
+        }else{
+            return true ;
+        }
+    }
+
+
+    public  function is_open_item(): bool {
+        $current_date_time=AppTime::get_current_datetime();
+        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$this->id,"current_date_time"=> $current_date_time]);
+        if($query->rowCount()==0){
+            return false ;
+        }else{
+            return true; 
+        }
     }
 
     public function get_path() : String {
@@ -45,10 +93,6 @@ class Item extends Model {
         return (double) $data['max'] ;
     }
 
-    public function get_owner_full_name() : string {
-        $res = User::get_full_name_by_id($this->owner);
-        return $res["full_name"];
-    }
 
 
     private static $items_participated_in_sql =  "SELECT DISTINCT vit.*, owners.full_name owner_full_name, b.amount, 

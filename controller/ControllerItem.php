@@ -24,7 +24,8 @@ class ControllerItem extends Controller{
         
         if ($user != false){ // si $user == false nous sommes en mode invité
             $items_participated_in = Item::get_items_participatedIn($user->get_id());
-            $other_available_items = Item::get_other_available_items($user->get_id());
+            $other_available_items = Item::get_other_available_item($user->get_id());
+           
         }
         else {
             $items_participated_in = [];
