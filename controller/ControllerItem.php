@@ -204,7 +204,8 @@ class ControllerItem extends Controller
 
                     // sauvegarde des nouvelles images dans le repertoire uploads
                     $file_name = pathinfo($image["name"], PATHINFO_FILENAME);
-                    $picture_path = "uploads/items/$item_id/$file_name.jpg";
+                    $unique_file_name = uniqid($file_name); // creation d'un nom unique pour eviter d'avoir deux images avec le meme path dans la DB
+                    $picture_path = "uploads/items/$item_id/$unique_file_name.jpg";
 
                     ImageUtils::save_image_file($full_image, $picture_path);
                     ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
