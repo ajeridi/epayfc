@@ -2,21 +2,35 @@
 
 require_once "framework/Model.php";
 require_once "utils/AppTime.php";
+require_once "model/Bid.php";
 
 class Item extends Model {
-    public int $id ;
-     public string $title ;
-     public int $owner;
-     public string $created_at;
-     public int $duration_days;
-     public ?string $description=null;
-     public ?int $buy_now_price=null;
-     public ? int $starting_bid=null;
-     public ? array $bids=[] ;
-     
-    public function __construct(){
+   
+    public function __construct(public int $id ,
+     public string $title ,
+     public int $owner,
+     public string $created_at,
+     public int $duration_days,
+     public ?string $description=null,
+     public ?int $buy_now_price=null,
+     public ? int $starting_bid=null,
+     public ? array $bids=[] )
+    {
+        $this->id=$id;
+        $this->title=$title;
+        $this->owner=$owner;
+        $this->created_at=$created_at;
+        $this->duration_days=$duration_days;
+        $this->description=$description;
+        $this->buy_now_price=$buy_now_price;
+        $this->starting_bid=$starting_bid;
+        
+    } 
+    private static function build_Item(array $array) : Item {
+        return new Item($array['id'],$array['title'],$array['owner'],$array['created_at'],$array['duration_days'],$array['description'],$array['buy_now_price'],$array['starting_bid']);
+
     }
-    
+   
 
     public static function get_items_participatedIn(int $user_id) : array {
         $items=Item::get_other_items($user_id);
@@ -76,15 +90,25 @@ class Item extends Model {
         
         $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid
         FROM items i join v_items_status vi on vi.id=i.id Where i.owner != :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
-        return $query->fetchAll(PDO::FETCH_CLASS,Item::class);        
+        $data= $query->fetchAll();
+        $array=[];
+        foreach($data as $item){
+            $array[]=Item::build_Item($item);
+        }   
+        return $array;     
     }
 
     private static function get_my_items(int $user_id) : array {
        
         $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid
          FROM items i join v_items_status vi on vi.id=i.id Where i.owner = :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
-        return $query->fetchAll(PDO::FETCH_CLASS,Item::class);
-    }
+         $data= $query->fetchAll();
+        $array=[];
+        foreach($data as $item){
+            $array[]=Item::build_Item($item);
+        }   
+        return $array; 
+    }     
 
     private function is_participated(int $user_id) : bool {
         $query=self::execute("SELECT * FROM bids b WHERE  b.owner = :user_id AND b.item= :item_id",["user_id"=>$user_id,"item_id"=>$this->id]);
@@ -136,9 +160,10 @@ class Item extends Model {
 
 
     public static function get_item_by_id(int $item_id) : Item | bool {
-        $query=self::execute("SELECT  i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid FROM item i WHERE i.id= :id ",["id"=>$item_id]);
-        $item =$query->fetch(PDO::FETCH_CLASS,Item::class); 
-        $item->bids[]=Bid::get_item_bids($item->id);
+        $query=self::execute("SELECT  i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid FROM items i WHERE i.id= :id ",["id"=>$item_id]);
+        $array=$query->fetch(); 
+        $item=Item::build_Item($array);
+        $item->bids=Bid::get_item_bids($item->id);
         return $item;     
     }
 

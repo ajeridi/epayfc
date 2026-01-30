@@ -49,6 +49,7 @@ class ControllerItem extends Controller{
             }else{
 
                 $item =Item::get_item_by_id($_GET["param1"]);
+               
         }
         $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
         $bids=Item::get_bids($_GET["param1"]);
@@ -63,7 +64,8 @@ class ControllerItem extends Controller{
              $this->index();
          }else{
         
-        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"bids"=>$bids,"is_open"=>$is_open,"user"=>$user,"from"=>$from]);
+        
+        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"is_open"=>$is_open,"user"=>$user,"from"=>$from]);
          }
     }
     public function buy() : void {
@@ -73,8 +75,8 @@ class ControllerItem extends Controller{
 
         if(isset($_GET['param1'])  ){
             $item_id=$_GET['param1'];
-            $item =Item::get_item_by_id($item_id,1);
-            Item::buy($user->get_id(),$_GET['param1'],$current_date,$item['buy_now_price']);
+            $item =Item::get_item_by_id($item_id);
+            Item::buy($user->get_id(),$_GET['param1'],$current_date,$item->buy_now_price);
               
         }
         $this->redirect("Item","open",$item_id);

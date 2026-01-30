@@ -201,5 +201,10 @@ public function is_unique_full_name() : bool {
         $query = self::execute($sql, ["new_password" => $hashed_new_password, "user_id" => $this->id]);
         $this->hashed_password = $hashed_new_password;
     }
+    public static function get_pseudo_by_id(int $id): string {
+        $query=self::execute("SELECT u.pseudo FROM users u WHERE u.id = :id ",["id"=>$id]);
+        $data=$query->fetch();
+        return $data['pseudo'];
+    }
 }
 ?>
