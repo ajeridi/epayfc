@@ -18,7 +18,7 @@
 
     </header>
     <body class="bg-navy"> 
-        <main class="container mt-3" style="margin-bottom: 100px;">
+        <main class="container mt-3" style="margin-bottom: 150px;">
             <!-- Information utilisateur !-->
             <div class="container mb-3">
                 <div class="card text-center bg-dark">
