@@ -29,7 +29,7 @@ class ControllerItem extends Controller{
         }
         else {
             $items_participated_in = [];
-            $other_available_items = Item::get_other_available_items(-1);    // aucun user a l'id -1
+            $other_available_items = Item::get_other_available_item(-1);    // aucun user a l'id -1
         }
         (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items, "user"=>$user]);
     }
