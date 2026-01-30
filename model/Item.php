@@ -27,8 +27,9 @@ class Item extends Model {
         
     } 
     private static function build_Item(array $array) : Item {
-        return new Item($array['id'],$array['title'],$array['owner'],$array['created_at'],$array['duration_days'],$array['description'],$array['buy_now_price'],$array['starting_bid']);
-
+        $item= new Item($array['id'],$array['title'],$array['owner'],$array['created_at'],$array['duration_days'],$array['description'],$array['buy_now_price'],$array['starting_bid']);
+        $item->bids[]=Bid::get_item_bids($item->id);
+        return $item;
     }
    
 
@@ -82,6 +83,16 @@ class Item extends Model {
             if(!$item->is_open_item() && $item->get_max_bid()!=null){
                 $data[]=$item;
                 }
+        }
+        return $data ;
+     }
+     public static function get_purchases_items( $user) : array {
+        $items=Item::get_other_items($user->get_id());
+        $data=[];
+        foreach($items as $item){
+            if(!$item->is_open_item() && $user->is_heigth_bider($item->id) ){
+                $data[]=$item;
+            }
         }
         return $data ;
      }
@@ -374,7 +385,7 @@ class Item extends Model {
         $total=0.0 ;
         $nbrOfSales=0;
         foreach($salesItem as $sale){
-            $total=$total + $sale['amount'];
+            $total=$total + $sale->get_max_bid();
             $nbrOfSales=$nbrOfSales+1;
         }
         $info['total']=(double)$total;
@@ -383,13 +394,13 @@ class Item extends Model {
         return $info;
 
     }
-    public static function find_loyer_bider(array $buyer,String $indice): ? array {
+    public static function find_loyer_bider($buyer,String $indice): ? array {
         if(empty($buyer)){
             return null ;
         }
         $buyrArray=[];
         foreach($buyer  as $item) {
-            $buyrArray[]=$item[$indice];
+            $buyrArray[]=User::get_pseudo_by_id($item->owner);
 
         }
 
@@ -401,20 +412,7 @@ class Item extends Model {
 
 
     }
-    public static function get_purchases_item(int $user_id) : array {
-        $current_date_time=AppTime::get_current_datetime();
-        $query=self::execute(" SELECT distinct v.id,v.title,v.owner,v.created_at,v.buy_now_price,v.end_at,v.bid_count,v.max_bid as amount,v.is_direct_sale,v.is_auction,v.starting_bid,u.pseudo,v.has_buy_now,( Select count(*) from item_pictures where item_pictures.item=v.id) as number_of_pictures,(SELECT picture_path FROM item_pictures WHERE item = v.id AND priority = 1) as picture_path,
-                                (SELECT distinct u.pseudo  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as buyer , (SELECT distinct  b.created_at  from  bids b  join users u on b.owner=u.id where b.item=v.id order by -b.created_at LIMIT 1) as created_at 
-                                                               from v_items_status v join users u on v.owner=u.id 
-                                                            join item_pictures ip on ip.item=v.id
-                                                            join bids b on b.item=v.id 
-                                                            where ((v.is_auction=1 and v.end_at < :current_date) or
-                                        (v.has_buy_now=1 and v.buy_now_reached=1)) and  v.id = (SELECT b1.item from bids b1  where b1.amount=v.max_bid and b1.owner=:user_id )",['user_id'=>$user_id,"current_date"=>" $current_date_time"]);
-      $data=$query->fetchAll();
-      return $data ;   ;                                 
 
-                               
-    } 
     
     
 

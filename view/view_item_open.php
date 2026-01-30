@@ -191,7 +191,7 @@
                 <div class="avatar rounded-circle"><img src="<?= User::get_path_picture($item->owner) ?>"  class="w-100"></div>
                 <div>
                   <div class="fw-semibold"><?= User::get_pseudo_by_id($item->owner)  ?></div>
-                  <div class="text-muted small"><?=User::get_role_by_id( $item->owner) ?></div>
+                  <div class="text-muted small"><?=User::get_role_by_id($item->owner) ?></div>
                 </div>
               </div>
             </div>

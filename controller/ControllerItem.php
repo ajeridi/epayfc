@@ -246,7 +246,7 @@ class ControllerItem extends Controller{
     }
     public function purchases() : void {
         $user=$this->get_user_or_redirect();
-         $salesItem=Item::get_purchases_item($user->get_id());
+         $salesItem=Item::get_purchases_items($user);
          $info=Item::cal_total_avg_nbrOfSales($salesItem);
          $top_seller=Item::find_loyer_bider($salesItem,"pseudo");
          $nom=$this::concate_names($top_seller);

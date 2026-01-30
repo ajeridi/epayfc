@@ -54,7 +54,7 @@ class User extends Model {
      public function is_heigth_bider(int $item_id) : bool {
         $query=self::execute("SELECT b.owner FROM bids b where b.item = :item_id order by b.created_at DESC",["item_id"=>$item_id]);
         $data=$query->fetch();
-        if($data['owner'] === $this->id){
+        if($query->rowCount()!=0 && $data['owner'] === $this->id){
             return true; 
         } else {
             return false ;
@@ -209,6 +209,9 @@ public function is_unique_full_name() : bool {
     public static function get_path_picture(int $id) :  string {
          $query=self::execute("SELECT u.picture_path FROM users u WHERE u.id = :id ",["id"=>$id]);
         $data=$query->fetch();
+        if($data['picture_path'] == null){
+            return "";
+        }
         return $data['picture_path'];
     }
     public static function get_role_by_id(int $id) : string {
