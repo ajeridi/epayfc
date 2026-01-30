@@ -36,18 +36,41 @@ class Item extends Model {
         }
         return $data;
     }
+   
+    public static function get_user_active_item(int $user_id) : array {
+         $items=Item::get_my_items($user_id);
+         $data=[];
+         foreach($items as $item){
+            if($item->is_open_item()){
+                $data[]=$item;
+                }
+        }
+        return $data ;
+    }
+
+     public static function get_user_closed_unsold_item(int $user_id): array{
+         $items=Item::get_my_items($user_id);
+         $data=[];
+         foreach($items as $item){
+            if(!$item->is_open_item() && $item->get_max_bid()==null){
+                $data[]=$item;
+                }
+        }
+        return $data ;
+
+    }
 
     private static function get_other_items(int $user_id) : array {
         
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid 
-        FROM items i Where i.owner != :user_id",[":user_id"=>$user_id]);
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid
+        FROM items i join v_items_status vi on vi.id=i.id Where i.owner != :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
         return $query->fetchAll(PDO::FETCH_CLASS,Item::class);        
     }
 
     private static function get_my_items(int $user_id) : array {
        
         $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid
-         FROM items i Where i.owner = :user_id",[":user_id"=>$user_id]);
+         FROM items i join v_items_status vi on vi.id=i.id Where i.owner = :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
         return $query->fetchAll(PDO::FETCH_CLASS,Item::class);
     }
 
@@ -71,9 +94,12 @@ class Item extends Model {
         }
     }
 
-    public function get_path() : String {
+    public function get_path() : String | null {
         $query = self::execute("SELECT ip.picture_path FROM item_pictures ip where ip.item = :item_id and ip.priority= :nb",["item_id"=>$this->id,"nb"=>"1"]);
         $data=$query->fetch();
+        if($query->rowCount()==0){
+            return null; 
+        }
         return $data['picture_path'];
     }
 
@@ -87,30 +113,15 @@ class Item extends Model {
          return  count($this->get_pictures_by_id());
     }
 
-    public function get_max_bid() {
+    public function get_max_bid(): float | null {
         $query=self::execute("SELECT MAX(b.amount) as max FROM bids b where b.item = :item_id ",["item_id"=>$this->id]);
         $data=$query->fetch();
+        if($query->rowCount()==0){
+            return null ;
+        }
         return (double) $data['max'] ;
     }
 
-    public static function get_user_active_items(int $user_id) : array{
-        $current_date_time =AppTime::get_current_datetime();
-        
-
-        $sql = "SELECT vit.id, vit.title, owners.full_name, vit.starting_bid, vit.max_bid, vit.is_auction, vit.is_direct_sale, vit.buy_now_price, vit.has_buy_now, (SELECT COUNT(*) FROM item_pictures ip WHERE ip.item = vit.id) as number_of_pictures, 
-                   (SELECT ip.picture_path from item_pictures ip WHERE ip.priority = 1 AND ip.item = vit.id) as picture_path, 
-                    CONCAT(TIMESTAMPDIFF(DAY, :current_date_time, vit.end_at), 'd ', TIMESTAMPDIFF(HOUR, :current_date_time, vit.end_at) % 24, 'h') as time_left
-                FROM v_items_status vit
-                JOIN users as owners on owners.id = vit.owner
-                WHERE owners.id = :user_id AND 
-                vit.buy_now_reached = 0 AND 
-                vit.end_at > :current_date_time
-                ORDER BY vit.end_at";
-
-       $query = self::execute($sql, ["user_id" => $user_id, "current_date_time" => $current_date_time]); 
-       return $query->fetchAll();
-
-    }
 
 
     public static function get_user_closed_unsold_items(int $user_id) : array{
