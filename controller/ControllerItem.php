@@ -188,6 +188,11 @@ class ControllerItem extends Controller{
                 // validation de l'image
                 $errors = ImageUtils::validate_image($image);
                 if (count($errors) == 0){ // si le fichier est valide on peut proceder a son upload
+
+                    //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
+                    $nb_pictures = Item::get_picture_count($item_id);
+                    if ($nb_pictures == 0){mkdir("uploads/items/$item_id");}
+
                     // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
                     $full_image = ImageUtils::scale_image($image, 1080);
                     $thumbnail = ImageUtils::scale_image($image, 360);
@@ -211,6 +216,8 @@ class ControllerItem extends Controller{
             }
             else if (isset($_POST["delete"])){
                 $this->delete_image($item_id, $_POST["delete"]);
+                // si le dossier est vide, donc nb_pictures == 0, on le supprime
+                if (Item::get_picture_count($item_id) == 0){rmdir("uploads/items/$item_id");}
             }
 
         
