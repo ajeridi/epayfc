@@ -39,20 +39,16 @@ class ControllerItem extends Controller{
         $from="";
         if(isset($_GET["param2"])){
             $from=substr(stristr($_GET["param2"],"-"),1);
-        }
-        
-    
+        }        
         if(isset($_GET["param1"]) && is_numeric($_GET["param1"])){
             $is_open=Item::is_open_anonce($_GET["param1"]);
             if(isset($_GET["param3"])){
                  $item =Item::get_item_by_id($_GET["param1"]);
             }else{
-
-                $item =Item::get_item_by_id($_GET["param1"]);
-               
+                $item =Item::get_item_by_id($_GET["param1"]);    
         }
         $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
-        $bids=Item::get_bids($_GET["param1"]);
+        $item =Item::get_item_by_id($_GET["param1"]);
          } else{
             $this->index();
          }
@@ -60,7 +56,7 @@ class ControllerItem extends Controller{
             $item=Item::get_item($_GET["param1"]);
             $item['picture_path']="";
          }
-         if(!$is_open && $user->get_pseudo() != $item['pseudo'] &&  (count($bids)==0 || $user->get_pseudo() != $bids['0']['pseudo'])){
+         if(!$is_open && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
              $this->index();
          }else{
         
@@ -95,9 +91,9 @@ class ControllerItem extends Controller{
     public function edit() : void {
          $user=$this->get_user_or_redirect();
         if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
-        $item=Item::get_item_by_id($_GET['param1'],1);
+        $item=Item::get_item_by_id($_GET['param1']);
         $is_open=Item::is_open_anonce($_GET['param1']); 
-        if($item['pseudo']!= $user->get_pseudo() || !$is_open ){
+        if($item->owner!= $user->get_id() || !$is_open ){
             $this->index();
             return;
         }

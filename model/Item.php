@@ -185,11 +185,7 @@ class Item extends Model {
         $data=$query->fetchAll();
         return $data;
     }
-    public static function get_bids(int $item_id):array {
-        $query=self::execute("SELECT owner ,pseudo , created_at ,amount  FROM bids join users on bids.owner=users.id WHERE item= :item ORDER BY -created_at",["item" =>$item_id]);
-        $data=$query->fetchAll();
-        return $data;
-    }
+
        public static function is_open_anonce(int $item_id): bool {
          $current_date_time=AppTime::get_current_datetime();
         $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> $current_date_time]);
@@ -207,8 +203,8 @@ class Item extends Model {
         return $data;
     }
     public static function buy($owner,$item_id,$at,$amount): void {
-        $bids=item::get_item_by_id($item_id,1);
-        if($amount>$bids['max_bid'] && $amount>=$bids['starting_bid']){
+        $item=item::get_item_by_id($item_id);
+        if($amount>$item->get_max_bid() && $amount>=$item->starting_bid){
                  $query=self::execute("INSERT INTO bids(owner,item,created_at,amount) VALUES (:owner,:item,:created_at,:amount)",["owner"=>$owner,"item"=>$item_id,"created_at"=>$at,"amount"=>$amount]);
         }
 
@@ -297,9 +293,9 @@ class Item extends Model {
 
     }
     public static function is_Direct_sale(int $item_id): bool {
-         $item=Item::get_item_by_id($item_id,1);
+         $item=Item::get_item_by_id($item_id);
 
-         if($item['is_direct_sale']==1){
+         if($item->starting_bid==null){
             return true;
          }else{
             return false;

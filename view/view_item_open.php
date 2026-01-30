@@ -168,7 +168,7 @@
                 if($user->get_id()===$item->bids['0']->owner){?>
                 <p> Congratulation! You purchased this item for € <?= $item->get_max_bid() ?> </p>
                 <?php }else {?>
-                <p><?= $item->bids['0']->owner ?> Won this item for € <?= $item->get_max_bid() ?></p> 
+                <p><?= User::get_pseudo_by_id($item->bids['0']->owner) ?> Won this item for € <?= $item->get_max_bid() ?></p> 
               <?php } }  else {?>
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
@@ -196,7 +196,7 @@
               </div>
             </div>
           </div>
-          <?php if($user == true && $user->get_pseudo() === $item->owner  && $is_open){?>
+          <?php if($user == true && $user->get_id() === $item->owner  && $is_open){?>
           <div class="card card-dark border-0 mt-3">
             <div class="card-body">
               <div class="section-title mb-3">Manage Your Item</div>
