@@ -34,7 +34,7 @@ class ControllerItem extends Controller{
     }
     public function open() : void {
 
-        $user=$this->get_user_or_redirect();
+        $user=$this->get_user_or_false();
         $from="";
         if(isset($_GET["param2"])){
             $from=substr(stristr($_GET["param2"],"-"),1);
