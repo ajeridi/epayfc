@@ -12,9 +12,11 @@ class Item extends Model {
      public ?string $description=null;
      public ?int $buy_now_price=null;
      public ? int $starting_bid=null;
+     public ? array $bids=[] ;
      
     public function __construct(){
     }
+    
 
     public static function get_items_participatedIn(int $user_id) : array {
         $items=Item::get_other_items($user_id);
@@ -132,18 +134,14 @@ class Item extends Model {
         return (double) $data['max'] ;
     }
 
-    public static function get_item_by_id(int $item_id,int $priority) : array | bool {
-        $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,item_pictures.picture_path ,priority,u1.pseudo,u1.picture_path as user_path ,u1.role,starting_bid
-                                 FROM  v_items_status join item_pictures on v_items_status.id=item_pictures.item 
-                                  join users u1 on v_items_status.owner=u1.id
-                                            WHERE v_items_status.id= :id
-                                            and item_pictures.priority=:priority",["id"=>$item_id,"priority"=>$priority]);
-        $data=$query->fetch();
-       
-            return $data;
-        
 
+    public static function get_item_by_id(int $item_id) : Item | bool {
+        $query=self::execute("SELECT  i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid FROM item i WHERE i.id= :id ",["id"=>$item_id]);
+        $item =$query->fetch(PDO::FETCH_CLASS,Item::class); 
+        $item->bids[]=Bid::get_item_bids($item->id);
+        return $item;     
     }
+
      public static function get_item(int $item_id) : array {
         $query=self::execute("SELECT is_direct_sale,has_buy_now, v_items_status.id,title , description,v_items_status.created_at, end_at, bid_count,buy_now_price,max_bid,u1.pseudo,u1.picture_path as user_path ,u1.role,starting_bid
                                  FROM  v_items_status 

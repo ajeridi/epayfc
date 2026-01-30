@@ -29,18 +29,18 @@
           <!-- Card image + infos -->
           <div class="card card-dark border-0 overflow-hidden">
             <div class="ratio ratio-16x9 bg-black-30">
-              <img <?= ($item['picture_path']=="") ? "src=uploads/items/default.jpg" :   "src=".$item['picture_path'] ?>  class="w-100 h-100 object-fit-cover" alt="item image">
+              <img <?= ($item->get_path()== null) ? "src=uploads/items/default.jpg" :   "src=".$itemitem->get_path() ?>  class="w-100 h-100 object-fit-cover" alt="item image">
             </div>
 
             <div class="card-body">
               <div class="d-flex justify-content-between gap-3">
                 <div>
-                  <div class="h5 mb-1"><?= $item['title'] ?></div>
-                  <div class="text-muted small mb-2"><?= $item['description'] ?></div>
+                  <div class="h5 mb-1"><?= $item->title ?></div>
+                  <div class="text-muted small mb-2"><?= $item->description ?></div>
 
                   <div class="text-muted small">
-                    <div><span class="label">Start:</span> <?= $item['created_at'] ?></div>
-                    <div><span class="label">Ends:</span> <?= $item['end_at'] ?></div>
+                    <div><span class="label">Start:</span> <?= $item->created_at ?></div>
+                    <div><span class="label">Ends:</span> <?= $item->created_at->add($item_duration_days)?></div>
                   </div>
                 </div>
 
@@ -56,7 +56,7 @@
             <div class="thumbs d-flex gap-2 flex-wrap">
               <?php
                 foreach ($pictures as $i => $p) { ?>
-                  <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item['id']?>/from-browse/<?= $p['priority'] ?>">
+                  <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item->id?>/from-browse/">
                     <img src="<?= $p['picture_path'] ?>" alt="thumb">
                   </a>
               <?php } ?>
@@ -68,18 +68,18 @@
             <div class="d-flex align-items-center justify-content-between px-3 pt-3">
               <div class="section-title mb-0">Bid History</div>
           
-              <span class="badge badge-dark"><?= $item['bid_count']?> entries</span>
+              <span class="badge badge-dark"><?= count($item->bids)?> entries</span>
             </div>
 
             <div class="list-group list-group-flush list-dark mt-3">
-              <?php foreach ($bids as $bid){ ?>
+              <?php foreach ($item->bids as $bid){ ?>
                 <div class="list-group-item">
                   <div class="d-flex justify-content-between align-items-start">
                     <div>
-                      <div class="fw-semibold"><?= $bid['pseudo'] ?></div>
-                      <div class="small text-muted"><?= $bid['created_at'] ?></div>
+                      <div class="fw-semibold"><?= $bid->owner ?></div>
+                      <div class="small text-muted"><?= $bid->created_at ?></div>
                     </div>
-                    <div class="price-green fw-semibold">€ <?= $bid['amount'] ?></div>
+                    <div class="price-green fw-semibold">€ <?= $bid->amount ?></div>
                   </div>
                 </div>
               <?php  } ?>
@@ -96,29 +96,29 @@
           <div class="card card-dark border-0">
             <div class="card-body">
               <div class="section-title mb-3">Pricing</div>
-              <?php if($item['is_direct_sale']==0) {?>
+              <?php if($item->starting_at!= null) {?>
               <div class="d-flex justify-content-between small mb-0">
                 <span class="text-muted">Current Bid</span>
                 <span class="price-green fw-semibold">
-                  <?php if($item['max_bid']==NULL){?>
-                  <i class="bi bi-currency-euro"></i><?= $item['starting_bid'] ?>
+                  <?php if($item->get_max_bid()==NULL){?>
+                  <i class="bi bi-currency-euro"></i><?= $item->starting_bid ?>
                 </span>
               </div>
                 <div class="d-flex justify-content-between small mb-2">
-                <span class="text-muted">starting at € <?= $item['starting_bid'] ?> </span>    
+                <span class="text-muted">starting at € <?= $item->starting_bid ?> </span>    
                 </div>
                   <?php }else {?>
-                    <i class="bi bi-currency-euro"></i><?= $item['max_bid'] ?>
+                    <i class="bi bi-currency-euro"></i><?= $item->get_max_bid() ?>
                 </span>
               </div>       
                     <?php } ?> 
                 <?php } ?>           
               <div class="d-flex justify-content-between small mb-3">
                 
-                <?php if($item['has_buy_now']==1){ ?>
+                <?php if($item->buy_now_price!= null){ ?>
                 <span class="text-muted">Buy Now</span>
                 <span class="fw-semibold">
-                  <i class="bi bi-currency-euro"></i><?= $item['buy_now_price'] ?>
+                  <i class="bi bi-currency-euro"></i><?= $item->buy_now_price ?>
                 </span>
                 <?php } ?>    
               </div>
