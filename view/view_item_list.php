@@ -32,7 +32,7 @@
                                 <div class="col-3">
                                     <a href="item/open/<?= $item['id']?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
+                                            <img <?= ($item['picture_path']==null) ? "src=uploads/items/default.jpg" :   "src=".$item['picture_path']?> class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
@@ -93,7 +93,7 @@
                                 <div class="col-3">
                                     <a href="item/open/<?= $item['id']?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
+                                            <img <?= ($item['picture_path']=="") ? "src=uploads/items/default.jpg" :   "src=".$item['picture_path']?> class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
@@ -155,7 +155,7 @@
                                 <div class="col-3">
                                     <a href="item/open/<?= $item['id']?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img src='<?=$item['picture_path']?>' class="card-img-top" alt="image item">
+                                            <img <?= ($item['picture_path']=="") ? "src=uploads/items/default.jpg" :   "src=".$item['picture_path']?> class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
@@ -177,7 +177,7 @@
                                                 <div class="container">
                                                     <div class="row align-items-center">
                                                         <div class="col-md-6">
-                                                            <?php if ($item['buy_now_price'] == NULL){?>
+                                                            <?php if ($item['buy_now_price'] == ""){?>
                                                                 <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= $item['starting_bid']?></p>
                                                             <?php }else{?>
                                                                 <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= $item['buy_now_price']?></p>

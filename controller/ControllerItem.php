@@ -23,8 +23,8 @@ class ControllerItem extends Controller{
         $user = $this->get_user_or_false();
         
         if ($user != false){ // si $user == false nous sommes en mode invité
-            $items_participated_in = Item::get_items_participated_in($user->id);
-            $other_available_items = Item::get_other_available_items($user->id);
+            $items_participated_in = Item::get_items_participated_in($user->get_id());
+            $other_available_items = Item::get_other_available_items($user->get_id());
         }
         else {
             $items_participated_in = [];
@@ -58,7 +58,7 @@ class ControllerItem extends Controller{
             $item=Item::get_item($_GET["param1"]);
             $item['picture_path']="";
          }
-         if(!$is_open && $user->pseudo != $item['pseudo'] &&  (count($bids)==0 || $user->pseudo != $bids['0']['pseudo'])){
+         if(!$is_open && $user->get_pseudo() != $item['pseudo'] &&  (count($bids)==0 || $user->get_pseudo() != $bids['0']['pseudo'])){
              $this->index();
          }else{
         
@@ -73,7 +73,7 @@ class ControllerItem extends Controller{
         if(isset($_GET['param1'])  ){
             $item_id=$_GET['param1'];
             $item =Item::get_item_by_id($item_id,1);
-            Item::buy($user->id,$_GET['param1'],$current_date,$item['buy_now_price']);
+            Item::buy($user->get_id(),$_GET['param1'],$current_date,$item['buy_now_price']);
               
         }
         $this->redirect("Item","open",$item_id);
@@ -85,7 +85,7 @@ class ControllerItem extends Controller{
        if(isset($_GET['param1'])){
         $item_id=$_GET['param1'];
         $amount=$_POST['min_bid'];
-        Item::buy($user->id,$item_id,$current_date,$amount);
+        Item::buy($user->get_id(),$item_id,$current_date,$amount);
        }
        $this->redirect("item","open",$item_id);
     }
@@ -94,7 +94,7 @@ class ControllerItem extends Controller{
         if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
         $item=Item::get_item_by_id($_GET['param1'],1);
         $is_open=Item::is_open_anonce($_GET['param1']); 
-        if($item['pseudo']!= $user->pseudo || !$is_open ){
+        if($item['pseudo']!= $user->get_pseudo() || !$is_open ){
             $this->index();
             return;
         }
@@ -120,11 +120,11 @@ class ControllerItem extends Controller{
         $info['saleprice']=$saleprice;
         
         
-        $errors=Item::validat_item($user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
+        $errors=Item::validat_item($user->get_id(),$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
         if(count($errors['title'])==0 && count($errors['description'])==0 && count($errors['buy_now_price'])==0 && count($errors['starting_bid'])==0){
             $id=$_GET['param1'];
             $info['id']=$id;
-            $id_nv=Item::put_edition_item($id,$user->id,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
+            $id_nv=Item::put_edition_item($id,$user->get_id(),$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice);
             $this->redirect("item","open",$id_nv,"from-items");
         } else{
              
@@ -170,9 +170,9 @@ class ControllerItem extends Controller{
 
     public function list() : void {
         $user = $this->get_user_or_redirect();
-        $active_items = Item::get_user_active_items($user->id);
-        $closed_unsold_items = Item::get_user_closed_unsold_items($user->id);
-        $sold_items = Item::get_user_sold_items($user->id);
+        $active_items = Item::get_user_active_items($user->get_id());
+        $closed_unsold_items = Item::get_user_closed_unsold_items($user->get_id());
+        $sold_items = Item::get_user_sold_items($user->get_id());
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
     }
    
@@ -235,7 +235,7 @@ class ControllerItem extends Controller{
    
     public  function sales(){
         $user=$this->get_user_or_redirect();
-        $salesItem=Item::get_salesItem_by_user($user->id);
+        $salesItem=Item::get_salesItem_by_user($user->get_id());
         $info=Item::cal_total_avg_nbrOfSales($salesItem);
         $loyer_buyer=Item::find_loyer_bider($salesItem,"buyer");
         $nom=$this::concate_names($loyer_buyer);
@@ -247,7 +247,7 @@ class ControllerItem extends Controller{
     }
     public function purchases() : void {
         $user=$this->get_user_or_redirect();
-         $salesItem=Item::get_purchases_item($user->id);
+         $salesItem=Item::get_purchases_item($user->get_id());
          $info=Item::cal_total_avg_nbrOfSales($salesItem);
          $top_seller=Item::find_loyer_bider($salesItem,"pseudo");
          $nom=$this::concate_names($top_seller);
