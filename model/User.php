@@ -188,7 +188,7 @@ public function is_unique_full_name() : bool {
     public static function confirm_password(string $password, string $confirmPassword) : array{
         $error = [];
         if ($password !== $confirmPassword){
-            $error[] = "Password do not match";
+            $error[] = "You have to enter twice the same password.";
         }
         return $error;
     }
