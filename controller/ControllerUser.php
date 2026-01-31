@@ -128,13 +128,14 @@ class ControllerUser extends Controller
                 $this::actualise_path($user, $picture_path);
                 ImageUtils::save_image_file($full_image, $picture_path);
                 ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
+                $this->redirect("user", "manage_profile_picture");
 
             }
         }
-
         if (isset($_POST['delete'])) {
             $this::actualise_path($user, $picture_path);
             rmdir("uploads/users/$user_id");
+            $this->redirect("user", "manage_profile_picture");
         }
         (new View('manage_profile_picture'))->show(['user' => $user, 'errors' => $errors]);
     }
