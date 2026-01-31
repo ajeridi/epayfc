@@ -120,7 +120,7 @@
                 <?php } ?>           
               <div class="d-flex justify-content-between small mb-3">
                 
-                <?php if($item->starting_bid == null){ ?>
+                <?php if($item->buy_now_price != null){ ?>
                 <span class="text-muted">Buy Now</span>
                 <span class="fw-semibold">
                   <i class="bi bi-currency-euro"></i><?= $item->buy_now_price ?>
