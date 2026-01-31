@@ -181,7 +181,8 @@ class ControllerItem extends Controller
         if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
             $item_id=Tools::sanitize($_GET['param1']);
             $item=Item::get_item_by_id($item_id);
-            if($item->owner!= $user->get_id()){
+            $is_open=Item::is_open_anonce($item->id);
+            if($item->owner!= $user->get_id()|| count($item->bids)!=0 || !$is_open ){
                 $this->index();
             }
             $owner=User::get_full_name_by_id($item->owner);
@@ -192,7 +193,8 @@ class ControllerItem extends Controller
         $user=$this->get_user_or_redirect();
         $item_id=Tools::sanitize($_GET['param1']);
         $item=Item::get_item_by_id($item_id);
-        if($item->owner!= $user->get_id() || count($item->bids)!=0){
+         $is_open=Item::is_open_anonce($item->id);
+        if($item->owner!= $user->get_id() || count($item->bids)!=0 || !$is_open){
                 $this->index();
          } else {
          $item->delete();   
