@@ -112,7 +112,7 @@
                                               <?php if($_GET['action']=="sales") {?>  <p><span><i class="bi bi-trophy"></i> <?= User::get_pseudo_by_id($item->bids['0']->owner) ?></span></p>
                                                 <?php } ?>
                                                 
-                                                <p><span><i class="bi bi-clock fs-5"></i> Closed on <?= $item->created_at ?> </span></p>
+                                                <p><span><i class="bi bi-clock fs-5"></i> Closed on <?= $item->bids['0']->created_at ?> </span></p>
 
                                             </div>
                                         </div>
