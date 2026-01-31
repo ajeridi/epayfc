@@ -139,7 +139,7 @@
                     type="text"
                     name="min_bid"
                     class="form-control"
-                    value="<?= ($item->get_max_bid() === null) ? (($item->starting_bid != 0) ? $item->starting_bid : 1) : ($item->get_max_bid() + 1) ?>"
+                    value="<?= ($item->get_max_bid() == null) ?  $item->starting_bid : ($item->get_max_bid()+1 ) ?>"
                     required
                   >
                 </div>
