@@ -289,24 +289,26 @@ class ControllerItem extends Controller
    
     public  function sales(){
         $user=$this->get_user_or_redirect();
+        $action="sales";
         $salesItem=Item::get_user_sold_item($user->get_id());
         $info=Item::cal_total_avg_nbrOfSales($salesItem);
         $loyer_buyer=Item::find_loyer_bider($salesItem,"buyer");
         $nom=$this::concate_names($loyer_buyer);
      
-        (new View("item_closed"))->show(["salesItem"=>$salesItem,"info"=>$info,"loyer_buyer"=>$loyer_buyer,"nom"=>$nom,'user'=>$user]);
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,"info"=>$info,"loyer_buyer"=>$loyer_buyer,"nom"=>$nom,'user'=>$user,'action'=>$action]);
 
 
 
     }
     public function purchases() : void {
         $user=$this->get_user_or_redirect();
+         $action="purchases";
          $salesItem=Item::get_purchases_items($user);
          $info=Item::cal_total_avg_nbrOfSales($salesItem);
          $top_seller=Item::find_loyer_bider($salesItem,"pseudo");
          $nom=$this::concate_names($top_seller);
     
-        (new View("item_closed"))->show(["salesItem"=>$salesItem,'info'=>$info,'loyer_buyer'=>$top_seller,"nom"=>$nom,'user'=>$user]);
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,'info'=>$info,'loyer_buyer'=>$top_seller,"nom"=>$nom,'user'=>$user,'action'=>$action]);
         
     }
     private function concate_names(array $loyer_buyer): string

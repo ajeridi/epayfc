@@ -394,6 +394,12 @@ class Item extends Model {
         $query = self::execute($sql, ["item_id" => $item_id]);
         return $query->fetchColumn();
     }
+    public function end_at() : string {
+        $query=self::execute("SELECT end_at from v_items_status where id= :id",["id"=>$this->id]);
+        $data=$query->fetch();
+        return $data['end_at'];
+    }
+   
     
     
     
