@@ -366,7 +366,12 @@ class Item extends Model {
         }
         $buyrArray=[];
         foreach($buyer  as $item) {
-            $buyrArray[]=User::get_pseudo_by_id($item->owner);
+            if($indice=='pseudo'){
+                 $buyrArray[]=User::get_pseudo_by_id($item->owner);
+            } 
+            if($indice=='buyer'){
+                $buyrArray[]=User::get_pseudo_by_id($item->bids['0']->owner);
+            }
 
         }
 
