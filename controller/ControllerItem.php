@@ -74,6 +74,11 @@ class ControllerItem extends Controller
         if(isset($_GET['param1'])  ){
             $item_id=$_GET['param1'];
             $item =Item::get_item_by_id($item_id);
+            $is_open=Item::is_open_anonce($item->id);
+            if(!$is_open || $user->get_id() == $item->owner){
+                throw new Exception("You can't buy or bid on your item");
+                return;
+            }
             Item::buy($user->get_id(),$_GET['param1'],$current_date,$item->buy_now_price);
               
         }
