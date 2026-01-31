@@ -106,7 +106,6 @@ class ControllerItem extends Controller
         }
    
     }
-
         if (count($_POST)) {
             $ok = true;
             $user = $this->get_user_or_redirect();
@@ -127,21 +126,22 @@ class ControllerItem extends Controller
 
 
             $errors = Item::validat_item($user->get_id(), $title, $description, $duration_days, $buy_now_price, $starting_bid, $saleprice);
-            if (count($errors['title']) == 0 && count($errors['description']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0) {
+            if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days'])==0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0) {
                 $id = $_GET['param1'];
                 $info['id'] = $id;
                 $id_nv = Item::put_edition_item($id, $user->get_id(), $title, $description, $duration_days, $buy_now_price, $starting_bid, $saleprice);
                 $this->redirect("item", "open", $id_nv, "from-items");
             } else {
-
                 (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'ok' => $ok]);
             }
+            
         } else {
             $ok = false;
             $user = $this->get_user_or_redirect();
             $item_id = $_GET['param1'];
             $info = Item::get_item_ino($item_id);
             if (Item::is_Direct_sale($item_id)) {
+                $info['duration_days']=$info['duration_days'];
                 $info['starting_bid'] = null;
                 $info['saleprice'] = $info['buy_now_price'];
                 $info['buy_now_price'] = null;
@@ -149,6 +149,7 @@ class ControllerItem extends Controller
                 $info['saleprice'] = null;
             }
             $errors[] = [];
+            $errors['duration_days']=[];
             $errors['title'] = [];
             $errors['description'] = [];
             $errors['buy_now_price'] = [];

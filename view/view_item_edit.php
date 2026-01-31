@@ -48,7 +48,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea class="form-label d-block  text-bg-dark" id="description" name="description" style ="padding-right:80%"  <?= ($_GET['action']=="add") ? "placeholder=\"Describe your item in detail...\"  rows=\"3\">" : "rows=\"3\">".$info['description']?></textarea>
+                                <textarea class="form-label d-block  text-bg-dark" id="description" name="description" style ="padding-right:80%" <?= ($_GET['action']=="add") ? "placeholder=\"Describe your item in detail...\"  rows=\"3\">" : "rows=\"3\">".$info['description']?></textarea>
                                  <div class="errors">
                                 <?php if(count($errors['description'])){?>
                                    <ul>
@@ -64,6 +64,17 @@
                             <div class="mb-3">
                                 <label for="saledays" class="form-label">Sale Duration (days)*</label>
                                 <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days" <?=($_GET['action']=="add") ? "value=\"7\"" : "value=".$info['duration_days'] ?>>
+                                <div class="errors">
+                                <?php if(count($errors['duration_days'])){?>
+                                   <ul>
+                                    <?php
+                                    foreach($errors['duration_days'] as $str){?>
+                                        <li><?= $str ?></li>
+
+                                       <?php } 
+                                  } ?>
+                                    </ul>
+                                </div>
 
                             </div>
                         

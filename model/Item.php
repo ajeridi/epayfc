@@ -220,6 +220,7 @@ class Item extends Model {
         $errors['buy_now_price']=[];
         $errors['starting_bid']=[];
         $errors['saleprice']=[];
+        $errors['duration_days']=[];
  
        if(!Item::unicite_title_for_owner($owner,$title)){
         $errors['title'][]="This title already exist, Please choose another one !";
@@ -254,7 +255,9 @@ class Item extends Model {
         if(($starting_bid != "" &&  $saleprice != "")|| ($saleprice!="" && $buy_now_price!="")){
             $errors["buy_now_price"][]="Cannot create both auction and direct sale";
             $errors["saleprice"][]="Cannot create both auction and direct sale";
-            
+        }
+        if($duration_days==null || $duration_days <= 0){
+            $errors["duration_days"][]="Duartion is required and most be positif";
         }
         
        
