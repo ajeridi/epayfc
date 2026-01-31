@@ -21,7 +21,7 @@
         </header>
         <main class="main-content-margins">
             <div class="active_items float-start">
-                <h3 class="text-blue">Active items</h3>
+                <h3 class="text-blue"><?= count($active_items)>0 ?  "Active items" : "" ?></h3>
 
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4 mb-5">
@@ -86,7 +86,7 @@
             </div>
 
             <div class="closed_unsold_items">
-                <h3 class="text-blue">Closed Unsold Items</h3>
+                <h3 class="text-blue"><?= (count($closed_unsold_items) >0) ?  "Closed Unsold Items":"" ?></h3>
 
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4 mb-5">
@@ -148,7 +148,7 @@
             
 
             <div class="sold_items">
-                <h3 class="text-blue">Sold Items</h3>
+                <h3 class="text-blue"><?= count($sold_items)>0 ? "Sold Items" : "" ?></h3>
 
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4" style="margin-bottom: 150px;">
