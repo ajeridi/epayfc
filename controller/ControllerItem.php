@@ -95,7 +95,7 @@ class ControllerItem extends Controller
         if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
         $item=Item::get_item_by_id($_GET['param1']);
         $is_open=Item::is_open_anonce($_GET['param1']); 
-        if($item->owner!= $user->get_id() || !$is_open ){
+        if($item->owner!= $user->get_id() || !$is_open ||count($item->bids)!=0){
             $this->index();
             return;
         }
