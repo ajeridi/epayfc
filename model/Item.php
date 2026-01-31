@@ -376,6 +376,11 @@ class Item extends Model {
         return $loyer_bider;
         
     }
+     public static function get_picture_count(int $item_id) : int {
+        $sql = "SELECT COUNT(*) as nb_pictures FROM item_pictures WHERE item = :item_id";
+        $query = self::execute($sql, ["item_id" => $item_id]);
+        return $query->fetchColumn();
+    }
 
     
     
