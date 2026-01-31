@@ -168,6 +168,7 @@ class ControllerItem extends Controller
         $errors['buy_now_price'] = [];
         $errors['starting_bid'] = [];
         $errors['saleprice'] = [];
+        $errors['duration_days'] = [];
         $info['id'] = 0;
         (new View("item_edit"))->show(['info' => $info, 'errors' => $errors]);
     }
