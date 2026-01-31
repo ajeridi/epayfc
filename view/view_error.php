@@ -17,7 +17,7 @@
                    <h1 >Nice Try </h1>
                 </div>
                 <div class="card-body bg-dark text-white text-center " style="padding: 15px;" >
-                    <p >Are you really want to this ? <b style="text-decoration: solid;text-decoration-color: red;"><?= $error ?></b>  Abdelmouine et Aymen thank you -_-</p>
+                    <p >Are you really want to do this ? <b style="text-decoration: solid;text-decoration-color: red;"><?= $error ?></b>  Abdelmouine et Aymen thank you -_-</p>
                     <p style="text-align: center;"></p>
                     <div class="row " style="padding: 35px;">
                         <div class="col">
