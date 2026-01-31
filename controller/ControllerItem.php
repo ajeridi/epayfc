@@ -176,6 +176,11 @@ class ControllerItem extends Controller
         $sold_items = Item::get_user_sold_item($user->get_id());
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
     }
+    public function delete_item() : void {
+        $user = $this->get_user_or_redirect();
+        (new View("delete_confirm"))->show();
+    }
+
 
 
     public function manage_images(): void

@@ -211,7 +211,7 @@
                     </a>
                 </div>
                 <div class="d-grid gap-2">    
-                    <a class="btn btn-outline-danger" href="">
+                    <a class="btn btn-outline-danger" href="item/delete_item">
                       Delete Item 
                     </a>
                 </div>    

@@ -386,7 +386,7 @@ class Item extends Model {
         $query = self::execute($sql, ["item_id" => $item_id]);
         return $query->fetchColumn();
     }
-
+    
     
     
 
