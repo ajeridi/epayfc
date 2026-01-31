@@ -26,7 +26,7 @@
     <main class="main-content-margins">
         <?php if ($user != false) { ?>
             <div class="items_participated_in float-start">
-                <h3 class="text-blue">Items I'm Participating In</h3>
+                <h3 class="text-blue"> <?= (count($items_participated_in) > 0)  ? "Items I\n'm Participating In" : ""?> </h3>
 
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4 mb-5">
