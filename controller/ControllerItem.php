@@ -176,9 +176,28 @@ class ControllerItem extends Controller
         $sold_items = Item::get_user_sold_item($user->get_id());
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
     }
-    public function delete_item() : void {
+    public function delete() : void {
         $user = $this->get_user_or_redirect();
-        (new View("delete_confirm"))->show();
+        if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
+            $item_id=Tools::sanitize($_GET['param1']);
+            $item=Item::get_item_by_id($item_id);
+            if($item->owner!= $user->get_id()){
+                $this->index();
+            }
+            $owner=User::get_full_name_by_id($item->owner);
+        (new View("delete_confirm"))->show(["owner"=>$owner,"title"=>$item->title,"id"=>$item_id]);
+        }
+    }
+    public function delete_item() : void{
+        $user=$this->get_user_or_redirect();
+        $item_id=Tools::sanitize($_GET['param1']);
+        $item=Item::get_item_by_id($item_id);
+        if($item->owner!= $user->get_id() || count($item->bids)!=0){
+                $this->index();
+         } else {
+         $item->delete();   
+         $this->redirect('item','list');
+         }
     }
 
 

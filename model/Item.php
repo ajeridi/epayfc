@@ -168,6 +168,11 @@ class Item extends Model {
         }
         return (double) $data['max'] ;
     }
+    public function delete() : void {
+        self::execute("DELETE FROM bids WHERE item= :id  ;
+                         DELETE FROM item_pictures WHERE item= :id ;
+                         DELETE FROM items WHERE id = :id",["id"=>$this->id]);        
+    }
 
 
     public static function get_item_by_id(int $item_id) : Item | bool {

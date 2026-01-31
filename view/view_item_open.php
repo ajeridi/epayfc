@@ -211,7 +211,7 @@
                     </a>
                 </div>
                 <div class="d-grid gap-2">    
-                    <a class="btn btn-outline-danger" href="item/delete_item">
+                    <a class="btn btn-outline-danger  <?php if(count($item->bids)!=0){?>disabled <?php } ?> " href="item/delete/<?= $item->id ?>">
                       Delete Item 
                     </a>
                 </div>    
