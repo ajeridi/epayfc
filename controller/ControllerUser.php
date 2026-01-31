@@ -124,10 +124,11 @@ class ControllerUser extends Controller
                 if (!$user->has_profile_picture()) {
                     mkdir("uploads/users/$user_id");
                 }
+
+                $this::actualise_path($user, $picture_path);
                 ImageUtils::save_image_file($full_image, $picture_path);
                 ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
 
-                $this::actualise_path($user, $picture_path);
             }
         }
 
