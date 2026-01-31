@@ -105,6 +105,7 @@ class ControllerUser extends Controller
     {
 
         $user = $this->get_user_or_redirect();
+        $user_id = $user->get_id();
         $errors = [];
         $picture_path = null;
 
@@ -118,8 +119,11 @@ class ControllerUser extends Controller
                 $full_image = ImageUtils::scale_image($image, 100, 101);
                 $thumbnail = ImageUtils::scale_image($image, 100, 101);
                 $file_name = pathinfo($image["name"], PATHINFO_FILENAME);
-                $user_id = $user->get_id();
                 $picture_path = "uploads/users/$user_id/$file_name.jpg";
+                // creation du repertoire uploads/users/user_id si pas de picture_path
+                if (!$user->has_profile_picture()) {
+                    mkdir("uploads/users/$user_id");
+                }
                 ImageUtils::save_image_file($full_image, $picture_path);
                 ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
 
@@ -129,6 +133,7 @@ class ControllerUser extends Controller
 
         if (isset($_POST['delete'])) {
             $this::actualise_path($user, $picture_path);
+            rmdir("uploads/users/$user_id");
         }
         (new View('manage_profile_picture'))->show(['user' => $user, 'errors' => $errors]);
     }

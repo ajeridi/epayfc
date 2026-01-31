@@ -232,5 +232,11 @@ public function is_unique_full_name() : bool {
         $data=$query->fetch();
         return $data['role'];
     }
+
+    public function has_profile_picture() : bool{
+        $sql = "SELECT picture_path FROM users WHERE id = :user_id";
+        $query = self::execute($sql, ["user_id" => $this->id]);
+        return $query->fetchColumn() != null;
+    }
 }
 ?>
