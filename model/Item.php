@@ -363,14 +363,14 @@ class Item extends Model {
             $nbrOfSales=$nbrOfSales+1;
         }
         $info['total']=(double)$total;
-        $info['avg']=$total/$nbrOfSales;
+        $info['avg']= $nbrOfSales == 0 ? 0 : $total/$nbrOfSales;
         $info['nbr']=$nbrOfSales;
         return $info;
 
     }
     public static function find_loyer_bider($buyer,String $indice): ? array {
         if(empty($buyer)){
-            return null ;
+            return [] ;
         }
         $buyrArray=[];
         foreach($buyer  as $item) {
