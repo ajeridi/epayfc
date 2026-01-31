@@ -3,6 +3,19 @@
 require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 require_once "model/Bid.php";
+function cmp($i1,$i2){
+        $date1=($i1->buy_now_price <= $i1->bids['0']->amount) ? $i1->bids['0']->created_at : $i1->end_at();
+        $date2=($i2->buy_now_price <= $i2->bids['0']->amount) ? $i2->bids['0']->created_at : $i2->end_at();
+        
+        $dates1=new DateTime($date1);
+        $dates2=new DateTime($date2);
+        if($dates1==$dates2){
+            return 0;
+        }
+
+        return ($dates1 > $dates2) ? 1 : -1 ;
+
+    }
 
 class Item extends Model {
    
@@ -84,6 +97,8 @@ class Item extends Model {
                 $data[]=$item;
                 }
         }
+        usort($data,'cmp');
+
         return $data ;
      }
      public static function get_purchases_items( $user) : array {
@@ -94,6 +109,7 @@ class Item extends Model {
                 $data[]=$item;
             }
         }
+        usort($data,'cmp');
         
         return $data ;
      }
@@ -400,6 +416,21 @@ class Item extends Model {
         $data=$query->fetch();
         return $data['end_at'];
     }
+    
+     function cmp($i1,$i2){
+        $date1=($i1->buy_now_price <= $i1->bids['0']->amount) ? $i1->bids['0']->created_at : $i1->end_at();
+        $date2=($i2->buy_now_price <= $i2->bids['0']->amount) ? $i2->bids['0']->created_at : $i2->end_at();
+        
+        $dates1=new DateTime($date1);
+        $dates2=new DateTime($date2);
+        if($dates1==$dates2){
+            return 0;
+        }
+
+        return ($dates1 > $dates2) ? 1 : -1 ;
+
+    }
+
 
    
     
