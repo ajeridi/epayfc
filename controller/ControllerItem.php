@@ -55,10 +55,10 @@ class ControllerItem extends Controller
             $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
             $item =Item::get_item_by_id($_GET["param1"]);
          } else{
-            $this->index();
+              throw new Exception("Openning same think alse then Item");
          }
          if(!$is_open && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
-             $this->index();
+              throw new Exception("Open an Item dont consern you");
          }else{
         
         
@@ -96,7 +96,7 @@ class ControllerItem extends Controller
         $item=Item::get_item_by_id($_GET['param1']);
         $is_open=Item::is_open_anonce($_GET['param1']); 
         if($item->owner!= $user->get_id() || !$is_open ||count($item->bids)!=0){
-            $this->index();
+             throw new Exception("you can edit this ");
             return;
         }
    
@@ -183,7 +183,7 @@ class ControllerItem extends Controller
             $item=Item::get_item_by_id($item_id);
             $is_open=Item::is_open_anonce($item->id);
             if($item->owner!= $user->get_id()|| count($item->bids)!=0 || !$is_open ){
-                $this->index();
+                 throw new Exception("You can't delete this item ");
             }
             $owner=User::get_full_name_by_id($item->owner);
         (new View("delete_confirm"))->show(["owner"=>$owner,"title"=>$item->title,"id"=>$item_id]);
@@ -195,7 +195,7 @@ class ControllerItem extends Controller
         $item=Item::get_item_by_id($item_id);
          $is_open=Item::is_open_anonce($item->id);
         if($item->owner!= $user->get_id() || count($item->bids)!=0 || !$is_open){
-                $this->index();
+                 throw new Exception("You can't delete this item ");
          } else {
          $item->delete();   
          $this->redirect('item','list');
