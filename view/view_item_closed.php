@@ -77,7 +77,7 @@
                                                         if ($item->starting_bid != null){?>
                                                             <span class="badge rounded-pill" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
                                                     <?php  }
-                                                        if ($item->starting_bid != null OR $item->buy_now_price != null){?>
+                                                        if ( $item->buy_now_price != null){?>
                                                             <span class="badge rounded-pill text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
                                                         <?php } ?>    
                                                             <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_nomber_of_pictures() ?> images</span>

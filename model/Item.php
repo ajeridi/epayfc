@@ -94,6 +94,7 @@ class Item extends Model {
                 $data[]=$item;
             }
         }
+        
         return $data ;
      }
 
@@ -399,6 +400,7 @@ class Item extends Model {
         $data=$query->fetch();
         return $data['end_at'];
     }
+
    
     
     
