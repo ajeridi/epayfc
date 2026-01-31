@@ -2,7 +2,7 @@
 <html lang="en">
      <head>
         <meta charset="UTF-8">
-        <title>🛒 <?= $item['title'] ?></title>
+        <title>🛒 <?= $item->title ?> </title>
         <base href="<?= $web_root ?>">
          <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -29,18 +29,23 @@
           <!-- Card image + infos -->
           <div class="card card-dark border-0 overflow-hidden">
             <div class="ratio ratio-16x9 bg-black-30">
-              <img <?= ($item['picture_path']=="") ? "src=uploads/items/default.jpg" :   "src=".$item['picture_path'] ?>  class="w-100 h-100 object-fit-cover" alt="item image">
+              <img <?= ($item->get_path($priority)== null) ? "src=uploads/items/default.jpg" :   "src=".$item->get_path($priority) ?>  class="w-100 h-100 object-fit-cover" alt="item image">
             </div>
 
             <div class="card-body">
               <div class="d-flex justify-content-between gap-3">
                 <div>
-                  <div class="h5 mb-1"><?= $item['title'] ?></div>
-                  <div class="text-muted small mb-2"><?= $item['description'] ?></div>
+                  <div class="h5 mb-1"><?= $item->title ?></div>
+                  <div class="text-muted small mb-2"><?= $item->description ?></div>
+                  <?php
+                    
+                            $durations=new DateInterval("P{$item->duration_days}D");
+                            $datedebut=new DateTime($item->created_at);
+                  ?>
 
                   <div class="text-muted small">
-                    <div><span class="label">Start:</span> <?= $item['created_at'] ?></div>
-                    <div><span class="label">Ends:</span> <?= $item['end_at'] ?></div>
+                    <div><span class="label">Start:</span> <?= $item->created_at ?></div>
+                    <div><span class="label">Ends:</span> <?php echo $datedebut->add($durations)->format('x-m-d h:m:s') ?></div>
                   </div>
                 </div>
 
@@ -56,7 +61,7 @@
             <div class="thumbs d-flex gap-2 flex-wrap">
               <?php
                 foreach ($pictures as $i => $p) { ?>
-                  <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item['id']?>/from-browse/<?= $p['priority'] ?>">
+                  <a class="thumb <?= $i === 0 ? 'active' : '' ?>"  href="item/open/<?= $item->id?>/from-browse/<?= $p['priority'] ?>">
                     <img src="<?= $p['picture_path'] ?>" alt="thumb">
                   </a>
               <?php } ?>
@@ -68,18 +73,18 @@
             <div class="d-flex align-items-center justify-content-between px-3 pt-3">
               <div class="section-title mb-0">Bid History</div>
           
-              <span class="badge badge-dark"><?= $item['bid_count']?> entries</span>
+              <span class="badge badge-dark"><?= count($item->bids)?> entries</span>
             </div>
 
             <div class="list-group list-group-flush list-dark mt-3">
-              <?php foreach ($bids as $bid){ ?>
+              <?php foreach ($item->bids as $bid){ ?>
                 <div class="list-group-item">
                   <div class="d-flex justify-content-between align-items-start">
                     <div>
-                      <div class="fw-semibold"><?= $bid['pseudo'] ?></div>
-                      <div class="small text-muted"><?= $bid['created_at'] ?></div>
+                      <div class="fw-semibold"><?=User::get_pseudo_by_id($bid->owner) ?></div>
+                      <div class="small text-muted"><?= $bid->created_at ?></div>
                     </div>
-                    <div class="price-green fw-semibold">€ <?= $bid['amount'] ?></div>
+                    <div class="price-green fw-semibold">€ <?= $bid->amount ?></div>
                   </div>
                 </div>
               <?php  } ?>
@@ -96,78 +101,78 @@
           <div class="card card-dark border-0">
             <div class="card-body">
               <div class="section-title mb-3">Pricing</div>
-              <?php if($item['is_direct_sale']==0) {?>
+              <?php if($item->starting_bid!= null) {?>
               <div class="d-flex justify-content-between small mb-0">
                 <span class="text-muted">Current Bid</span>
                 <span class="price-green fw-semibold">
-                  <?php if($item['max_bid']==NULL){?>
-                  <i class="bi bi-currency-euro"></i><?= $item['starting_bid'] ?>
+                  <?php if($item->get_max_bid()==NULL){?>
+                  <i class="bi bi-currency-euro"></i><?= $item->starting_bid ?>
                 </span>
               </div>
                 <div class="d-flex justify-content-between small mb-2">
-                <span class="text-muted">starting at € <?= $item['starting_bid'] ?> </span>    
+                <span class="text-muted">starting at € <?= $item->starting_bid ?> </span>    
                 </div>
                   <?php }else {?>
-                    <i class="bi bi-currency-euro"></i><?= $item['max_bid'] ?>
+                    <i class="bi bi-currency-euro"></i><?= $item->get_max_bid() ?>
                 </span>
               </div>       
                     <?php } ?> 
                 <?php } ?>           
               <div class="d-flex justify-content-between small mb-3">
                 
-                <?php if($item['has_buy_now']==1){ ?>
+                <?php if($item->starting_bid == null){ ?>
                 <span class="text-muted">Buy Now</span>
                 <span class="fw-semibold">
-                  <i class="bi bi-currency-euro"></i><?= $item['buy_now_price'] ?>
+                  <i class="bi bi-currency-euro"></i><?= $item->buy_now_price ?>
                 </span>
                 <?php } ?>    
               </div>
             
               <hr class="hr-soft">
-              <fieldset <?php if($user == false || $user->get_pseudo() == $item['pseudo'] ){?> disabled <?php } ?>>
-              <?php  if($item['is_direct_sale']==0) {?>
+              <fieldset <?php if($user == false || $user->get_id() == $item->owner ){?> disabled <?php } ?>>
+              <?php  if($item->starting_bid !=null) {?>
               <?php if($is_open){?>
-              <form method="post" action="item/bid/<?= $item['id']?>">
+              <form method="post" action="item/bid/<?= $item->id?>">
                 <div class="input-group input-dark mb-3">
                   <span class="input-group-text">€</span>
                   <input
                     type="text"
                     name="min_bid"
                     class="form-control"
-                    value="<?= ($item['max_bid'] === null) ? (($item['starting_bid'] != 0) ? $item['starting_bid'] : 1) : ($item['max_bid'] + 1) ?>"
+                    value="<?= ($item->get_max_bid() === null) ? (($item->starting_bid != 0) ? $item->starting_bid : 1) : ($item->get_max_bid() + 1) ?>"
                     required
                   >
                 </div>
 
                 <div class="d-grid gap-2">
                   <button class="btn btn-success" type="submit">Place Bid</button>
-                  <?php if($item['has_buy_now']==1){ ?>
-                  <a class="btn btn-outline-primary  " href="item/buy/<?= $item['id'] ?>">
-                    Buy Now at € <?= $item['buy_now_price'] ?>
+                  <?php if($item->buy_now_price != null && $item->starting_bid !=null){ ?>
+                  <a class="btn btn-outline-primary  " href="item/buy/<?= $item->id ?>">
+                    Buy Now at € <?= $item->buy_now_price ?>
                   </a>
                   <?php } ?>
                 </div>
               </form>
               <?php } ?>
               <?php } ?>
-              <?php  if($item['is_direct_sale']==1 && $is_open ) {?>
+              <?php  if($item->starting_bid==null && $is_open ) {?>
                 <div class="d-grid gap-2">
-                <a class="btn btn-outline-success" href="item/buy/<?= $item['id'] ?>">
+                <a class="btn btn-outline-success" href="item/buy/<?= $item->id ?>">
                     Buy Now 
                   </a>
                 </div>
               </fieldset>   
               <?php }if(!$is_open){
-                if($item['bid_count']!=0){
-                if($user->get_id()===$bids['0']['owner']){?>
-                <p> Congratulation! You purchased this item for € <?= $item['max_bid'] ?> </p>
+                if(count($item->bids)!=0){
+                if($user->get_id()===$item->bids['0']->owner){?>
+                <p> Congratulation! You purchased this item for € <?= $item->get_max_bid() ?> </p>
                 <?php }else {?>
-                <p><?= $bids['0']['pseudo'] ?> Won this item for € <?= $item['max_bid'] ?></p> 
+                <p><?= User::get_pseudo_by_id($item->bids['0']->owner) ?> Won this item for € <?= $item->get_max_bid() ?></p> 
               <?php } }  else {?>
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
 
-                <?php if($user == true && $user->get_pseudo() === $item['pseudo'] && $is_open){?>
+                <?php if($user == true && $user->get_pseudo() === $item->owner && $is_open){?>
                 <p>You cannot bid on your own listing</p>
                 <?php } ?> 
                 <?php if($user == false && $is_open){?>
@@ -182,26 +187,26 @@
               <div class="section-title mb-3">Seller Information</div>
 
               <div class="d-flex align-items-center gap-3">
-                <div class="avatar rounded-circle"><img src="<?= $item['user_path'] ?>"  class="w-100"></div>
+                <div class="avatar rounded-circle"><img src="<?= User::get_path_picture($item->owner) ?>"  class="w-100"></div>
                 <div>
-                  <div class="fw-semibold"><?= $item['pseudo'] ?></div>
-                  <div class="text-muted small"><?= $item['role'] ?></div>
+                  <div class="fw-semibold"><?= User::get_pseudo_by_id($item->owner)  ?></div>
+                  <div class="text-muted small"><?=User::get_role_by_id($item->owner) ?></div>
                 </div>
               </div>
             </div>
           </div>
-          <?php if($user == true && $user->get_pseudo() === $item['pseudo']  && $is_open){?>
+          <?php if($user == true && $user->get_id() === $item->owner  && $is_open){?>
           <div class="card card-dark border-0 mt-3">
             <div class="card-body">
               <div class="section-title mb-3">Manage Your Item</div>
                 <div class="row g-3">
                 <div class="d-grid gap-2">  
-                  <a class="btn btn-outline-success <?php if($item['bid_count']!=0){?>disabled <?php } ?> "  href="item/edit/<?= $item['id']?>">
+                  <a class="btn btn-outline-success <?php if(count($item->bids)!=0){?>disabled <?php } ?> "  href="item/edit/<?= $item->id?>">
                     Edit item Details
                     </a>
                 </div>
                 <div class="d-grid gap-2">    
-                    <a class="btn btn-outline-info" href="item/manage_images/<?= $item["id"] ?>">
+                    <a class="btn btn-outline-info" href="item/manage_images/<?= $item->id?>">
                       Manage Images
                     </a>
                 </div>
