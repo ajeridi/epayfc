@@ -39,10 +39,16 @@ class Item extends Model {
         $this->starting_bid=$starting_bid;
         
     } 
-    private static function build_Item(array $array) : Item {
+    private static function build_Item(array | bool $array) : Item  {
+        if(is_bool($array)){
+             throw new Exception("Unable to find the data record in the table");
+        } else{
+       
         $item= new Item($array['id'],$array['title'],$array['owner'],$array['created_at'],$array['duration_days'],$array['description'],$array['buy_now_price'],$array['starting_bid']);
         $item->bids=Bid::get_item_bids($item->id);
         return $item;
+        }
+        
     }
    
 
@@ -193,11 +199,15 @@ class Item extends Model {
 
 
     public static function get_item_by_id(int $item_id) : Item | bool {
+       
+        
         $query=self::execute("SELECT  i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid FROM items i WHERE i.id= :id ",["id"=>$item_id]);
         $array=$query->fetch(); 
         $item=Item::build_Item($array);
         
-        return $item;     
+        
+        return $item; 
+        
     }
 
     public static function get_other_pictures_by_id(int $item_id): array {
