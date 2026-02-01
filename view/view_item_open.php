@@ -48,8 +48,9 @@
                     <div><span class="label">Ends:</span> <?php echo $datedebut->add($durations)->format('x-m-d h:m:s') ?></div>
                   </div>
                 </div>
-
+                <?php if($item->starting_bid != null){?>
                 <span class="badge badge-pill">Auction</span>
+                <?php } ?>
               </div>
             </div>
           </div>
