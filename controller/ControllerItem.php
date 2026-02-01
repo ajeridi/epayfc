@@ -129,7 +129,7 @@ class ControllerItem extends Controller
 
 
             $errors = Item::validat_item($user->get_id(), $title, $description, $duration_days, $buy_now_price, $starting_bid, $saleprice);
-            if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days'])==0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0) {
+            if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days'])==0 && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0) {
                 $id = $_GET['param1'];
                 $info['id'] = $id;
                 $id_nv = Item::put_edition_item($id, $user->get_id(), $title, $description, $duration_days, $buy_now_price, $starting_bid, $saleprice);

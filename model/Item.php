@@ -276,11 +276,11 @@ class Item extends Model {
            
         }
         if($starting_bid != ""  &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $starting_bid)){
-            $errors["starting_bid"][]="Starting bid must be positif ";
+            $errors["starting_bid"][]="Starting bid must be a nomber positif ";
             
         }
-        if( $buy_now_price != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $starting_bid) ){
-            $errors['buy_now_price'][]="the buy now price must be positif";
+        if( $buy_now_price != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/",$buy_now_price) ){
+            $errors['buy_now_price'][]="the buy now price must be a nomber positif";
             
         }
         if($starting_bid =="" && $saleprice==""){
@@ -299,6 +299,12 @@ class Item extends Model {
 
             $errors["duration_days"][]="Duartion is required and most be integer positif and between 1 and 60";
         }
+        if($starting_bid == "" && $saleprice !="" &&  !preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $saleprice )){
+             $errors["saleprice"][]="Sale price most be a nomber positif ";
+        }
+
+    
+
         
        
         return $errors;
