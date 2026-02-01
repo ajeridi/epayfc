@@ -33,7 +33,7 @@
                         
                             <div class="mb-3">
                                 <label for="itemtitle" class="form-label" >Item Title *</label>
-                                <input type="text" class="form-control d-block  text-bg-dark"  style ="padding-right:80%" id="title" name="title" <?= ($action=="add") ? "placeholder=\"EX:Iphon 13 Pro Max 256GB\"" : "value=\"".$info['title']."\"" ?>>
+                                <input type="text" class="form-label d-block  text-bg-dark"  style ="padding-right:80%" id="title" name="title" <?= ($action=="add") ? "placeholder=\"EX:Iphon 13 Pro Max 256GB\"" : "value=\"".$info['title']."\"" ?>>
                                 <div class="errors">
                                 <?php if(count($errors['title'])){?>
                                    <ul>
