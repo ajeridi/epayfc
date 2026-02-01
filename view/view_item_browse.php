@@ -42,7 +42,7 @@
                             <div class="col-3">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".$item->get_path() ?> class="card-img-top" alt="image item">
+                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
                                             <?php if ($user->is_heigth_bider($item->id)) { ?>
                                                 <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
@@ -110,7 +110,7 @@
                             <div class="col-3">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".$item->get_path() ?> class="card-img-top" alt="image item">
+                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
                                             <div class="float-end d-flex flex-column gap-2 h-50">
                                                 <?php
@@ -130,9 +130,9 @@
                                             <p class="card-text fw-bolder mb-0"><?= $item->title ?></p>
                                             <p class="card-text fw-light fs-6">By <?= User::get_full_name_by_id($item->owner) ?></p>
                                             <?php if ($item->buy_now_price == NULL) { ?>
-                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= $item->starting_bid ?></p>
+                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= number_format($item->starting_bid, 2, ",", " ") ?></p>
                                             <?php } else { ?>
-                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= $item->buy_now_price ?></p>
+                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ") ?></p>
                                             <?php } ?>
                                             <span class="card-text text-success fw-bold"><i class="bi bi-clock"></i><?php echo $current_date->diff($datedebut->add($durations))->format('%dd  %hh') ?> left</span>
                                         </div>

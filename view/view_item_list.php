@@ -36,7 +36,7 @@
                                 <div class="col-3">
                                     <a href="item/open/<?= $item->id?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img <?= ($item->get_path()==null) ? "src=uploads/items/default.jpg" :   "src=".$item->get_path()?> class="card-img-top" alt="image item">
+                                            <img <?= ($item->get_path()==null) ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path())?> class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
@@ -59,16 +59,16 @@
                                                     <div class="row align-items-center">
                                                         <div class="col-md-6">
                                                             <?php if ($item->buy_now_price == NULL){?>
-                                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= $item->starting_bid?></p>
+                                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= number_format($item->starting_bid, 2, ",", " ")?></p>
                                                             <?php }else{?>
-                                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= $item->buy_now_price?></p>
+                                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ")?></p>
                                                             <?php }?>
                                                         </div>
                                                         <?php if ($item->get_max_bid() != NULL) { ?>
                                                             <div class="col-md-6 text-end">
                                                                 <div class="d-flex flex-column">
                                                                     <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
-                                                                    <span class="card-text fs-6" style="color: green;">€ <?= $item->get_max_bid() ?><span>
+                                                                    <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->get_max_bid(), 2, ",", " ") ?><span>
                                                                 </div>
                                                             </div>
                                                         <?php } ?>
@@ -97,7 +97,7 @@
                                 <div class="col-3">
                                     <a href="item/open/<?= $item->id?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img <?= ($item->get_path()==null) ? "src=uploads/items/default.jpg" :   "src=".$item->get_path()?> class="card-img-top" alt="image item">
+                                            <img <?= ($item->get_path()==null) ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path(), 2, ",", " ")?> class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
@@ -120,16 +120,16 @@
                                                     <div class="row align-items-center">
                                                         <div class="col-md-6">
                                                             <?php if ($item->buy_now_price == NULL){?>
-                                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= $item->starting_bid?></p>
+                                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= number_format($item->starting_bid, 2, ",", " ")?></p>
                                                             <?php }else{?>
-                                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= $item->buy_now_price?></p>
+                                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ")?></p>
                                                             <?php }?>
                                                         </div>
                                                         <?php if ($item->get_max_bid() != NULL) { ?>
                                                             <div class="col-md-6 text-end">
                                                                 <div class="d-flex flex-column">
                                                                     <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
-                                                                    <span class="card-text fs-6" style="color: green;">€ <?= $item->get_max_bid() ?><span>
+                                                                    <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->get_max_bid(), 2, ",", " ") ?><span>
                                                                 </div>
                                                             </div>
                                                         <?php } ?>
@@ -159,7 +159,7 @@
                                 <div class="col-3">
                                     <a href="item/open/<?= $item->id?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img <?= ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".$item->get_path()?> class="card-img-top" alt="image item">
+                                            <img <?= ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path())?> class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
                                                     <?php 
@@ -182,16 +182,16 @@
                                                     <div class="row align-items-center">
                                                         <div class="col-md-6">
                                                             <?php if ($item->buy_now_price == null){?>
-                                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= $item->starting_bid?></p>
+                                                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= number_format($item->starting_bid, 2, ",", " ")?></p>
                                                             <?php }else{?>
-                                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= $item->buy_now_price?></p>
+                                                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ")?></p>
                                                             <?php }?>
                                                         </div>
                                                         <?php if ($item->get_max_bid() != NULL && $item->starting_bid != null) { ?>
                                                             <div class="col-md-6 text-end">
                                                                 <div class="d-flex flex-column">
                                                                     <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
-                                                                    <span class="card-text fs-6" style="color: green;">€ <?= $item->get_max_bid() ?><span>
+                                                                    <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->get_max_bid(), 2, ",", " ") ?><span>
                                                                 </div>
                                                             </div>
                                                         <?php } ?>
