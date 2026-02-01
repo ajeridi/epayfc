@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Manage Images</title>
+    <title>🛒 Manage Images - <?= $item_title ?></title>
     <base href="<?= $web_root ?>" ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">

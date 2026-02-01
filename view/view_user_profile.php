@@ -13,11 +13,11 @@
      <header>
         <header>
             <!-- Barre  -->
-            <nav class="navbar bg-navy-gray" data-bs-theme="dark"> <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Profile 🛒 </div> </nav>
+            <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark"> <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Profile 🛒 </div> </nav>
          </header>   
 
     </header>
-    <body class="bg-navy"> 
+    <body class="bg-navy" style="margin-top: 70px;"> 
         <main class="container mt-3" style="margin-bottom: 150px;">
             <!-- Information utilisateur !-->
             <div class="container mb-3">

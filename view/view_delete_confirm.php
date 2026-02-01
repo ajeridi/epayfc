@@ -2,7 +2,7 @@
 <html>
     <head>
          <meta charset="UTF-8">
-        <title>🛒 Settings </title>
+        <title>🛒 Delete "<?= $title ?>" </title>
         <base href="<?= $web_root ?>">
         <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
