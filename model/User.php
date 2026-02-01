@@ -116,7 +116,7 @@ class User extends Model {
 
     private function validate_full_name() : array {
         $errors = [];
-        if (strlen($this->full_name) < 3){
+        if (strlen($this->full_name) < Configuration::get("name_min_length")){
             $errors[] = "Full name must be at least 3 characters long.";
         }
         if (!$this->is_unique_full_name($this->full_name)){
@@ -127,7 +127,7 @@ class User extends Model {
 
     private function validate_username() : array {
         $errors = [];
-        if (strlen($this->pseudo) < 3 || strlen($this->pseudo) > 30){
+        if (strlen($this->pseudo) < Configuration::get("name_min_length") || strlen($this->pseudo) > Configuration::get("name_max_length")){
             $errors[] = "Username must be between 3 and 30 characters long.";
         }
         if (!$this->is_unique_pseudo($this->pseudo)){
