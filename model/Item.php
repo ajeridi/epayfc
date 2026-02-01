@@ -260,7 +260,7 @@ class Item extends Model {
         $errors['saleprice']=[];
         $errors['duration_days']=[];
  
-       if(!Item::unicite_title_for_owner($owner,$title)){
+       if( !Item::unicite_title_for_owner($owner,$title) ){
         $errors['title'][]="This title already exist, Please choose another one !";
        }
         
@@ -299,31 +299,27 @@ class Item extends Model {
 
             $errors["duration_days"][]="Duartion is required and most be integer positif and between 1 and 60";
         }
-        if($starting_bid == "" && $saleprice !="" &&  !preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $saleprice )){
+        if($starting_bid == "" && $saleprice !="" &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $saleprice)){
              $errors["saleprice"][]="Sale price most be a nomber positif ";
         }
-
-    
-
-        
-       
+     
         return $errors;
     }
     private static function unicite_title_for_owner($owner ,$title): bool {
-        $result=true ;
-        $query=self::execute("SELECT title from items where owner=:owner",["owner"=>$owner]);
+
+        $query=self::execute("SELECT * from items i where i.owner = :owner and i.title = :title ",["owner"=>$owner,"title"=>$title]);
         $data=$query->fetchAll();
-        foreach($data as $tit){
-            if(Tools::sanitize($title)===$tit){
-                $result=false ;
-            }
-        }
-        return $result;
+       if($query->rowCount() != 0){
+        return false; 
+       }
+        return true;
 
 
     }
     public static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): int {
         $current_date_time=AppTime::get_current_datetime();
+        
+
         if($buy_now_price == ""){
             if($starting_bid != "" && $starting_bid !=0){
                 $buy_now_price=null;
@@ -331,6 +327,9 @@ class Item extends Model {
             $buy_now_price=$saleprice;
             }
         }
+
+        $starting_bid= str_replace(',','.',$starting_bid);
+        $buy_now_price=str_replace(',','.',$buy_now_price);
         if($id==0){
             self::execute("INSERT INTO items (owner,title,description,duration_days,buy_now_price,starting_bid,created_at)  VALUE (:owner,:title,:description,:duration_days,:buy_now_price,:starting_bid,:created_at) ",['owner'=>$owner,'title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price,'created_at'=>$current_date_time]);
             $id_nv=self::lastInsertId();
