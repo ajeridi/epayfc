@@ -103,7 +103,7 @@
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
                         foreach ($other_available_items as $item) {
-                             $current_dates=AppTime::get_current_datetime();
+                            $current_dates=AppTime::get_current_datetime();
                             $current_date= new DateTime($current_dates);
                             $durations=new DateInterval("P{$item->duration_days}D");
                             $datedebut=new DateTime($item->created_at); ?>
