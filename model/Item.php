@@ -288,8 +288,9 @@ class Item extends Model {
             $errors["buy_now_price"][]="Cannot create both auction and direct sale";
             $errors["saleprice"][]="Cannot create both auction and direct sale";
         }
-        if($duration_days==null || $duration_days <= 0){
-            $errors["duration_days"][]="Duartion is required and most be positif";
+        if (!preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $duration_days)) {
+
+            $errors["duration_days"][]="Duartion is required and most be integer positif and between 1 and 60";
         }
         
        

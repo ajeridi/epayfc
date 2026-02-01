@@ -109,9 +109,15 @@ class ControllerItem extends Controller
     }
         if (count($_POST)) {
             $ok = true;
+            
             $user = $this->get_user_or_redirect();
             $info = [];
             $info['id'] = $_GET['param1'];
+            if(isset($_GET['param1'])){
+                $action="edit";
+            }else{
+                $action="add";
+            }
             $title = Tools::sanitize($_POST['title']);
             $info['title'] = $title;
             $description = Tools::sanitize($_POST['description']);
@@ -133,7 +139,8 @@ class ControllerItem extends Controller
                 $id_nv = Item::put_edition_item($id, $user->get_id(), $title, $description, $duration_days, $buy_now_price, $starting_bid, $saleprice);
                 $this->redirect("item", "open", $id_nv, "from-items");
             } else {
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'ok' => $ok]);
+                
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'ok' => $ok,"action"=>$action]);
             }
             
         } else {
@@ -156,13 +163,15 @@ class ControllerItem extends Controller
             $errors['buy_now_price'] = [];
             $errors['starting_bid'] = [];
             $errors['saleprice'] = [];
+            $action="edit";
 
-            (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'ok' => $ok]);
+            (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'ok' => $ok,"action"=>$action]);
         }
     }
     public function add()
     {
         $user = $this->get_user_or_redirect();
+        $action="add";
         $errors[] = [];
         $errors['title'] = [];
         $errors['description'] = [];
@@ -171,7 +180,7 @@ class ControllerItem extends Controller
         $errors['saleprice'] = [];
         $errors['duration_days'] = [];
         $info['id'] = 0;
-        (new View("item_edit"))->show(['info' => $info, 'errors' => $errors]);
+        (new View("item_edit"))->show(['info' => $info, 'errors' => $errors,'action'=>$action]);
     }
 
 
