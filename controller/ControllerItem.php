@@ -57,10 +57,10 @@ class ControllerItem extends Controller
             $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
             $item =Item::get_item_by_id($_GET["param1"]);
          } else{
-              throw new Exception("Openning same think alse then Item");
+              throw new Exception("No Item specified or Item not found");
          }
          if(!$is_open && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
-              throw new Exception("Open an Item dont consern you");
+              throw new Exception("This Item seem to not be yours.");
          }else{
         (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"is_open"=>$is_open,"user"=>$user,"from"=>$from,"priority"=>$priority]);
          }
