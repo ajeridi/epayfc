@@ -22,7 +22,7 @@
             </div>
         </nav>
     </header>
-    <main class="container  text-white">
+    <main class="container  text-white" style="margin-bottom: 150px;">
         <h2 class="mt-4 mb-4">Manage images for "<?= $item_title ?>"</h2>
         <!-- Partie input d'images !-->
         <div class="card text-white">
