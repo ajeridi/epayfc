@@ -6,7 +6,7 @@ class ImageUtils
 
     public static function validate_image(array $image): array
     {
-        $max_size = 5 * 1024 * 1024; // 5MB
+        $max_size = Configuration::get("max_file_size"); // 5MB
         $errors = [];
         if ($image["size"] > $max_size) {
             $errors[] = "File size cannot exceed 5MB";
