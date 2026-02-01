@@ -113,11 +113,7 @@ class ControllerItem extends Controller
             $user = $this->get_user_or_redirect();
             $info = [];
             $info['id'] = $_GET['param1'];
-            if(isset($_GET['param1'])){
-                $action="edit";
-            }else{
-                $action="add";
-            }
+           
             $title = Tools::sanitize($_POST['title']);
             $info['title'] = $title;
             $description = Tools::sanitize($_POST['description']);
@@ -140,7 +136,7 @@ class ControllerItem extends Controller
                 $this->redirect("item", "open", $id_nv, "from-items");
             } else {
                 
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'ok' => $ok,"action"=>$action]);
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'ok' => $ok,"action"=>"edit"]);
             }
             
         } else {

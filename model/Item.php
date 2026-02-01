@@ -263,6 +263,7 @@ class Item extends Model {
        if(!Item::unicite_title_for_owner($owner,$title)){
         $errors['title'][]="This title already exist, Please choose another one !";
        }
+        
         if(strlen($title)==0){
             $errors['title'][]="Title is required";
         }
@@ -274,11 +275,11 @@ class Item extends Model {
             $errors['description'][]="Description lenght must be betwenn 3 and 255 characters";
            
         }
-        if($starting_bid != ""  &&  $starting_bid < 0){
+        if($starting_bid != ""  &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $starting_bid)){
             $errors["starting_bid"][]="Starting bid must be positif ";
             
         }
-        if( $buy_now_price != "" &&  $buy_now_price <= 0 ){
+        if( $buy_now_price != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $starting_bid) ){
             $errors['buy_now_price'][]="the buy now price must be positif";
             
         }
