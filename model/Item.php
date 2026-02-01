@@ -239,10 +239,16 @@ class Item extends Model {
     }
     public static function buy($owner,$item_id,$at,$amount): void {
         $item=item::get_item_by_id($item_id);
-        if($amount>$item->get_max_bid() && $amount>=$item->starting_bid){
-                 $query=self::execute("INSERT INTO bids(owner,item,created_at,amount) VALUES (:owner,:item,:created_at,:amount)",["owner"=>$owner,"item"=>$item_id,"created_at"=>$at,"amount"=>$amount]);
-        }
+          if (!preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $amount)) {
+                
+        } else {
+                    $amount = str_replace(',', '.', $amount);
+                    if($amount>$item->get_max_bid() && $amount>=$item->starting_bid){
+                            $query=self::execute("INSERT INTO bids(owner,item,created_at,amount) VALUES (:owner,:item,:created_at,:amount)",["owner"=>$owner,"item"=>$item_id,"created_at"=>$at,"amount"=>$amount]);
+                    } 
 
+                }
+               
     }
     public static function validat_item($owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
         
