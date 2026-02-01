@@ -168,12 +168,12 @@ class Item extends Model {
         $query = self::execute("SELECT ip.picture_path FROM item_pictures ip where ip.item = :item_id and ip.priority= :nb",["item_id"=>$this->id,"nb"=>$priority]);
         $data=$query->fetch();
         if($query->rowCount()==0 ){
-            if($priority>0){
+            if($priority>1){
                  throw new Exception("Unable to find the data record in the table");
                 
-            } 
+            } else {
                 return null ;
-            
+            }
         }
         return $data['picture_path'];
     }
