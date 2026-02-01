@@ -23,7 +23,7 @@
             </div>
         </nav>
     </header>
-    <main class="main-content-margins">
+    <main class="main-content-margins" style="margin-top : 60px ;">
         <?php if ($user != false) { ?>
             <div class="items_participated_in float-start">
                 <h3 class="text-blue"> <?= (count($items_participated_in) > 0)  ? "Items I\n'm Participating In" : ""?> </h3>

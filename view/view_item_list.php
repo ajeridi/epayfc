@@ -19,9 +19,10 @@
                 </div>
             </nav>
         </header>
-        <main class="main-content-margins">
+        <main class="main-content-margins" style="margin-top: 100px;">
+            <?php if(count($active_items)){?>
             <div class="active_items float-start">
-                <h3 class="text-blue"><?= count($active_items)>0 ?  "Active items" : "" ?></h3>
+                <h3 class="text-blue">Active items</h3>
 
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4 mb-5">
@@ -84,6 +85,7 @@
                     ?>
                 </div>
             </div>
+            <?php } ?>
 
             <div class="closed_unsold_items">
                 <h3 class="text-blue"><?= (count($closed_unsold_items) >0) ?  "Closed Unsold Items":"" ?></h3>
