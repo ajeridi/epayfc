@@ -446,25 +446,15 @@ class Item extends Model {
         $query = self::execute($sql, ["item_id" => $item_id]);
         return $query->fetchColumn();
     }
-    public function end_at() : string {
-        $query=self::execute("SELECT end_at from v_items_status where id= :id",["id"=>$this->id]);
+    public function get_end_at() : string {
+        $query=self::execute("SELECT vi.end_at from v_items_status vi where vi.id= :id",["id"=>$this->id]);
         $data=$query->fetch();
         return $data['end_at'];
     }
+
+
     
-     function cmp($i1,$i2){
-        $date1=($i1->buy_now_price <= $i1->bids['0']->amount) ? $i1->bids['0']->created_at : $i1->end_at();
-        $date2=($i2->buy_now_price <= $i2->bids['0']->amount) ? $i2->bids['0']->created_at : $i2->end_at();
-        
-        $dates1=new DateTime($date1);
-        $dates2=new DateTime($date2);
-        if($dates1==$dates2){
-            return 0;
-        }
 
-        return ($dates1 > $dates2) ? 1 : -1 ;
-
-    }
 
 
    

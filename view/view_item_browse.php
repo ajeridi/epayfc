@@ -34,10 +34,6 @@
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
                         foreach ($items_participated_in as $item) {   
-                            $current_dates=AppTime::get_current_datetime();
-                            $current_date= new DateTime($current_dates);
-                            $durations=new DateInterval("P{$item->duration_days}D");
-                            $datedebut=new DateTime($item->created_at);
                             ?>
                             <div class="col-3">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
@@ -83,7 +79,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <span class="card-text text-success fw-bold"><i class="bi bi-clock"></i> <?php echo $current_date->diff($datedebut->add($durations))->format('%dd  %hh') ?> left</span>
+                                            <span class="card-text text-success fw-bold"><i class="bi bi-clock"></i> <?= $item->get_period() ?> left</span>
                                         </div>
                                     </div>
                                 </a>

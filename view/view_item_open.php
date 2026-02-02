@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
         <link rel="stylesheet" href="css/style.css">
     </head>
+     <body class="app-bg page-item-open">      
          <header>
             <!-- Barre au dessus de la page -->
             <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark" >
@@ -18,7 +19,7 @@
                 </div>
             </nav>
         </header>
-    <body class="app-bg page-item-open">             
+          
     <main class="container-fluid px-3 page-wrap" style="margin-top: 100px;">
       <br>
       <div class="row g-3 align-items-start">
@@ -37,15 +38,9 @@
                 <div>
                   <div class="h5 mb-1"><?= $item->title ?></div>
                   <div class="text-muted small mb-2"><?= $item->description ?></div>
-                  <?php
-                    
-                            $durations=new DateInterval("P{$item->duration_days}D");
-                            $datedebut=new DateTime($item->created_at);
-                  ?>
-
                   <div class="text-muted small">
                     <div><span class="label">Start:</span> <?= $item->created_at ?></div>
-                    <div><span class="label">Ends:</span> <?php echo $datedebut->add($durations)->format('x-m-d h:m:s') ?></div>
+                    <div><span class="label">Ends:</span> <?= $item->get_end_at() ?></div>
                   </div>
                 </div>
                 <?php if($item->starting_bid != null){?>
