@@ -24,6 +24,7 @@ class Item extends Model {
      public int $owner,
      public string $created_at,
      public int $duration_days,
+     public ? string $pseudo,
      public ?string $description=null,
      public ?int $buy_now_price=null,
      public ? int $starting_bid=null,
@@ -32,6 +33,7 @@ class Item extends Model {
         $this->id=$id;
         $this->title=$title;
         $this->owner=$owner;
+        $this->pseudo=$pseudo;
         $this->created_at=$created_at;
         $this->duration_days=$duration_days;
         $this->description=$description;
@@ -44,11 +46,16 @@ class Item extends Model {
              throw new Exception("Unable to find the data record in the table");
         } else{
        
-        $item= new Item($array['id'],$array['title'],$array['owner'],$array['created_at'],$array['duration_days'],$array['description'],$array['buy_now_price'],$array['starting_bid']);
+        $item= new Item($array['id'],$array['title'],$array['owner'],$array['created_at'],$array['duration_days'],$array['pseudo'],$array['description'],$array['buy_now_price'],$array['starting_bid']);
         $item->bids=Bid::get_item_bids($item->id);
         return $item;
         }
         
+    }
+
+    public function get_thumbnail_path() : string {
+        return ImageUtils::get_thumbnail_path($this->get_path());
+
     }
    
 
@@ -122,8 +129,8 @@ class Item extends Model {
 
     private static function get_other_items(int $user_id) : array {
         
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid
-        FROM items i join v_items_status vi on vi.id=i.id Where i.owner != :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid,users.pseudo
+        FROM items i join v_items_status vi  on vi.id=i.id join users on i.owner=users.id Where i.owner != :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
         $data= $query->fetchAll();
         $array=[];
         foreach($data as $item){
@@ -134,8 +141,8 @@ class Item extends Model {
 
     private static function get_my_items(int $user_id) : array {
        
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid
-         FROM items i join v_items_status vi on vi.id=i.id Where i.owner = :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid, users.pseudo
+         FROM items i join v_items_status vi on vi.id=i.id join users on users.id = vi.id Where i.owner = :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
          $data= $query->fetchAll();
         $array=[];
         foreach($data as $item){

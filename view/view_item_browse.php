@@ -65,7 +65,7 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="card-text fw-bolder mb-0"><?= $item->title ?></p>
-                                            <p class="card-text fw-light fs-6">By <?= User::get_full_name_by_id($item->owner) ?></p>
+                                            <p class="card-text fw-light fs-6">By <?= $item->pseudo ?></p>
                                             <div class="container">
                                                 <div class="row align-items-center">
                                                     <div class="col-md-6">
@@ -110,7 +110,7 @@
                             <div class="col-3">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
+                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".$item->get_thumbnail_path() ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
                                             <div class="float-end d-flex flex-column gap-2 h-50">
                                                 <?php
