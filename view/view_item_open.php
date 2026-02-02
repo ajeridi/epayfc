@@ -101,7 +101,7 @@
               <div class="d-flex justify-content-between small mb-0">
                 <span class="text-muted">Current Bid</span>
                 <span class="price-green fw-semibold">
-                  <?php if($item->get_max_bid()==NULL){?>
+                  <?php if($item->bids==NULL){?>
                   <i class="bi bi-currency-euro"></i><?= $item->starting_bid ?>
                 </span>
               </div>
@@ -109,7 +109,7 @@
                 <span class="text-muted">starting at € <?= $item->starting_bid ?> </span>    
                 </div>
                   <?php }else {?>
-                    <i class="bi bi-currency-euro"></i><?= $item->get_max_bid() ?>
+                    <i class="bi bi-currency-euro"></i><?= $item->bids['0']->get_amount() ?>
                 </span>
               </div>       
                     <?php } ?> 
@@ -135,7 +135,7 @@
                     type="text"
                     name="min_bid"
                     class="form-control"
-                    value="<?= ($item->get_max_bid() == null) ?  $item->starting_bid : ($item->get_max_bid()+1 ) ?>"
+                    value="<?= ($item->bids == null) ?  $item->starting_bid :( $item->bids['0']->get_amount()+1 ) ?>"
                     required
                   >
                 </div>
@@ -160,10 +160,10 @@
               </fieldset>   
               <?php }if(!$is_open){
                 if(count($item->bids)!=0){
-                if($user->get_id()===$item->bids['0']->owner){?>
-                <p> Congratulation! You purchased this item for € <?= $item->get_max_bid() ?> </p>
+                if($user->get_id()===$item->bids['0']->get_owner()){?>
+                <p> Congratulation! You purchased this item for € <?= $item->bids['0']->get_amount() ?> </p>
                 <?php }else {?>
-                <p><?= User::get_pseudo_by_id($item->bids['0']->owner) ?> Won this item for € <?= $item->get_max_bid() ?></p> 
+                <p><?= $item->bids['0']->get_pseudo() ?> Won this item for € <?= $item->bids['0']->get_amount() ?></p> 
               <?php } }  else {?>
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
@@ -185,7 +185,7 @@
               <div class="d-flex align-items-center gap-3">
                 <div class="avatar rounded-circle"><img src="<?= User::get_path_picture($item->owner) ?>"  class="w-100"></div>
                 <div>
-                  <div class="fw-semibold"><?= User::get_pseudo_by_id($item->owner)  ?></div>
+                  <div class="fw-semibold"><?= $item->pseudo  ?></div>
                   <div class="text-muted small"><?=User::get_role_by_id($item->owner) ?></div>
                 </div>
               </div>

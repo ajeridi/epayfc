@@ -4,8 +4,8 @@ require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 require_once "model/Bid.php";
 function cmp($i1,$i2){
-        $date1=($i1->buy_now_price <= $i1->bids['0']->amount) ? $i1->bids['0']->created_at : $i1->end_at();
-        $date2=($i2->buy_now_price <= $i2->bids['0']->amount) ? $i2->bids['0']->created_at : $i2->end_at();
+        $date1=($i1->buy_now_price <= $i1->bids['0']->get_amount) ? $i1->bids['0']->get_created_at : $i1->end_at();
+        $date2=($i2->buy_now_price <= $i2->bids['0']->get_amount) ? $i2->bids['0']->get_created_at : $i2->end_at();
         
         $dates1=new DateTime($date1);
         $dates2=new DateTime($date2);
@@ -132,8 +132,11 @@ class Item extends Model {
 
     private static function get_other_items(int $user_id) : array {
         
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid,users.pseudo,vi.end_at 
-        FROM items i join v_items_status vi  on vi.id = i.id join users on i.owner = users.id Where i.owner != :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days
+                                ,i.description,i.buy_now_price,i.starting_bid,u.pseudo,vi.end_at 
+                                FROM items i join users u on i.owner = u.id join v_items_status vi
+                                  on vi.id = i.id  Where i.owner != :user_id ORDER BY vi.end_at ",
+                                [":user_id"=>$user_id]);
         $data= $query->fetchAll();
         $array=[];
         foreach($data as $item){
@@ -144,8 +147,10 @@ class Item extends Model {
 
     private static function get_my_items(int $user_id) : array {
        
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid, users.pseudo
-         FROM items i join v_items_status vi on vi.id=i.id join users on users.id = i.owner Where i.owner = :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days
+                             ,i.description,i.buy_now_price,i.starting_bid, users.pseudo
+                                FROM items i join v_items_status vi on vi.id=i.id join users on
+                             users.id = i.owner Where i.owner = :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
          $data= $query->fetchAll();
         $array=[];
         foreach($data as $item){

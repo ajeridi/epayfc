@@ -103,7 +103,7 @@
                             <div class="col-3">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
+                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" : "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
                                             <div class="float-end d-flex flex-column gap-2 h-50">
                                                 <?php
