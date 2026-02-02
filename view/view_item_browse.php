@@ -79,7 +79,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <span class="card-text text-success fw-bold"><i class="bi bi-clock"></i> <?= $item->get_period() ?> left</span>
+                                            <span class="card-text  fw-bold <?= (substr_count($item->get_period(),'m') == 1) ? "text-warning" : "text-success" ?>"><i class="bi bi-clock" ></i> <?= $item->get_period() ?> left</span>
                                         </div>
                                     </div>
                                 </a>
@@ -130,7 +130,7 @@
                                             <?php } else { ?>
                                                 <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ") ?></p>
                                             <?php } ?>
-                                            <span class="card-text text-success fw-bold"><i class="bi bi-clock"></i><?php echo $current_date->diff($datedebut->add($durations))->format('%dd  %hh') ?> left</span>
+                                            <span class="card-text <?= (substr_count($item->get_period(),'m') == 1) ? "text-warning" : "text-success" ?> fw-bold"><i class="bi bi-clock"></i><?= $item->get_period() ?>  left</span>
                                         </div>
                                     </div>
                                 </a>

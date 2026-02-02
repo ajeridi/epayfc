@@ -439,10 +439,29 @@ class Item extends Model {
         $query = self::execute($sql, ["item_id" => $item_id]);
         return $query->fetchColumn();
     }
-    public function get_end_at() : string {
+
+     public function get_end_at() : string {
         $query=self::execute("SELECT vi.end_at from v_items_status vi where vi.id= :id",["id"=>$this->id]);
         $data=$query->fetch();
         return $data['end_at'];
+    }
+
+        public function get_period() : string {
+            $current_date_time=AppTime::get_current_datetime();
+        $query=self::execute("SELECT  TIMESTAMPDIFF(DAY, :current_date_time, end_at) as d,
+                                TIMESTAMPDIFF(HOUR, :current_date_time, end_at) % 24 h,
+                                TIMESTAMPDIFF(MINUTE, :current_date_time, end_at) % 60 m
+                                 FROM v_items_status vi WHERE vi.id= :id ",["id"=>$this->id,":current_date_time"=>$current_date_time]);
+         $data=$query->fetch();
+         $result="";
+         if($data['d'] != 0){
+            $result=$data['d'].'d '.$data['h'].'h';
+         } else {
+            $result=$data['h']. 'h '.$data['m'].'m';
+         }
+           
+         return $result;
+
     }
 
 
