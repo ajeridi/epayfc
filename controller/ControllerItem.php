@@ -274,7 +274,7 @@ class ControllerItem extends Controller
 
 
             // recherche des donnees a afficher sur la page
-            $item_pictures = Item::get_other_pictures_by_id($item_id);
+            $item_pictures = Picture::get_pictures($item_id);
             $item_title = Item::get_item_title($item_id);
 
             // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
