@@ -24,7 +24,7 @@ class Item extends Model {
      public int $owner,
      public string $created_at,
      public int $duration_days,
-     public string $pseudo,
+     public ?string $pseudo,
      public ?string $description=null,
      public ?int $buy_now_price=null,
      public ? int $starting_bid=null,
@@ -46,7 +46,10 @@ class Item extends Model {
              throw new Exception("Unable to find the data record in the table");
         } else{
        
-        $item= new Item($array['id'],$array['title'],$array['owner'],$array['created_at'],$array['duration_days'],$array['pseudo'],$array['description'],$array['buy_now_price'],$array['starting_bid']);
+        $item= new Item($array['id'],$array['title'],$array['owner'],
+                        $array['created_at'],$array['duration_days'],
+                        $array['pseudo'],$array['description'],
+                        $array['buy_now_price'],$array['starting_bid']);
         $item->bids=Bid::get_item_bids($item->id);
         return $item;
         }
@@ -129,8 +132,8 @@ class Item extends Model {
 
     private static function get_other_items(int $user_id) : array {
         
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid,users.pseudo 
-        FROM items i join v_items_status vi  on vi.id=i.id join users on i.owner=users.id Where i.owner != :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid,users.pseudo,vi.end_at 
+        FROM items i join v_items_status vi  on vi.id = i.id join users on i.owner = users.id Where i.owner != :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
         $data= $query->fetchAll();
         $array=[];
         foreach($data as $item){
@@ -213,7 +216,9 @@ class Item extends Model {
     public static function get_item_by_id(int $item_id) : Item | bool {
        
         
-        $query=self::execute("SELECT  i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid FROM items i WHERE i.id= :id ",["id"=>$item_id]);
+        $query=self::execute("SELECT  i.id,i.title,i.owner,i.created_at,
+                             i.duration_days,i.description,i.buy_now_price,i.starting_bid,users.pseudo
+                           FROM items i join users on users.id = i.owner WHERE i.id= :id ",["id"=>$item_id]);
         $array=$query->fetch(); 
         $item=Item::build_Item($array);
         
@@ -230,7 +235,8 @@ class Item extends Model {
 
        public static function is_open_anonce(int $item_id): bool {
          $current_date_time=AppTime::get_current_datetime();
-        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> $current_date_time]);
+        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 )
+                                     or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> $current_date_time]);
 
         if($query->rowCount()==0){
             return false ;

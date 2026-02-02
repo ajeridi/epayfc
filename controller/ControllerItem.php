@@ -38,9 +38,7 @@ class ControllerItem extends Controller
     }
     public function open(): void
     {
-
-        $user=$this->get_user_or_false();
-        $user=$this->get_user_or_false();
+        $user=$this->get_user_or_redirect();
         $from="";
         if(isset($_GET["param2"])){
             $from=substr(stristr($_GET["param2"],"-"),1);
@@ -52,10 +50,8 @@ class ControllerItem extends Controller
             if(isset($_GET["param3"])){
                 $priority=$_GET["param3"] ;    
             }
-            
             $item =Item::get_item_by_id($_GET["param1"]);     
             $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
-            $item =Item::get_item_by_id($_GET["param1"]);
          } else{
               throw new Exception("No Item specified or Item not found");
          }
