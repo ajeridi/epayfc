@@ -3,6 +3,8 @@
 require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 require_once "model/Bid.php";
+require_once "model/Picture.php";
+
 function cmp($i1,$i2){
         $date1=($i1->buy_now_price <= $i1->bids['0']->get_amount()) ? $i1->bids['0']->get_created_at() : $i1->end_at();
         $date2=($i2->buy_now_price <= $i2->bids['0']->get_amount()) ? $i2->bids['0']->get_created_at() : $i2->end_at();
@@ -28,7 +30,8 @@ class Item extends Model {
      public ?string $description=null,
      public ?int $buy_now_price=null,
      public ? int $starting_bid=null,
-     public ? array $bids=[] )
+     public ? array $bids=[],
+     public ? array $pictures=[])
     {
         $this->id=$id;
         $this->title=$title;
@@ -51,15 +54,12 @@ class Item extends Model {
                         $array['pseudo'],$array['description'],
                         $array['buy_now_price'],$array['starting_bid']);
         $item->bids=Bid::get_item_bids($item->id);
+        $item->pictures = Picture::get_pictures($item->id);  
         return $item;
         }
         
     }
 
-    public function get_thumbnail_path() : string {
-        return ImageUtils::get_thumbnail_path($this->get_path());
-
-    }
    
 
     public static function get_items_participatedIn(int $user_id) : array {
@@ -179,6 +179,7 @@ class Item extends Model {
         }
     }
 
+    /*
     public function get_path(int $priority=1) : String | null {
         $query = self::execute("SELECT ip.picture_path FROM item_pictures ip where ip.item = :item_id and ip.priority= :nb",["item_id"=>$this->id,"nb"=>$priority]);
         $data=$query->fetch();
@@ -192,15 +193,42 @@ class Item extends Model {
         }
         return $data['picture_path'];
     }
+*/
+
+public function get_path(int $priority=1) : string {
+    if ($this->pictures == [] || !isset($this->pictures[$priority-1]))
+        return "";
+    return $this->pictures[$priority-1]->get_path();
+}
+
+public function get_thumbnail_path(int $priority=1) : string {
+    if ($this->pictures == [] || !isset($this->pictures[$priority-1]))
+        return "";
+    return $this->pictures[$priority-1]->get_thumbnail_path();
+}
+
 
     public function get_pictures_by_id() : array {
+        /*
         $query=self::execute("SELECT ip.picture_path FROM item_pictures ip where ip.item=:item_id",["item_id"=>$this->id]);
         $data=$query->fetchAll();
-        return $data; 
+        return $data;
+        */
+        return Picture::get_pictures($this->id); 
     }
 
+    public function get_pictures() : array {
+        return $this->pictures;
+    }
+
+    /*
     public function get_nomber_of_pictures(): int {
          return  count($this->get_pictures_by_id());
+    }
+    */
+
+    public function get_number_of_pictures() : int {
+        return count($this->pictures);
     }
 
     public function get_max_bid(): float | null {
@@ -232,11 +260,13 @@ class Item extends Model {
         
     }
 
+/*
     public static function get_other_pictures_by_id(int $item_id): array {
         $query=self::execute("SELECT * FROM item_pictures WHERE item = :item ",["item"=>$item_id]);
         $data=$query->fetchAll();
         return $data;
     }
+        */
 
        public static function is_open_anonce(int $item_id): bool {
          $current_date_time=AppTime::get_current_datetime();

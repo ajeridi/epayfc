@@ -36,6 +36,8 @@ class ControllerItem extends Controller
         }
         (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items, "user" => $user]);
     }
+
+
     public function open(): void
     {
         $user=$this->get_user_or_redirect();
@@ -51,7 +53,7 @@ class ControllerItem extends Controller
                 $priority=$_GET["param3"] ;    
             }
             $item =Item::get_item_by_id($_GET["param1"]);     
-            $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
+            $pictures=$item->get_pictures();
          } else{
               throw new Exception("No Item specified or Item not found");
          }
@@ -62,6 +64,7 @@ class ControllerItem extends Controller
          }
         
     }
+
     public function buy(): void
     {
         $user = $this->get_user_or_redirect();
@@ -81,6 +84,8 @@ class ControllerItem extends Controller
         }
         $this->redirect("Item", "open", $item_id);
     }
+
+
     public function bid(): void
     {
         $user = $this->get_user_or_redirect();
@@ -92,6 +97,8 @@ class ControllerItem extends Controller
         }
         $this->redirect("item", "open", $item_id);
     }
+
+
     public function edit() : void {
          $user=$this->get_user_or_redirect();
         if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
@@ -160,6 +167,8 @@ class ControllerItem extends Controller
             (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'ok' => $ok,"action"=>$action]);
         }
     }
+
+
     public function add()
     {
         $user = $this->get_user_or_redirect();
@@ -185,6 +194,8 @@ class ControllerItem extends Controller
         $sold_items = Item::get_user_sold_item($user->get_id());
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user"=>$user]);
     }
+
+
     public function delete() : void {
         $user = $this->get_user_or_redirect();
         if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
@@ -198,6 +209,8 @@ class ControllerItem extends Controller
         (new View("delete_confirm"))->show(["owner"=>$owner,"title"=>$item->title,"id"=>$item_id]);
         }
     }
+
+
     public function delete_item() : void{
         $user=$this->get_user_or_redirect();
         $item_id=Tools::sanitize($_GET['param1']);
@@ -210,7 +223,6 @@ class ControllerItem extends Controller
          $this->redirect('item','list');
          }
     }
-
 
 
     public function manage_images(): void

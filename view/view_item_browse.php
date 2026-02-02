@@ -38,7 +38,7 @@
                             <div class="col-3">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
+                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".$item->get_thumbnail_path() ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
                                             <?php if ($item->bids['0']->get_owner() == $user->get_id()) { ?>
                                                 <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
@@ -53,9 +53,9 @@
                                                 if ($item->starting_bid == null or $item->buy_now_price !== null ) { ?>
                                                     <span class="badge rounded-pill text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
                                                 <?php } ?>
-                                                <?php if ($item->get_nomber_of_pictures() > 1) {
+                                                <?php if ($item->get_number_of_pictures() > 1) {
                                                 ?>
-                                                    <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_nomber_of_pictures()?> images</span>
+                                                    <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_number_of_pictures()?> images</span>
                                                 <?php } ?>
                                             </div>
                                         </div>
@@ -103,7 +103,7 @@
                             <div class="col-3">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" : "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
+                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" : "src=".$item->get_thumbnail_path() ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
                                             <div class="float-end d-flex flex-column gap-2 h-50">
                                                 <?php
@@ -113,9 +113,9 @@
                                                 if ($item->buy_now_price != null ) { ?>
                                                     <span class="badge text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
                                                 <?php } ?>
-                                                <?php if ($item->get_nomber_of_pictures() > 1) {
+                                                <?php if ($item->get_number_of_pictures() > 1) {
                                                 ?>
-                                                    <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_nomber_of_pictures() ?> images</span>
+                                                    <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_number_of_pictures() ?> images</span>
                                                 <?php } ?>
                                             </div>
                                         </div>
