@@ -51,16 +51,7 @@ class User extends Model {
         }
         return $errors;
     }
-     public function is_heigth_bider(int $item_id) : bool {
-        $query=self::execute("SELECT b.owner FROM bids b where b.item = :item_id order by b.created_at DESC",["item_id"=>$item_id]);
-        $data=$query->fetch();
-        if($query->rowCount()!=0 && $data['owner'] === $this->id){
-            return true; 
-        } else {
-            return false ;
-        }
-    }
-
+   
 
     public static function get_user_by_email(string $email): User | false{
         $query =self::execute("SELECT * FROM users where email= :email",["email"=>$email]);

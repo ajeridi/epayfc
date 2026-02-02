@@ -77,10 +77,10 @@
                 <div class="list-group-item">
                   <div class="d-flex justify-content-between align-items-start">
                     <div>
-                      <div class="fw-semibold"><?=User::get_pseudo_by_id($bid->owner) ?></div>
-                      <div class="small text-muted"><?= $bid->created_at ?></div>
+                      <div class="fw-semibold"><?= $bid->get_pseudo() ?></div>
+                      <div class="small text-muted"><?= $bid->get_created_at() ?></div>
                     </div>
-                    <div class="price-green fw-semibold">€ <?= $bid->amount ?></div>
+                    <div class="price-green fw-semibold">€ <?= $bid->get_amount() ?></div>
                   </div>
                 </div>
               <?php  } ?>

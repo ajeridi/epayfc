@@ -33,14 +33,14 @@
                     <div class="row text-white g-3">
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
-                        foreach ($items_participated_in as $item) {   
+                        foreach ($items_participated_in as $item) {
                             ?>
                             <div class="col-3">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
                                         <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
-                                            <?php if ($user->is_heigth_bider($item->id)) { ?>
+                                            <?php if ($item->bids['0']->get_owner() == $user->get_id()) { ?>
                                                 <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
                                             <?php } else { ?>
                                                 <span class="badge rounded-pill text-bg-secondary"><i class="ti ti-gavel"></i> Bidder</span>
@@ -74,12 +74,12 @@
                                                     <div class="col-md-6 text-end">
                                                         <div class="d-flex flex-column">
                                                             <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
-                                                            <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->bids['0']->amount, 2, ",", " ") ?><span>
+                                                            <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->bids['0']->get_amount(), 2, ",", " ") ?><span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <span class="card-text  fw-bold <?= (substr_count($item->get_period(),'m') == 1) ? "text-warning" : "text-success" ?>"><i class="bi bi-clock" ></i> <?= $item->get_period() ?> left</span>
+                                            <span class="card-text text-success fw-bold"><i class="bi bi-clock"></i> <?= $item->get_period() ?> left</span>
                                         </div>
                                     </div>
                                 </a>
@@ -99,14 +99,11 @@
                         <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
                         foreach ($other_available_items as $item) {
-                            $current_dates=AppTime::get_current_datetime();
-                            $current_date= new DateTime($current_dates);
-                            $durations=new DateInterval("P{$item->duration_days}D");
-                            $datedebut=new DateTime($item->created_at); ?>
+                         ?>
                             <div class="col-3">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".$item->get_thumbnail_path() ?> class="card-img-top" alt="image item">
+                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
                                             <div class="float-end d-flex flex-column gap-2 h-50">
                                                 <?php
@@ -124,13 +121,13 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="card-text fw-bolder mb-0"><?= $item->title ?></p>
-                                            <p class="card-text fw-light fs-6">By <?= User::get_full_name_by_id($item->owner) ?></p>
+                                            <p class="card-text fw-light fs-6">By <?= $item->pseudo ?></p>
                                             <?php if ($item->buy_now_price == NULL) { ?>
                                                 <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= number_format($item->starting_bid, 2, ",", " ") ?></p>
                                             <?php } else { ?>
                                                 <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ") ?></p>
                                             <?php } ?>
-                                            <span class="card-text <?= (substr_count($item->get_period(),'m') == 1) ? "text-warning" : "text-success" ?> fw-bold"><i class="bi bi-clock"></i><?= $item->get_period() ?>  left</span>
+                                            <span class="card-text text-success fw-bold"><i class="bi bi-clock"></i><?= $item->get_period() ?> left</span>
                                         </div>
                                     </div>
                                 </a>
