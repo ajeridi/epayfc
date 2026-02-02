@@ -68,6 +68,14 @@
                         <div class="mb-3">
                             <label for="inputConfirmPassword" class="form-label">Confirm New Password *</label>
                             <input type="password" name="confirmPassword" placeholder="Confirm your new password" class="form-control" id="inputConfirmPassword" aria-describedby="confirmPasswordHelp" >
+                            <?php
+                            if (isset($errors["confirmPassword"]) && count($errors["confirmPassword"]) != 0) { ?> <!-- ajout du count pour ne pas avoir d'espace inutile !-->
+                                <ul class="text-danger">
+                                    <?php foreach ($errors["confirmPassword"] as $error) { ?>
+                                        <li><?= $error ?></li>
+                                    <?php } ?>
+                                </ul>
+                            <?php } ?>
                             <div id="confirmPasswordHelp" class="form-text text-secondary ">Re-enter your new password to confirm it matches</div>
                         </div>
                     </div>

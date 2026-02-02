@@ -1,9 +1,45 @@
 <?php
 require_once "framework/Model.php";
 class User extends Model {
-    public function __construct(public int $id, public string $pseudo,public string $hashed_password,public string $email,public string $full_name, public string $role,public ?string $picture_path= null, public ?string $iban=null,){
+    public function __construct(private int $id, private string $pseudo,private string $hashed_password,private string $email,private string $full_name, private string $role,private ?string $picture_path = null, private ?string $iban=null){}
 
+    public function get_id(): int {
+        return $this->id ;
     }
+
+    public function get_full_name(){
+        return $this->full_name;
+    }
+
+    public function get_email(){
+        return $this->email;
+    }
+
+    public function get_pseudo(){
+        return $this->pseudo;
+    }
+
+    public function get_password(){
+        return $this->hashed_password;
+    }
+
+    public function get_role(){
+        return $this->role;
+    }
+
+    public function get_picture_path(){
+        return $this->picture_path; 
+    }
+    
+    public function get_iban(){
+        return $this->iban;
+    }
+
+    public function set_picture_path($picture_path) : void {
+        $this->picture_path=$picture_path;     
+    }
+
+    
     private static function check_password(string $clear_password, string $hash) : bool {
         return password_verify($clear_password,$hash);
     }
@@ -15,6 +51,16 @@ class User extends Model {
         }
         return $errors;
     }
+     public function is_heigth_bider(int $item_id) : bool {
+        $query=self::execute("SELECT b.owner FROM bids b where b.item = :item_id order by b.created_at DESC",["item_id"=>$item_id]);
+        $data=$query->fetch();
+        if($query->rowCount()!=0 && $data['owner'] === $this->id){
+            return true; 
+        } else {
+            return false ;
+        }
+    }
+
 
     public static function get_user_by_email(string $email): User | false{
         $query =self::execute("SELECT * FROM users where email= :email",["email"=>$email]);
@@ -38,10 +84,10 @@ class User extends Model {
         return $errors;
 
     }
-     public static function get_full_name_by_id(int $user_id) : array  {
-        $query=self::execute("SELECT* from users WHERE id = :id",["id"=> $user_id]);
+     public static function get_full_name_by_id(int $user_id) : String {
+        $query=self::execute("SELECT full_name from users WHERE id = :id",["id"=> $user_id]);
         $data=$query->fetch();
-        return $data;
+        return $data['full_name'];
     }
     public static function get_user_by_id(int $user_id): array {
         $query= self::execute("SELECT full_name , pseudo ,picture_path ,email FROM users where id=:id",["id"=>$user_id]);
@@ -70,7 +116,7 @@ class User extends Model {
 
     private function validate_full_name() : array {
         $errors = [];
-        if (strlen($this->full_name) < 3){
+        if (strlen($this->full_name) < Configuration::get("name_min_length")){
             $errors[] = "Full name must be at least 3 characters long.";
         }
         if (!$this->is_unique_full_name($this->full_name)){
@@ -81,7 +127,7 @@ class User extends Model {
 
     private function validate_username() : array {
         $errors = [];
-        if (strlen($this->pseudo) < 3 || strlen($this->pseudo) > 30){
+        if (strlen($this->pseudo) < Configuration::get("name_min_length") || strlen($this->pseudo) > Configuration::get("name_max_length")){
             $errors[] = "Username must be between 3 and 30 characters long.";
         }
         if (!$this->is_unique_pseudo($this->pseudo)){
@@ -144,9 +190,17 @@ public function is_unique_full_name() : bool {
         $errors = [];
         $regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])[\x20-\x7E]{8,16}$/";
         if (!preg_match($regex, $newPasssword)){
-            $errors[] = "New password not valid.";
+            $errors[] = "Password not valid.";
         }
         return $errors;
+    }
+
+    public static function confirm_password(string $password, string $confirmPassword) : array{
+        $error = [];
+        if ($password !== $confirmPassword){
+            $error[] = "You have to enter twice the same password.";
+        }
+        return $error;
     }
 
     public function save_new_password(string $newPasssword) : void {
@@ -154,6 +208,35 @@ public function is_unique_full_name() : bool {
         $sql = "UPDATE users SET password = :new_password WHERE id = :user_id";
         $query = self::execute($sql, ["new_password" => $hashed_new_password, "user_id" => $this->id]);
         $this->hashed_password = $hashed_new_password;
+    }
+
+    public function insert_new_user() : void {
+        $sql = "INSERT INTO users(full_name, email, pseudo, password, role) VALUES(:fullname, :email, :pseudo, :password, :role)";
+        $query = self::execute($sql, ["fullname" => $this->full_name, "email" => $this->email, "pseudo" => $this->pseudo, "password" => $this->hashed_password, "role" => $this->role]);
+    }
+    public static function get_pseudo_by_id(int $id): string {
+        $query=self::execute("SELECT u.pseudo FROM users u WHERE u.id = :id ",["id"=>$id]);
+        $data=$query->fetch();
+        return $data['pseudo'];
+    }
+    public static function get_path_picture(int $id) :  string {
+         $query=self::execute("SELECT u.picture_path FROM users u WHERE u.id = :id ",["id"=>$id]);
+        $data=$query->fetch();
+        if($data['picture_path'] == null){
+            return "";
+        }
+        return $data['picture_path'];
+    }
+    public static function get_role_by_id(int $id) : string {
+         $query=self::execute("SELECT u.role FROM users u WHERE u.id = :id ",["id"=>$id]);
+        $data=$query->fetch();
+        return $data['role'];
+    }
+
+    public function has_profile_picture() : bool{
+        $sql = "SELECT picture_path FROM users WHERE id = :user_id";
+        $query = self::execute($sql, ["user_id" => $this->id]);
+        return $query->fetchColumn() != null;
     }
 }
 ?>
