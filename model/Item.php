@@ -24,7 +24,7 @@ class Item extends Model {
      public int $owner,
      public string $created_at,
      public int $duration_days,
-     public ? string $pseudo,
+     public string $pseudo,
      public ?string $description=null,
      public ?int $buy_now_price=null,
      public ? int $starting_bid=null,
@@ -129,7 +129,7 @@ class Item extends Model {
 
     private static function get_other_items(int $user_id) : array {
         
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid,users.pseudo
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid,users.pseudo 
         FROM items i join v_items_status vi  on vi.id=i.id join users on i.owner=users.id Where i.owner != :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
         $data= $query->fetchAll();
         $array=[];
@@ -142,7 +142,7 @@ class Item extends Model {
     private static function get_my_items(int $user_id) : array {
        
         $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid, users.pseudo
-         FROM items i join v_items_status vi on vi.id=i.id join users on users.id = vi.id Where i.owner = :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
+         FROM items i join v_items_status vi on vi.id=i.id join users on users.id = i.owner Where i.owner = :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
          $data= $query->fetchAll();
         $array=[];
         foreach($data as $item){
@@ -447,7 +447,7 @@ class Item extends Model {
         return $query->fetchColumn();
     }
 
-     public function get_end_at() : string {
+     public function end_at() : string {
         $query=self::execute("SELECT vi.end_at from v_items_status vi where vi.id= :id",["id"=>$this->id]);
         $data=$query->fetch();
         return $data['end_at'];

@@ -40,7 +40,7 @@
                   <div class="text-muted small mb-2"><?= $item->description ?></div>
                   <div class="text-muted small">
                     <div><span class="label">Start:</span> <?= $item->created_at ?></div>
-                    <div><span class="label">Ends:</span> <?= $item->get_end_at() ?></div>
+                    <div><span class="label">Ends:</span> <?= $item->end_at() ?></div>
                   </div>
                 </div>
                 <?php if($item->starting_bid != null){?>
