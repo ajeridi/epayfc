@@ -4,8 +4,8 @@ require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 require_once "model/Bid.php";
 function cmp($i1,$i2){
-        $date1=($i1->buy_now_price <= $i1->bids['0']->get_amount) ? $i1->bids['0']->get_created_at : $i1->end_at();
-        $date2=($i2->buy_now_price <= $i2->bids['0']->get_amount) ? $i2->bids['0']->get_created_at : $i2->end_at();
+        $date1=($i1->buy_now_price <= $i1->bids['0']->get_amount()) ? $i1->bids['0']->get_created_at() : $i1->end_at();
+        $date2=($i2->buy_now_price <= $i2->bids['0']->get_amount()) ? $i2->bids['0']->get_created_at() : $i2->end_at();
         
         $dates1=new DateTime($date1);
         $dates2=new DateTime($date2);
