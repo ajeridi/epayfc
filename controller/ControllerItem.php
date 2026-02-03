@@ -39,27 +39,31 @@ class ControllerItem extends Controller
     public function open(): void
     {
         $user=$this->get_user_or_redirect();
+
         $from="";
-        if(isset($_GET["param2"])){
-            $from=substr(stristr($_GET["param2"],"-"),1);
-        }
-              
+        $priority=1;
+
         if(isset($_GET["param1"]) && is_numeric($_GET["param1"])){
-            $priority=1;
-    
-            if(isset($_GET["param3"])){
-                $priority=$_GET["param3"] ;    
-            }
             $item =Item::get_item_by_id($_GET["param1"]);     
             $pictures=Item::get_other_pictures_by_id($_GET["param1"]);
-         } else{
+            
+            if(isset($_GET["param2"])){
+                $from=substr(stristr($_GET["param2"],"-"),1);
+                if(isset($_GET["param3"]) && is_numeric($_GET["param3"])){
+                    $priority=$_GET["param3"];
+                }
+            }                    
+        } else{
               throw new Exception("No Item specified or Item not found");
-         }
-         if(!$item->is_open_item() && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
+        }
+        if(!$item->is_open_item() && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
               throw new Exception("This Item seem to not be yours.");
-         }else{
-        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"user"=>$user,"from"=>$from,"priority"=>$priority]);
-         }
+        }else{
+          $owner_picture = User::get_path_picture($item->owner);
+          $owner_role=User::get_role_by_id($item->owner) ;
+          
+        (new View("item_open"))->show(["item"=>$item,"owner_picture"=>$owner_picture,"owner_role"=>$owner_role,"pictures"=>$pictures,"user"=>$user,"from"=>$from,"priority"=>$priority]);
+        }
         
     }
     public function buy(): void
