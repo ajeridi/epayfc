@@ -157,15 +157,15 @@ class Item extends Model {
             $array[]=Item::build_Item($item);
         }   
         return $array; 
-    }     
+    }   
 
     private function is_participated(int $user_id) : bool {
-        $query=self::execute("SELECT * FROM bids b WHERE  b.owner = :user_id AND b.item= :item_id",["user_id"=>$user_id,"item_id"=>$this->id]);
-        if($query->rowCount() == 0){
-            return false;
-        }else{
-            return true ;
+        foreach($this->bids as $bid){
+            if($bid->get_owner()==$user_id){
+                return true;
+            }
         }
+        return false;
     }
 
 
