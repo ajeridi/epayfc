@@ -46,7 +46,7 @@ class ControllerItem extends Controller
               
         if(isset($_GET["param1"]) && is_numeric($_GET["param1"])){
             $priority=1;
-            $is_open=Item::is_open_anonce($_GET["param1"]);
+    
             if(isset($_GET["param3"])){
                 $priority=$_GET["param3"] ;    
             }
@@ -55,10 +55,10 @@ class ControllerItem extends Controller
          } else{
               throw new Exception("No Item specified or Item not found");
          }
-         if(!$is_open && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
+         if(!$item->is_open_item() && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
               throw new Exception("This Item seem to not be yours.");
          }else{
-        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"is_open"=>$is_open,"user"=>$user,"from"=>$from,"priority"=>$priority]);
+        (new View("item_open"))->show(["item"=>$item,"pictures"=>$pictures,"user"=>$user,"from"=>$from,"priority"=>$priority]);
          }
         
     }
@@ -71,8 +71,7 @@ class ControllerItem extends Controller
         if(isset($_GET['param1'])  ){
             $item_id=$_GET['param1'];
             $item =Item::get_item_by_id($item_id);
-            $is_open=Item::is_open_anonce($item->id);
-            if(!$is_open || $user->get_id() == $item->owner){
+            if(!$item->is_open_item()|| $user->get_id() == $item->owner){
                 throw new Exception("You can't buy or bid on your item");
                 return;
             }
@@ -95,9 +94,8 @@ class ControllerItem extends Controller
     public function edit() : void {
          $user=$this->get_user_or_redirect();
         if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
-        $item=Item::get_item_by_id($_GET['param1']);
-        $is_open=Item::is_open_anonce($_GET['param1']); 
-        if($item->owner!= $user->get_id() || !$is_open ||count($item->bids)!=0){
+        $item=Item::get_item_by_id($_GET['param1']);     
+        if($item->owner!= $user->get_id() || !$item->is_open_item() ||count($item->bids)!=0){
              throw new Exception("you can edit this ");
             return;
         }
@@ -190,8 +188,8 @@ class ControllerItem extends Controller
         if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
             $item_id=Tools::sanitize($_GET['param1']);
             $item=Item::get_item_by_id($item_id);
-            $is_open=Item::is_open_anonce($item->id);
-            if($item->owner!= $user->get_id()|| count($item->bids)!=0 || !$is_open ){
+           
+            if($item->owner!= $user->get_id()|| count($item->bids)!=0 || !$item->is_open_item() ){
                  throw new Exception("You can't delete this item ");
             }
             $owner=User::get_full_name_by_id($item->owner);
@@ -202,8 +200,8 @@ class ControllerItem extends Controller
         $user=$this->get_user_or_redirect();
         $item_id=Tools::sanitize($_GET['param1']);
         $item=Item::get_item_by_id($item_id);
-         $is_open=Item::is_open_anonce($item->id);
-        if($item->owner!= $user->get_id() || count($item->bids)!=0 || !$is_open){
+       
+        if($item->owner!= $user->get_id() || count($item->bids)!=0 || $item->is_open_item()){
                  throw new Exception("You can't delete this item ");
          } else {
          $item->delete();   
@@ -217,59 +215,64 @@ class ControllerItem extends Controller
     {
         $user = $this->get_user_or_redirect();
         $errors = [];
-        if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1']) && Item::is_open_anonce($_GET["param1"])) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
+        if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1']) ) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
             $item_id = $_GET['param1'];
-            if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
-                $image = $_FILES["image"];
+            $item= Item::get_item_by_id($item_id);
+            if($item->is_open_item()) {
+                if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
+                    $image = $_FILES["image"];
 
-                // validation de l'image
-                $errors = ImageUtils::validate_image($image);
-                if (count($errors) == 0) { // si le fichier est valide on peut proceder a son upload
+                    // validation de l'image
+                    $errors = ImageUtils::validate_image($image);
+                    if (count($errors) == 0) { // si le fichier est valide on peut proceder a son upload
 
-                    //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
-                    if (Item::get_picture_count($item_id) == 0) {
-                        mkdir("uploads/items/$item_id");
+                        //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
+                        if (Item::get_picture_count($item_id) == 0) {
+                            mkdir("uploads/items/$item_id");
+                        }
+
+                        // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
+                        $full_image = ImageUtils::scale_image($image, 1080);
+                        $thumbnail = ImageUtils::scale_image($image, 360);
+
+                        // sauvegarde des nouvelles images dans le repertoire uploads
+                        $file_name = pathinfo($image["name"], PATHINFO_FILENAME);
+                        $unique_file_name = uniqid($file_name); // creation d'un nom unique pour eviter d'avoir deux images avec le meme path dans la DB
+                        $picture_path = "uploads/items/$item_id/$unique_file_name.jpg";
+
+                        ImageUtils::save_image_file($full_image, $picture_path);
+                        ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
+
+                        // on l'insere dans la db
+                        Item::upload_image($item_id, $picture_path);
                     }
-
-                    // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
-                    $full_image = ImageUtils::scale_image($image, 1080);
-                    $thumbnail = ImageUtils::scale_image($image, 360);
-
-                    // sauvegarde des nouvelles images dans le repertoire uploads
-                    $file_name = pathinfo($image["name"], PATHINFO_FILENAME);
-                    $unique_file_name = uniqid($file_name); // creation d'un nom unique pour eviter d'avoir deux images avec le meme path dans la DB
-                    $picture_path = "uploads/items/$item_id/$unique_file_name.jpg";
-
-                    ImageUtils::save_image_file($full_image, $picture_path);
-                    ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
-
-                    // on l'insere dans la db
-                    Item::upload_image($item_id, $picture_path);
                 }
-            }
 
-            if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
-                $this->swap_priority($item_id, $_POST["left"], -1);
-            } else if (isset($_POST["right"])) { // si on a clique sur la fleche de droite
-                $this->swap_priority($item_id, $_POST["right"], 1);
-            } else if (isset($_POST["delete"])) {
-                $this->delete_image($item_id, $_POST["delete"]);
-                // si le dossier est vide, donc nb_pictures == 0, on le supprime
-                if (Item::get_picture_count($item_id) == 0) {
-                    rmdir("uploads/items/$item_id");
+                if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
+                    $this->swap_priority($item_id, $_POST["left"], -1);
+                } else if (isset($_POST["right"])) { // si on a clique sur la fleche de droite
+                    $this->swap_priority($item_id, $_POST["right"], 1);
+                } else if (isset($_POST["delete"])) {
+                    $this->delete_image($item_id, $_POST["delete"]);
+                    // si le dossier est vide, donc nb_pictures == 0, on le supprime
+                    if (Item::get_picture_count($item_id) == 0) {
+                        rmdir("uploads/items/$item_id");
+                    }
                 }
+
+
+                // recherche des donnees a afficher sur la page
+                $item_pictures = Item::get_other_pictures_by_id($item_id);
+                $item_title = Item::get_item_title($item_id);
+
+                // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && count($errors) == 0) {
+                    $this->redirect("item", "manage_images", "$item_id");
+                }
+                (new View("manage_images"))->show(["user" => $user, "item_id" => $item_id, "item_pictures" => $item_pictures, "item_title" => $item_title, "errors" => $errors]);
+            }else{
+                  $this->redirect("item");
             }
-
-
-            // recherche des donnees a afficher sur la page
-            $item_pictures = Item::get_other_pictures_by_id($item_id);
-            $item_title = Item::get_item_title($item_id);
-
-            // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && count($errors) == 0) {
-                $this->redirect("item", "manage_images", "$item_id");
-            }
-            (new View("manage_images"))->show(["user" => $user, "item_id" => $item_id, "item_pictures" => $item_pictures, "item_title" => $item_title, "errors" => $errors]);
         }
         else {
             $this->redirect("item");

@@ -238,18 +238,7 @@ class Item extends Model {
         return $data;
     }
 
-       public static function is_open_anonce(int $item_id): bool {
-         $current_date_time=AppTime::get_current_datetime();
-        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 )
-                                     or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> $current_date_time]);
-
-        if($query->rowCount()==0){
-            return false ;
-        }else{
-            return true; 
-        }
-
-    }
+  
     public static function get_item_ino(int $item_id): array {
         $query=self::execute("SELECT id ,title,description ,duration_days,starting_bid,buy_now_price from items where id=:id",["id"=>$item_id]);
         $data=$query->fetch();
@@ -326,7 +315,7 @@ class Item extends Model {
     private static function unicite_title_for_owner($owner ,$title): bool {
 
         $query=self::execute("SELECT * from items i where i.owner = :owner and i.title = :title ",["owner"=>$owner,"title"=>$title]);
-        $data=$query->fetchAll();
+        $query->fetchAll();
        if($query->rowCount() != 0){
         return false; 
        }

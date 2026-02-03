@@ -127,7 +127,7 @@
               <hr class="hr-soft">
               <fieldset <?php if($user == false || $user->get_id() == $item->owner ){?> disabled <?php } ?>>
               <?php  if($item->starting_bid !=null) {?>
-              <?php if($is_open){?>
+              <?php if($item->is_open_item()){?>
               <form method="post" action="item/bid/<?= $item->id?>">
                 <div class="input-group input-dark mb-3">
                   <span class="input-group-text">€</span>
@@ -151,14 +151,14 @@
               </form>
               <?php } ?>
               <?php } ?>
-              <?php  if($item->starting_bid==null && $is_open ) {?>
+              <?php  if($item->starting_bid==null && $item->is_open_item() ) {?>
                 <div class="d-grid gap-2">
                 <a class="btn btn-outline-success" href="item/buy/<?= $item->id ?>">
                     Buy Now 
                   </a>
                 </div>
               </fieldset>   
-              <?php }if(!$is_open){
+              <?php }if(!$item->is_open_item()){
                 if(count($item->bids)!=0){
                 if($user->get_id()===$item->bids['0']->get_owner()){?>
                 <p> Congratulation! You purchased this item for € <?= $item->bids['0']->get_amount() ?> </p>
@@ -168,10 +168,10 @@
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
 
-                <?php if($user == true && $user->get_pseudo() === $item->owner && $is_open){?>
+                <?php if($user == true && $user->get_pseudo() === $item->owner && $item->is_open_item()){?>
                 <p>You cannot bid on your own listing</p>
                 <?php } ?> 
-                <?php if($user == false && $is_open){?>
+                <?php if($user == false && $item->is_open_item()){?>
                 <p>Option not available for guests</p>
                 <?php } ?> 
 
@@ -191,7 +191,7 @@
               </div>
             </div>
           </div>
-          <?php if($user == true && $user->get_id() === $item->owner  && $is_open){?>
+          <?php if($user == true && $user->get_id() === $item->owner  && $item->is_open_item()){?>
           <div class="card card-dark border-0 mt-3">
             <div class="card-body">
               <div class="section-title mb-3">Manage Your Item</div>
