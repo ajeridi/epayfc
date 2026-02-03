@@ -171,7 +171,6 @@ class Item extends Model {
 
     public  function is_open_item(): bool {
         $current_date_time=AppTime::get_current_datetime();
-
         if((count($this->bids)!=0 && ($this->buy_now_price <= $this->bids['0']->get_amount() || $this->end_at()<$current_date_time)) || $this->end_at()<$current_date_time ){
             return false;
         }
@@ -203,12 +202,11 @@ class Item extends Model {
     }
 
     public function get_max_bid(): float | null {
-        $query=self::execute("SELECT MAX(b.amount) as max FROM bids b where b.item = :item_id ",["item_id"=>$this->id]);
-        $data=$query->fetch();
-        if($query->rowCount()==0){
-            return null ;
+
+        if(count($this->bids)==0){
+            return null;
         }
-        return (double) $data['max'] ;
+        return $this->bids['0']->get_amount();
     }
     public function delete() : void {
         self::execute("DELETE FROM bids WHERE item= :id  ;
