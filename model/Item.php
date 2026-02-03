@@ -459,9 +459,10 @@ class Item extends Model {
     }
 
      public function end_at() : string {
-        $query=self::execute("SELECT vi.end_at from v_items_status vi where vi.id= :id",["id"=>$this->id]);
-        $data=$query->fetch();
-        return $data['end_at'];
+      $end_at= new DateTime($this->created_at);
+      $end_at->modify('+'.$this->duration_days.'days');
+
+      return $end_at->format('Y-m-d H:i:s');
     }
 
         public function get_period() : string {
