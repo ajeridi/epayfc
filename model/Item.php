@@ -171,7 +171,7 @@ class Item extends Model {
 
     public  function is_open_item(): bool {
         $current_date_time=AppTime::get_current_datetime();
-        if((count($this->bids)!=0 && ($this->buy_now_price <= $this->bids['0']->get_amount() || $this->end_at()<$current_date_time)) || $this->end_at()<$current_date_time ){
+        if(( $this->end_at()<$current_date_time || count($this->bids)!=0 && ( $this->buy_now_price != null && $this->buy_now_price <= $this->bids['0']->get_amount())) ){
             return false;
         }
         return true;

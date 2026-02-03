@@ -61,50 +61,36 @@ class ControllerItem extends Controller
         }else{
           $owner_picture = User::get_path_picture($item->owner);
           $owner_role=User::get_role_by_id($item->owner) ;
-          
+
         (new View("item_open"))->show(["item"=>$item,"owner_picture"=>$owner_picture,"owner_role"=>$owner_role,"pictures"=>$pictures,"user"=>$user,"from"=>$from,"priority"=>$priority]);
         }
         
     }
-    public function buy(): void
-    {
-        $user = $this->get_user_or_redirect();
-        $current_date = AppTime::get_current_datetime();
-
-
-        if(isset($_GET['param1'])  ){
-            $item_id=$_GET['param1'];
-            $item =Item::get_item_by_id($item_id);
-            if(!$item->is_open_item()|| $user->get_id() == $item->owner){
-                throw new Exception("You can't buy or bid on your item");
-                return;
-            }
-            Item::buy($user->get_id(),$_GET['param1'],$current_date,$item->buy_now_price);
-              
-        }
-        $this->redirect("Item", "open", $item_id);
-    }
+ 
     public function bid(): void
     {
         $user = $this->get_user_or_redirect();
         $current_date = AppTime::get_current_datetime();
-        if (isset($_GET['param1'])) {
+            if($_POST){
             $item_id = $_GET['param1'];
-            $amount = $_POST['min_bid'];
+            $amount = ($_POST['buy']) ? $_POST['buy'] : $_POST['min_bid'] ;
             Item::buy($user->get_id(), $item_id, $current_date, $amount);
-        }
-        $this->redirect("item", "open", $item_id);
+            $this->redirect("item", "open", $item_id);
+            }
+            $this->index();
+        
     }
     public function edit() : void {
-         $user=$this->get_user_or_redirect();
+        $user=$this->get_user_or_redirect();
+        
         if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
         $item=Item::get_item_by_id($_GET['param1']);     
-        if($item->owner!= $user->get_id() || !$item->is_open_item() ||count($item->bids)!=0){
-             throw new Exception("you can edit this ");
-            return;
-        }
+            if($item->owner!= $user->get_id() || !$item->is_open_item() ||count($item->bids)!=0){
+                throw new Exception("you can edit this ");
+                return;
+            }
    
-    }
+        }
         if (count($_POST)) {
             $ok = true;
             

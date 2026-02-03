@@ -142,21 +142,21 @@
 
                 <div class="d-grid gap-2">
                   <button class="btn btn-success" type="submit">Place Bid</button>
+              </form>  
                   <?php if($item->buy_now_price != null && $item->starting_bid !=null){ ?>
-                  <a class="btn btn-outline-primary  " href="item/buy/<?= $item->id ?>">
+                  <button class="btn btn-outline-primary " type="submit" name="buy" value="<?= $item->buy_now_price ?>">
                     Buy Now at € <?= $item->buy_now_price ?>
-                  </a>
+                  </button>
                   <?php } ?>
                 </div>
-              </form>
               <?php } ?>
               <?php } ?>
               <?php  if($item->starting_bid==null && $item->is_open_item() ) {?>
+                <form method="post" action="item/bid/<?= $item->id?>">
                 <div class="d-grid gap-2">
-                <a class="btn btn-outline-success" href="item/buy/<?= $item->id ?>">
-                    Buy Now 
-                  </a>
+                 <button class="btn btn-outline-primary " type="submit" name="buy" value="<?= $item->buy_now_price ?>">Buy Now</button>
                 </div>
+                </form>
               </fieldset>   
               <?php }if(!$item->is_open_item()){
                 if(count($item->bids)!=0){
