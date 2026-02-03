@@ -227,9 +227,8 @@ class ControllerItem extends Controller
         $user = $this->get_user_or_redirect();
         $errors = [];
         // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
-        if (!isset($_GET['param1']) || !$user->is_item_owner($_GET['param1']) || !Item::is_open_anonce($_GET["param1"])) {
+        if (!isset($_GET['param1']) || !$user->is_item_owner($_GET['param1']) || !Item::is_open_anonce($_GET["param1"]))
             $this->redirect("item");
-        }
         $item = Item::get_item_by_id($_GET["param1"]);
         if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
             $image = $_FILES["image"];
@@ -237,9 +236,8 @@ class ControllerItem extends Controller
             $errors = ImageUtils::validate_image($image);
             if (count($errors) == 0) { // si le fichier est valide on peut proceder a son upload
                 //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
-                if ($item->get_number_of_pictures() == 0) {
+                if ($item->get_number_of_pictures() == 0)
                     mkdir("uploads/items/$item->id");
-                }
                 // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
                 $formatted_images = $this->create_new_images($image);
                 // sauvegarde des nouvelles images dans le repertoire uploads
@@ -258,18 +256,16 @@ class ControllerItem extends Controller
         } else if (isset($_POST["delete"])) {
             $this->delete_image($item->id, $_POST["delete"]);
             // si le dossier est vide, donc nb_pictures == 0, on le supprime
-            if (Item::get_picture_count($item->id) == 0) {
+            if (Item::get_picture_count($item->id) == 0) 
                 rmdir("uploads/items/$item->id");
-            }
         }
 
         // recherche des donnees a afficher sur la page (actualisee)
         $item_pictures = Picture::get_pictures($item->id);
 
         // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
-        if (count($_POST) != 0) {
+        if (count($_POST) != 0) 
             $this->redirect("item", "manage_images", "$item->id");
-        }
         (new View("manage_images"))->show(["user" => $user, "item" => $item, "item_pictures" => $item_pictures, "errors" => $errors]);
     }
 
