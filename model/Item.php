@@ -121,7 +121,7 @@ class Item extends Model {
         $items=Item::get_other_items($user->get_id());
         $data=[];
         foreach($items as $item){
-            if(!$item->is_open_item() && $user->is_heigth_bider($item->id) ){
+            if(!$item->is_open_item() && $item->is_highest_bidder($user->get_id()) ){
                 $data[]=$item;
             }
         }
@@ -481,18 +481,12 @@ class Item extends Model {
          return $result;
 
     }
-
-
-    
-
-
-
-   
-    
-    
-    
-
-   
+    public function is_highest_bidder(int $user_id) : bool {
+        if(count($this->bids)==0){
+            return false;
+        }
+        return $this->bids['0']->get_owner()==$user_id;        
+    }
    
 }
 ?>

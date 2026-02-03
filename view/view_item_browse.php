@@ -40,7 +40,7 @@
                                     <div class="card" style="width: 18rem;">
                                         <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path()) ?> class="card-img-top" alt="image item">
                                         <div class="card-img-overlay">
-                                            <?php if ($item->bids['0']->get_owner() == $user->get_id()) { ?>
+                                            <?php if ($item->is_highest_bidder($user->get_id())) { ?>
                                                 <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
                                             <?php } else { ?>
                                                 <span class="badge rounded-pill text-bg-secondary"><i class="ti ti-gavel"></i> Bidder</span>
