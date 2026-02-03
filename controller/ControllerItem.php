@@ -230,8 +230,8 @@ class ControllerItem extends Controller
         if (!isset($_GET['param1']) || !$user->is_item_owner($_GET['param1']) || !Item::is_open_anonce($_GET["param1"])) {
             $this->redirect("item");
         }
-
-        $item_id = $_GET['param1'];
+        $item = Item::get_item_by_id($_GET["param1"]);
+        
         if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
             $image = $_FILES["image"];
 
@@ -240,8 +240,8 @@ class ControllerItem extends Controller
             if (count($errors) == 0) { // si le fichier est valide on peut proceder a son upload
 
                 //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
-                if (Item::get_picture_count($item_id) == 0) {
-                    mkdir("uploads/items/$item_id");
+                if ($item->get_number_of_pictures() == 0) {
+                    mkdir("uploads/items/$item->id");
                 }
 
                 // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
@@ -249,40 +249,39 @@ class ControllerItem extends Controller
                 $thumbnail = ImageUtils::scale_image($image, 360);
 
                 // sauvegarde des nouvelles images dans le repertoire uploads
-                $file_name = str_replace(" ", "",pathinfo($image["name"], PATHINFO_FILENAME));
+                $file_name = str_replace(" ", "", pathinfo($image["name"], PATHINFO_FILENAME));
                 $unique_file_name = uniqid($file_name); // creation d'un nom unique pour eviter d'avoir deux images avec le meme path dans la DB
-                $picture_path = "uploads/items/$item_id/$unique_file_name.jpg";
+                $picture_path = "uploads/items/$item->id/$unique_file_name.jpg";
 
                 ImageUtils::save_image_file($full_image, $picture_path);
                 ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
 
                 // on l'insere dans la db
-                Item::upload_image($item_id, $picture_path);
+                Item::upload_image($item->id, $picture_path);
+                $this->redirect("item", "manage_images", "$item->id");
             }
         }
 
         if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
-            $this->swap_priority($item_id, $_POST["left"], -1);
+            $this->swap_priority($item->id, $_POST["left"], -1);
         } else if (isset($_POST["right"])) { // si on a clique sur la fleche de droite
-            $this->swap_priority($item_id, $_POST["right"], 1);
+            $this->swap_priority($item->id, $_POST["right"], 1);
         } else if (isset($_POST["delete"])) {
-            $this->delete_image($item_id, $_POST["delete"]);
+            $this->delete_image($item->id, $_POST["delete"]);
             // si le dossier est vide, donc nb_pictures == 0, on le supprime
-            if (Item::get_picture_count($item_id) == 0) {
-                rmdir("uploads/items/$item_id");
+            if (Item::get_picture_count($item->id) == 0) {
+                rmdir("uploads/items/$item->id");
             }
         }
 
-
-        // recherche des donnees a afficher sur la page
-        $item_pictures = Picture::get_pictures($item_id);
-        $item_title = Item::get_item_title($item_id);
+        // recherche des donnees a afficher sur la page (actualisee)
+        $item_pictures = Picture::get_pictures($item->id);
 
         // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
-        if (count($_POST) != 0 && count($errors) == 0) {
-            $this->redirect("item", "manage_images", "$item_id");
+        if (count($_POST) != 0) {
+            $this->redirect("item", "manage_images", "$item->id");
         }
-        (new View("manage_images"))->show(["user" => $user, "item_id" => $item_id, "item_pictures" => $item_pictures, "item_title" => $item_title, "errors" => $errors]);
+        (new View("manage_images"))->show(["user" => $user, "item" => $item, "item_pictures" => $item_pictures, "errors" => $errors]);
     }
 
     private function swap_priority(int $item_id, int $old_priority, int $increment): void
