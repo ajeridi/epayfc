@@ -171,12 +171,11 @@ class Item extends Model {
 
     public  function is_open_item(): bool {
         $current_date_time=AppTime::get_current_datetime();
-        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$this->id,"current_date_time"=> $current_date_time]);
-        if($query->rowCount()==0){
-            return false ;
-        }else{
-            return true; 
+
+        if((count($this->bids)!=0 && ($this->buy_now_price <= $this->bids['0']->get_amount() || $this->end_at()<$current_date_time)) || $this->end_at()<$current_date_time ){
+            return false;
         }
+        return true;
     }
 
     public function get_path(int $priority=1) : String | null {
