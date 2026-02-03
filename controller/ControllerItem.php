@@ -201,7 +201,7 @@ class ControllerItem extends Controller
         $item_id=Tools::sanitize($_GET['param1']);
         $item=Item::get_item_by_id($item_id);
        
-        if($item->owner!= $user->get_id() || count($item->bids)!=0 || $item->is_open_item()){
+        if($item->owner!= $user->get_id() || count($item->bids)!=0 || !$item->is_open_item()){
                  throw new Exception("You can't delete this item ");
          } else {
          $item->delete();   
@@ -305,6 +305,7 @@ class ControllerItem extends Controller
 
 
     }
+
     public function purchases() : void {
         $user=$this->get_user_or_redirect();
          $action="purchases";
@@ -316,6 +317,7 @@ class ControllerItem extends Controller
         (new View("item_closed"))->show(["salesItem"=>$salesItem,'info'=>$info,'loyer_buyer'=>$top_seller,"nom"=>$nom,'user'=>$user,'action'=>$action]);
         
     }
+
     private function concate_names(array $loyer_buyer): string
     {
         $nom = "";
