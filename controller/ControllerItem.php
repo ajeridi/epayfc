@@ -231,33 +231,22 @@ class ControllerItem extends Controller
             $this->redirect("item");
         }
         $item = Item::get_item_by_id($_GET["param1"]);
-        
         if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
             $image = $_FILES["image"];
-
             // validation de l'image
             $errors = ImageUtils::validate_image($image);
             if (count($errors) == 0) { // si le fichier est valide on peut proceder a son upload
-
                 //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
                 if ($item->get_number_of_pictures() == 0) {
                     mkdir("uploads/items/$item->id");
                 }
-
                 // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
-                $full_image = ImageUtils::scale_image($image, 1080);
-                $thumbnail = ImageUtils::scale_image($image, 360);
-
+                $formatted_images = $this->create_new_images($image);
                 // sauvegarde des nouvelles images dans le repertoire uploads
-                $file_name = str_replace(" ", "", pathinfo($image["name"], PATHINFO_FILENAME));
-                $unique_file_name = uniqid($file_name); // creation d'un nom unique pour eviter d'avoir deux images avec le meme path dans la DB
-                $picture_path = "uploads/items/$item->id/$unique_file_name.jpg";
-
-                ImageUtils::save_image_file($full_image, $picture_path);
-                ImageUtils::save_image_file($thumbnail, ImageUtils::get_thumbnail_path($picture_path));
-
+                $new_image_path = $this->make_image_path($image, $item->id);
+                $this->save_new_images($formatted_images, $new_image_path);
                 // on l'insere dans la db
-                Item::upload_image($item->id, $picture_path);
+                Item::upload_image($item->id, $new_image_path);
                 $this->redirect("item", "manage_images", "$item->id");
             }
         }
@@ -282,6 +271,26 @@ class ControllerItem extends Controller
             $this->redirect("item", "manage_images", "$item->id");
         }
         (new View("manage_images"))->show(["user" => $user, "item" => $item, "item_pictures" => $item_pictures, "errors" => $errors]);
+    }
+
+    private function create_new_images(array $image): array
+    {
+        $new_images["full_image"] = ImageUtils::scale_image($image, 1080);
+        $new_images["thumbnail"] = ImageUtils::scale_image($image, 360);
+        return $new_images;
+    }
+
+    private function save_new_images(array $images, string $path) : void {
+        ImageUtils::save_image_file($images["full_image"], $path);
+        ImageUtils::save_image_file($images["thumbnail"], ImageUtils::get_thumbnail_path($path));
+    }
+
+    private function make_image_path(array $image, $item_id): string
+    {
+        $file_name = str_replace(" ", "", pathinfo($image["name"], PATHINFO_FILENAME));
+        $unique_file_name = uniqid($file_name); // creation d'un nom unique pour eviter d'avoir deux images avec le meme path dans la DB
+        $picture_path = "uploads/items/$item_id/$unique_file_name.jpg";
+        return $picture_path;
     }
 
     private function swap_priority(int $item_id, int $old_priority, int $increment): void
