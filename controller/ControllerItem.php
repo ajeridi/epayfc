@@ -229,7 +229,6 @@ class ControllerItem extends Controller
                 // on l'insere dans la db
                 Item::upload_image($item->id, $new_image_path);
                 $this->redirect("item", "manage_images", "$item->id");
-                    }
             }
 
         if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
