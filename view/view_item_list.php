@@ -37,9 +37,9 @@
                                 <div class="col-3">
                                     <a href="item/open/<?= $item->id?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img <?= ($item->get_path()==null) ? "src=uploads/items/default.jpg" :   "src=".$item->get_thumbnail_path()?> class="card-img-top" alt="image item">
+                                            <img <?= ($item->get_path()==null) ? "src=uploads/items/default.jpg" :   "src=".$item->get_thumbnail_path()?> class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">
                                             <div class="card-img-overlay">
-                                                <div class="float-end d-flex flex-column gap-2 h-50">
+                                                <div class="float-end d-flex flex-column gap-2" style="height: 150px;">
                                                     <?php 
                                                         if ($item->starting_bid != null){?>
                                                             <span class="badge rounded-pill" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
@@ -99,9 +99,9 @@
                                 <div class="col-3">
                                     <a href="item/open/<?= $item->id?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img <?= ($item->get_path()==null) ? "src=uploads/items/default.jpg" :   "src=".$item->get_thumbnail_path()?> class="card-img-top" alt="image item">
+                                            <img <?= ($item->get_path()==null) ? "src=uploads/items/default.jpg" :   "src=".$item->get_thumbnail_path()?> class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">
                                             <div class="card-img-overlay">
-                                                <div class="float-end d-flex flex-column gap-2 h-50">
+                                                <div class="float-end d-flex flex-column gap-2" style="height: 150px;">
                                                     <?php 
                                                         if ($item->starting_bid != null){?>
                                                             <span class="badge" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
@@ -161,9 +161,9 @@
                                 <div class="col-3">
                                     <a href="item/open/<?= $item->id?>/from-items" style="text-decoration: none;">
                                         <div class="card" style="width: 18rem;">    
-                                            <img <?= ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path())?> class="card-img-top" alt="image item">
+                                            <img <?= ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".ImageUtils::get_thumbnail_path($item->get_path())?> class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">
                                             <div class="card-img-overlay">
-                                                <div class="float-end d-flex flex-column gap-2 h-50">
+                                                <div class="float-end d-flex flex-column gap-2" style="height: 150px;">
                                                     <?php 
                                                         if ($item->starting_bid != null){?>
                                                             <span class="badge" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
