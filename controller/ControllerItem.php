@@ -218,10 +218,8 @@ class ControllerItem extends Controller
                 if (count($errors) == 0) // si le fichier est valide on peut proceder a son upload
                     $this->upload_image($item, $image);
             }
-            if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
-                $this->swap_priority($item->id, $_POST["left"], -1);
-            } else if (isset($_POST["right"])) { // si on a clique sur la fleche de droite
-                $this->swap_priority($item->id, $_POST["right"], 1);
+            if (isset($_POST["move"])) { // si on a clique sur la fleche de gauche
+                $this->swap_priority($item->id, $_POST["move"]);
             } else if (isset($_POST["delete"])) {
                 $this->delete_image($item, $_POST["delete"]);
             }
@@ -229,7 +227,9 @@ class ControllerItem extends Controller
                 $this->redirect("item", "manage_images", "$item->id");
             (new View("manage_images"))->show(["user" => $user, "item" => $item, "errors" => $errors]);
         }
+        else{
         $this->redirect("item");
+        }
     }
 
 
@@ -274,10 +274,12 @@ class ControllerItem extends Controller
         return $picture_path;
     }
 
-    private function swap_priority(int $item_id, int $old_priority, int $increment): void
+    private function swap_priority(int $item_id, int $post_value): void
     {
-        $new_priority = $old_priority + $increment;
-        Item::swap_priority($item_id, $old_priority, $new_priority);
+        $increment = $post_value < 0 ? -1 : 1;
+        $old_priority = $post_value * $increment; 
+        $new_priority = $post_value * $increment + $increment;
+        Picture::swap_priorities($item_id, $old_priority, $new_priority);
     }
 
     private function delete_image(Item $item, int $priority): void

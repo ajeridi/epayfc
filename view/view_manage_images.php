@@ -64,8 +64,8 @@
                             <figure class='d-inline-block' style="margin: 10px;">
                                 <img src='<?= $picture->get_thumbnail_path() ?>' class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px;">
                                 <figcaption style="text-align: center;">
-                                    <button type="submit" class="btn btn-secondary" name="left" value="<?= $picture->get_priority() ?>" <?= $picture->get_priority() == 1 ? "disabled" : "" ?>><i class="bi bi-arrow-left"></i></button>
-                                    <button type="submit" class="btn btn-secondary" name="right" value="<?= $picture->get_priority() ?>" <?= $picture->get_priority() == $item->get_number_of_pictures() ? "disabled" : "" ?>><i class="bi bi-arrow-right"></i></button>
+                                    <button type="submit" class="btn btn-secondary" name="move" value="<?= -1 * $picture->get_priority() ?>" <?= $picture->get_priority() == 1 ? "disabled" : "" ?>><i class="bi bi-arrow-left"></i></button>
+                                    <button type="submit" class="btn btn-secondary" name="move" value="<?= $picture->get_priority() ?>" <?= $picture->get_priority() == $item->get_number_of_pictures() ? "disabled" : "" ?>><i class="bi bi-arrow-right"></i></button>
                                     <button type="submit" class="btn btn-danger" name="delete" value="<?= $picture->get_priority() ?>"><i class="bi bi-x-lg"></i></button>
                                 </figcaption>
                             </figure>
