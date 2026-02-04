@@ -67,7 +67,7 @@
                                     <a href="item/open/<?= $item->id?>/from-<?= $action ?>" style="text-decoration: none;">
                                         <div class="card border-0" style="width: 18rem;">
                                             <div class="card-head">    
-                                            <img src='<?=$item->get_path()?>' class="card-img-top" alt="image item">
+                                            <img src='<?=$item->get_path() == "" ? "uploads/items/default.jpg" : $item->get_path()?>' class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
                                                 <?php if ($action=="purchases") { ?>
                                                             <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
