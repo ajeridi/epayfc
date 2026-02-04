@@ -127,7 +127,7 @@
               <hr class="hr-soft">
               <fieldset <?php if($user == false || $user->get_id() == $item->owner ){?> disabled <?php } ?>>
               <?php  if($item->starting_bid !=null) {?>
-              <?php if($is_open){?>
+              <?php if($item->is_open_item()){?>
               <form method="post" action="item/bid/<?= $item->id?>">
                 <div class="input-group input-dark mb-3">
                   <span class="input-group-text">€</span>
@@ -142,23 +142,23 @@
 
                 <div class="d-grid gap-2">
                   <button class="btn btn-success" type="submit">Place Bid</button>
+              </form>  
                   <?php if($item->buy_now_price != null && $item->starting_bid !=null){ ?>
-                  <a class="btn btn-outline-primary  " href="item/buy/<?= $item->id ?>">
+                  <button class="btn btn-outline-primary " type="submit" name="buy" value="<?= $item->buy_now_price ?>">
                     Buy Now at € <?= $item->buy_now_price ?>
-                  </a>
+                  </button>
                   <?php } ?>
                 </div>
-              </form>
               <?php } ?>
               <?php } ?>
-              <?php  if($item->starting_bid==null && $is_open ) {?>
+              <?php  if($item->starting_bid==null && $item->is_open_item() ) {?>
+                <form method="post" action="item/bid/<?= $item->id?>">
                 <div class="d-grid gap-2">
-                <a class="btn btn-outline-success" href="item/buy/<?= $item->id ?>">
-                    Buy Now 
-                  </a>
+                 <button class="btn btn-outline-primary " type="submit" name="buy" value="<?= $item->buy_now_price ?>">Buy Now</button>
                 </div>
+                </form>
               </fieldset>   
-              <?php }if(!$is_open){
+              <?php }if(!$item->is_open_item()){
                 if(count($item->bids)!=0){
                 if($user->get_id()===$item->bids['0']->get_owner()){?>
                 <p> Congratulation! You purchased this item for € <?= $item->bids['0']->get_amount() ?> </p>
@@ -168,10 +168,10 @@
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
 
-                <?php if($user == true && $user->get_pseudo() === $item->owner && $is_open){?>
+                <?php if($user == true && $user->get_pseudo() === $item->owner && $item->is_open_item()){?>
                 <p>You cannot bid on your own listing</p>
                 <?php } ?> 
-                <?php if($user == false && $is_open){?>
+                <?php if($user == false && $item->is_open_item()){?>
                 <p>Option not available for guests</p>
                 <?php } ?> 
 
@@ -183,15 +183,15 @@
               <div class="section-title mb-3">Seller Information</div>
 
               <div class="d-flex align-items-center gap-3">
-                <div class="avatar rounded-circle"><img src="<?= User::get_path_picture($item->owner) ?>"  class="w-100"></div>
+                <div class="avatar rounded-circle"><img src="<?= $owner_picture ?>"  class="w-100"></div>
                 <div>
                   <div class="fw-semibold"><?= $item->pseudo  ?></div>
-                  <div class="text-muted small"><?=User::get_role_by_id($item->owner) ?></div>
+                  <div class="text-muted small"><?= $owner_role ?></div>
                 </div>
               </div>
             </div>
           </div>
-          <?php if($user == true && $user->get_id() === $item->owner  && $is_open){?>
+          <?php if($user == true && $user->get_id() === $item->owner  && $item->is_open_item()){?>
           <div class="card card-dark border-0 mt-3">
             <div class="card-body">
               <div class="section-title mb-3">Manage Your Item</div>

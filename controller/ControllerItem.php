@@ -38,73 +38,58 @@ class ControllerItem extends Controller
 
     public function open(): void
     {
-        $user = $this->get_user_or_redirect();
-        $from = "";
-        if (isset($_GET["param2"])) {
-            $from = substr(stristr($_GET["param2"], "-"), 1);
-        }
+        $user=$this->get_user_or_redirect();
 
-        if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) {
-            $priority = 1;
-            $is_open = Item::is_open_anonce($_GET["param1"]);
-            if (isset($_GET["param3"])) {
-                $priority = $_GET["param3"];
-            }
-            $item = Item::get_item_by_id($_GET["param1"]);
-            $pictures = $item->get_pictures();
-        } else {
-            throw new Exception("No Item specified or Item not found");
+        $from="";
+        $priority=1;
+
+        if(isset($_GET["param1"]) && is_numeric($_GET["param1"])){
+            $item =Item::get_item_by_id($_GET["param1"]);     
+            $pictures=$item->get_pictures();
+            
+            if(isset($_GET["param2"])){
+                $from=substr(stristr($_GET["param2"],"-"),1);
+                if(isset($_GET["param3"]) && is_numeric($_GET["param3"])){
+                    $priority=$_GET["param3"];
+                }
+            }                    
+        } else{
+              throw new Exception("No Item specified or Item not found");
         }
-        if (!$is_open && $user->get_id() !=  $item->owner &&  (count($item->bids) == 0 || $user->get_id() != $item->bids['0']->owner)) {
-            throw new Exception("This Item seem to not be yours.");
-        } else {
-            (new View("item_open"))->show(["item" => $item, "pictures" => $pictures, "is_open" => $is_open, "user" => $user, "from" => $from, "priority" => $priority]);
+        if(!$item->is_open_item() && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
+              throw new Exception("This Item seem to not be yours.");
+        }else{
+          $owner_picture = User::get_path_picture($item->owner);
+          $owner_role=User::get_role_by_id($item->owner) ;
+
+        (new View("item_open"))->show(["item"=>$item,"owner_picture"=>$owner_picture,"owner_role"=>$owner_role,"pictures"=>$pictures,"user"=>$user,"from"=>$from,"priority"=>$priority]);
         }
+        
     }
-
-    public function buy(): void
-    {
-        $user = $this->get_user_or_redirect();
-        $current_date = AppTime::get_current_datetime();
-
-
-        if (isset($_GET['param1'])) {
-            $item_id = $_GET['param1'];
-            $item = Item::get_item_by_id($item_id);
-            $is_open = Item::is_open_anonce($item->id);
-            if (!$is_open || $user->get_id() == $item->owner) {
-                throw new Exception("You can't buy or bid on your item");
-                return;
-            }
-            Item::buy($user->get_id(), $_GET['param1'], $current_date, $item->buy_now_price);
-        }
-        $this->redirect("Item", "open", $item_id);
-    }
-
-
+ 
     public function bid(): void
     {
         $user = $this->get_user_or_redirect();
         $current_date = AppTime::get_current_datetime();
-        if (isset($_GET['param1'])) {
+            if($_POST){
             $item_id = $_GET['param1'];
-            $amount = $_POST['min_bid'];
+            $amount = ($_POST['buy']) ? $_POST['buy'] : $_POST['min_bid'] ;
             Item::buy($user->get_id(), $item_id, $current_date, $amount);
-        }
-        $this->redirect("item", "open", $item_id);
+            $this->redirect("item", "open", $item_id);
+            }
+            $this->index();
+        
     }
-
-
-    public function edit(): void
-    {
-        $user = $this->get_user_or_redirect();
-        if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
-            $item = Item::get_item_by_id($_GET['param1']);
-            $is_open = Item::is_open_anonce($_GET['param1']);
-            if ($item->owner != $user->get_id() || !$is_open || count($item->bids) != 0) {
+    public function edit() : void {
+        $user=$this->get_user_or_redirect();
+        
+        if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
+        $item=Item::get_item_by_id($_GET['param1']);     
+            if($item->owner!= $user->get_id() || !$item->is_open_item() ||count($item->bids)!=0){
                 throw new Exception("you can edit this ");
                 return;
             }
+   
         }
         if (count($_POST)) {
             $ok = true;
@@ -194,31 +179,28 @@ class ControllerItem extends Controller
     public function delete(): void
     {
         $user = $this->get_user_or_redirect();
-        if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
-            $item_id = Tools::sanitize($_GET['param1']);
-            $item = Item::get_item_by_id($item_id);
-            $is_open = Item::is_open_anonce($item->id);
-            if ($item->owner != $user->get_id() || count($item->bids) != 0 || !$is_open) {
-                throw new Exception("You can't delete this item ");
+        if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
+            $item_id=Tools::sanitize($_GET['param1']);
+            $item=Item::get_item_by_id($item_id);
+           
+            if($item->owner!= $user->get_id()|| count($item->bids)!=0 || !$item->is_open_item() ){
+                 throw new Exception("You can't delete this item ");
             }
             $owner = User::get_full_name_by_id($item->owner);
             (new View("delete_confirm"))->show(["owner" => $owner, "title" => $item->title, "id" => $item_id]);
         }
     }
-
-
-    public function delete_item(): void
-    {
-        $user = $this->get_user_or_redirect();
-        $item_id = Tools::sanitize($_GET['param1']);
-        $item = Item::get_item_by_id($item_id);
-        $is_open = Item::is_open_anonce($item->id);
-        if ($item->owner != $user->get_id() || count($item->bids) != 0 || !$is_open) {
-            throw new Exception("You can't delete this item ");
-        } else {
-            $item->delete();
-            $this->redirect('item', 'list');
-        }
+    public function delete_item() : void{
+        $user=$this->get_user_or_redirect();
+        $item_id=Tools::sanitize($_GET['param1']);
+        $item=Item::get_item_by_id($item_id);
+       
+        if($item->owner!= $user->get_id() || count($item->bids)!=0 || !$item->is_open_item()){
+                 throw new Exception("You can't delete this item ");
+         } else {
+         $item->delete();   
+         $this->redirect('item','list');
+         }
     }
 
 
@@ -226,13 +208,14 @@ class ControllerItem extends Controller
     {
         $user = $this->get_user_or_redirect();
         $errors = [];
-        // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
-        if (!isset($_GET['param1']) || !$user->is_item_owner($_GET['param1']) || !Item::is_open_anonce($_GET["param1"]))
-            $this->redirect("item");
-        $item = Item::get_item_by_id($_GET["param1"]);
-        if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
-            $image = $_FILES["image"];
-            // validation de l'image
+        if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1']) ) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
+            $item_id = $_GET['param1'];
+            $item= Item::get_item_by_id($item_id);
+            if($item->is_open_item()) {
+                if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
+                    $image = $_FILES["image"];
+
+                    // validation de l'image
             $errors = ImageUtils::validate_image($image);
             if (count($errors) == 0) { // si le fichier est valide on peut proceder a son upload
                 //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
@@ -246,8 +229,8 @@ class ControllerItem extends Controller
                 // on l'insere dans la db
                 Item::upload_image($item->id, $new_image_path);
                 $this->redirect("item", "manage_images", "$item->id");
+                    }
             }
-        }
 
         if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
             $this->swap_priority($item->id, $_POST["left"], -1);
@@ -313,17 +296,19 @@ class ControllerItem extends Controller
 
         (new View("item_closed"))->show(["salesItem" => $salesItem, "info" => $info, "loyer_buyer" => $loyer_buyer, "nom" => $nom, 'user' => $user, 'action' => $action]);
     }
-    public function purchases(): void
-    {
-        $user = $this->get_user_or_redirect();
-        $action = "purchases";
-        $salesItem = Item::get_purchases_items($user);
-        $info = Item::cal_total_avg_nbrOfSales($salesItem);
-        $top_seller = Item::find_loyer_bider($salesItem, "pseudo");
-        $nom = $this::concate_names($top_seller);
 
-        (new View("item_closed"))->show(["salesItem" => $salesItem, 'info' => $info, 'loyer_buyer' => $top_seller, "nom" => $nom, 'user' => $user, 'action' => $action]);
+    public function purchases() : void {
+        $user=$this->get_user_or_redirect();
+         $action="purchases";
+         $salesItem=Item::get_purchases_items($user);
+         $info=Item::cal_total_avg_nbrOfSales($salesItem);
+         $top_seller=Item::find_loyer_bider($salesItem,"pseudo");
+         $nom=$this::concate_names($top_seller);
+    
+        (new View("item_closed"))->show(["salesItem"=>$salesItem,'info'=>$info,'loyer_buyer'=>$top_seller,"nom"=>$nom,'user'=>$user,'action'=>$action]);
+        
     }
+
     private function concate_names(array $loyer_buyer): string
     {
         $nom = "";

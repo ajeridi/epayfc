@@ -121,7 +121,7 @@ class Item extends Model {
         $items=Item::get_other_items($user->get_id());
         $data=[];
         foreach($items as $item){
-            if(!$item->is_open_item() && $user->is_heigth_bider($item->id) ){
+            if(!$item->is_open_item() && $item->is_highest_bidder($user->get_id()) ){
                 $data[]=$item;
             }
         }
@@ -157,26 +157,24 @@ class Item extends Model {
             $array[]=Item::build_Item($item);
         }   
         return $array; 
-    }     
+    }   
 
     private function is_participated(int $user_id) : bool {
-        $query=self::execute("SELECT * FROM bids b WHERE  b.owner = :user_id AND b.item= :item_id",["user_id"=>$user_id,"item_id"=>$this->id]);
-        if($query->rowCount() == 0){
-            return false;
-        }else{
-            return true ;
+        foreach($this->bids as $bid){
+            if($bid->get_owner()==$user_id){
+                return true;
+            }
         }
+        return false;
     }
 
 
     public  function is_open_item(): bool {
         $current_date_time=AppTime::get_current_datetime();
-        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$this->id,"current_date_time"=> $current_date_time]);
-        if($query->rowCount()==0){
-            return false ;
-        }else{
-            return true; 
+        if(( $this->end_at()<$current_date_time || count($this->bids)!=0 && ( $this->buy_now_price != null && $this->buy_now_price <= $this->bids['0']->get_amount())) ){
+            return false;
         }
+        return true;
     }
 
     /*
@@ -232,12 +230,11 @@ public function get_thumbnail_path(int $priority=1) : string {
     }
 
     public function get_max_bid(): float | null {
-        $query=self::execute("SELECT MAX(b.amount) as max FROM bids b where b.item = :item_id ",["item_id"=>$this->id]);
-        $data=$query->fetch();
-        if($query->rowCount()==0){
-            return null ;
+
+        if(count($this->bids)==0){
+            return null;
         }
-        return (double) $data['max'] ;
+        return $this->bids['0']->get_amount();
     }
     public function delete() : void {
         self::execute("DELETE FROM bids WHERE item= :id  ;
@@ -268,18 +265,7 @@ public function get_thumbnail_path(int $priority=1) : string {
     }
         */
 
-       public static function is_open_anonce(int $item_id): bool {
-         $current_date_time=AppTime::get_current_datetime();
-        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 )
-                                     or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> $current_date_time]);
-
-        if($query->rowCount()==0){
-            return false ;
-        }else{
-            return true; 
-        }
-
-    }
+  
     public static function get_item_ino(int $item_id): array {
         $query=self::execute("SELECT id ,title,description ,duration_days,starting_bid,buy_now_price from items where id=:id",["id"=>$item_id]);
         $data=$query->fetch();
@@ -356,7 +342,7 @@ public function get_thumbnail_path(int $priority=1) : string {
     private static function unicite_title_for_owner($owner ,$title): bool {
 
         $query=self::execute("SELECT * from items i where i.owner = :owner and i.title = :title ",["owner"=>$owner,"title"=>$title]);
-        $data=$query->fetchAll();
+        $query->fetchAll();
        if($query->rowCount() != 0){
         return false; 
        }
@@ -489,9 +475,10 @@ public function get_thumbnail_path(int $priority=1) : string {
     }
 
      public function end_at() : string {
-        $query=self::execute("SELECT vi.end_at from v_items_status vi where vi.id= :id",["id"=>$this->id]);
-        $data=$query->fetch();
-        return $data['end_at'];
+      $end_at= new DateTime($this->created_at);
+      $end_at->modify('+'.$this->duration_days.'days');
+
+      return $end_at->format('Y-m-d H:i:s');
     }
 
         public function get_period() : string {
@@ -511,18 +498,12 @@ public function get_thumbnail_path(int $priority=1) : string {
          return $result;
 
     }
-
-
-    
-
-
-
-   
-    
-    
-    
-
-   
+    public function is_highest_bidder(int $user_id) : bool {
+        if(count($this->bids)==0){
+            return false;
+        }
+        return $this->bids['0']->get_owner()==$user_id;        
+    }
    
 }
 ?>
