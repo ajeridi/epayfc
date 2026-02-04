@@ -210,13 +210,13 @@ class ControllerItem extends Controller
         if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1'])) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
             $item_id = $_GET['param1'];
             $item = Item::get_item_by_id($item_id);
-            if ($item->is_open_item()) {
-                if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
-                    $image = $_FILES["image"];
-                    $errors = ImageUtils::validate_image($image);// validation de l'image
-                    if (count($errors) == 0) // si le fichier est valide on peut proceder a son upload
-                        $this->upload_image($item, $image);
-                }
+            if (!$item->is_open_item())
+                $this->redirect("item");
+            if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
+                $image = $_FILES["image"];
+                $errors = ImageUtils::validate_image($image); // validation de l'image
+                if (count($errors) == 0) // si le fichier est valide on peut proceder a son upload
+                    $this->upload_image($item, $image);
             }
             if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
                 $this->swap_priority($item->id, $_POST["left"], -1);
@@ -225,10 +225,11 @@ class ControllerItem extends Controller
             } else if (isset($_POST["delete"])) {
                 $this->delete_image($item, $_POST["delete"]);
             }
+            if (count($_POST) != 0) // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
+                $this->redirect("item", "manage_images", "$item->id");
+            (new View("manage_images"))->show(["user" => $user, "item" => $item, "errors" => $errors]);
         }
-        if (count($_POST) != 0) // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
-            $this->redirect("item", "manage_images", "$item->id");
-        (new View("manage_images"))->show(["user" => $user, "item" => $item, "errors" => $errors]);
+        $this->redirect("item");
     }
 
 
