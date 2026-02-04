@@ -254,56 +254,50 @@ class Item extends Model {
                 }
                
     }
-    public static function validat_item($owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
+    public static function validat_item($owner,$info,$errors): array {
         
-        $errors[]=[];
-        $errors['title']=[];
-        $errors['description']=[];
-        $errors['buy_now_price']=[];
-        $errors['starting_bid']=[];
-        $errors['saleprice']=[];
-        $errors['duration_days']=[];
+    
  
-       if( !Item::unicite_title_for_owner($owner,$title) ){
+       if( !Item::unicite_title_for_owner($owner,$info['title']) ){
         $errors['title'][]="This title already exist, Please choose another one !";
        }
         
-        if(strlen($title)==0){
+        if(strlen($info['title'])==0){
             $errors['title'][]="Title is required";
         }
-        if(strlen($title)<3){
+        if(strlen($info['title'])<3){
             $errors['title'][]="Title lenght must be between 3 and 255 characters";
             
         }
-        if($description!=null && strlen($description)<3){
+        if($info['description']!=null && strlen($info['description'])<3){
             $errors['description'][]="Description lenght must be betwenn 3 and 255 characters";
            
         }
-        if($starting_bid != ""  &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $starting_bid)){
+        if($info['starting_bid'] != ""  &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $info['starting_bid'] )){
             $errors["starting_bid"][]="Starting bid must be a nomber positif ";
             
         }
-        if( $buy_now_price != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/",$buy_now_price) ){
+        if( $info['buy_now_price'] != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/",$info['buy_now_price']) ){
             $errors['buy_now_price'][]="the buy now price must be a nomber positif";
             
         }
-        if($starting_bid =="" && $saleprice==""){
+        if($info['starting_bid']  =="" && $info['saleprice']==""){
             $errors["buy_now_price"][]="Type requiered";
              $errors["saleprice"][]="Type requiered";
         }
-        if($starting_bid != "" && $buy_now_price!="" && $buy_now_price<$starting_bid ){
+        if($info['starting_bid']  != "" && $info['buy_now_price']!="" && $info['buy_now_price']<$info['starting_bid'] ){
             $errors["buy_now_price"][]="the buy now price most be sup then the starting bid";
            
         }
-        if(($starting_bid != "" &&  $saleprice != "")|| ($saleprice!="" && $buy_now_price!="")){
+        if(($info['starting_bid']  != "" && $info['saleprice'] != "")|| ($info['saleprice']!="" && $info['buy_now_price']!="")){
             $errors["buy_now_price"][]="Cannot create both auction and direct sale";
             $errors["saleprice"][]="Cannot create both auction and direct sale";
         }
-        if (!preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $duration_days)) {
+        if (!preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $info['duration_days'])) {
 
             $errors["duration_days"][]="Duartion is required and most be integer positif and between 1 and 60";
         }
-        if($starting_bid == "" && $saleprice !="" &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $saleprice)){
+        if($info['starting_bid']  == "" && $info['saleprice'] !="" &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $info['saleprice'])){
              $errors["saleprice"][]="Sale price most be a nomber positif ";
         }
      
@@ -320,26 +314,31 @@ class Item extends Model {
 
 
     }
-    public static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): int {
+    public static function put_edition_item($id,$owner,$info): int {
         $current_date_time=AppTime::get_current_datetime();
         
 
-        if($buy_now_price == ""){
-            if($starting_bid != "" && $starting_bid !=0){
-                $buy_now_price=null;
+        if($info['buy_now_price'] == ""){
+            if($info['starting_bid'] != "" && $info['starting_bid'] !=0){
+                $info['buy_now_price']=null;
             } else{
-            $buy_now_price=$saleprice;
+           $info['buy_now_price']=$info['saleprice'];
             }
         }
 
-        $starting_bid= str_replace(',','.',$starting_bid);
-        $buy_now_price=str_replace(',','.',$buy_now_price);
+        $starting_bid= str_replace(',','.',$info['starting_bid']);
+        $buy_now_price=str_replace(',','.',$info['buy_now_price']);
         if($id==0){
-            self::execute("INSERT INTO items (owner,title,description,duration_days,buy_now_price,starting_bid,created_at)  VALUE (:owner,:title,:description,:duration_days,:buy_now_price,:starting_bid,:created_at) ",['owner'=>$owner,'title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price,'created_at'=>$current_date_time]);
+            self::execute("INSERT INTO items (owner,title,description,duration_days,buy_now_price,starting_bid,created_at)  VALUE 
+            (:owner,:title,:description,:duration_days,:buy_now_price,:starting_bid,:created_at) ",['owner'=>$owner,'title'=>$info['title'],
+            'description'=>$info['description'],'duration_days'=>$info['duration_days'],'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price,
+            'created_at'=>$current_date_time]);
             $id_nv=self::lastInsertId();
             return $id_nv;
         } else{
-            self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,starting_bid=:starting_bid WHERE id =:id ",['title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price, 'id' => $id]);
+            self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,
+            starting_bid=:starting_bid WHERE id =:id ",['title'=>$info['title'],'description'=>$info['description'],'duration_days'=>$info['duration_days'],
+            'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price, 'id' => $id]);
             return $id;
         }
     }
