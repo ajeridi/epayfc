@@ -219,6 +219,10 @@ public function get_thumbnail_path(int $priority=1) : string {
         return $this->pictures;
     }
 
+    public function get_picture(int $priority) : Picture{
+        return $this->pictures[$priority-1];
+    }
+
     /*
     public function get_nomber_of_pictures(): int {
          return  count($this->get_pictures_by_id());
@@ -236,6 +240,8 @@ public function get_thumbnail_path(int $priority=1) : string {
         }
         return $this->bids['0']->get_amount();
     }
+
+
     public function delete() : void {
         self::execute("DELETE FROM bids WHERE item= :id  ;
                          DELETE FROM item_pictures WHERE item= :id ;
@@ -390,20 +396,13 @@ public function get_thumbnail_path(int $priority=1) : string {
         return $result["title"];
     }
 
-    public static function upload_image(int $item_id, string $picture_path) : void {
+    public function upload_image(string $picture_path) : void {
         // on regarde quelle est la priorite de la derniere image de l'item
-        $priority = Item::get_new_picture_priority($item_id);
-        $query = self::execute("INSERT INTO item_pictures(item, priority, picture_path) VALUES (:item_id, :priority, :picture_path)",
-        ["item_id" => $item_id, "priority" => $priority ,"picture_path" => $picture_path]);
+        Picture::upload_image($this->id, $picture_path);
+        
     }
 
-    public static function get_new_picture_priority(int $item_id) : int {
-        $sql = "SELECT (MAX(priority)+1) as next_priority FROM item_pictures WHERE item = :item_id";
-        $query = self::execute($sql, ["item_id" => $item_id]);
-        $res = $query->fetch();
-        return $res["next_priority"] == null ? 1 : $res["next_priority"];
-    }
-
+    
     public static function swap_priority(int $item_id, int $old_priority, int $new_priority) : void {
         // Pour update deux champs sous contrainte, il faut faire un assignation avec une variable temp
         // si old = 1 et new = 2, old = -1, new = 1, old = 2, car sinon erreur
@@ -417,13 +416,10 @@ public function get_thumbnail_path(int $priority=1) : string {
         $query = self::execute($sql,["new_priority" => $new_priority, "old_priority" => $old_priority, "item_id" => $item_id]);
     }
 
-    public static function delete_picture(int $item_id, int $priority) : void {
-        // d'abord supprimer l'image    
-        $sql = "DELETE FROM item_pictures WHERE item = :item_id AND priority = :priority";
-        $query = self::execute($sql, ["item_id" => $item_id, "priority" => $priority]);
-        // ensuite il faut actualiser les priorites des images ayant une priorite > $priority, faire -1 a chaque priorite se trouvant apres
-        $sql = "UPDATE item_pictures SET priority = (priority - 1) WHERE priority > :priority AND item = :item_id";
-        $query = self::execute($sql, ["priority" => $priority, "item_id" => $item_id ]);
+
+    public function delete_picture(int $priority) : void{
+        $image_to_delete = $this->get_picture($priority);
+        $image_to_delete->delete();
     }
 
     public static function get_picture_path(int $item_id, int $priority) : string {

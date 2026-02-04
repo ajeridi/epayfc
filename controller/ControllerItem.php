@@ -38,58 +38,56 @@ class ControllerItem extends Controller
 
     public function open(): void
     {
-        $user=$this->get_user_or_redirect();
+        $user = $this->get_user_or_redirect();
 
-        $from="";
-        $priority=1;
+        $from = "";
+        $priority = 1;
 
-        if(isset($_GET["param1"]) && is_numeric($_GET["param1"])){
-            $item =Item::get_item_by_id($_GET["param1"]);     
-            $pictures=$item->get_pictures();
-            
-            if(isset($_GET["param2"])){
-                $from=substr(stristr($_GET["param2"],"-"),1);
-                if(isset($_GET["param3"]) && is_numeric($_GET["param3"])){
-                    $priority=$_GET["param3"];
+        if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) {
+            $item = Item::get_item_by_id($_GET["param1"]);
+            $pictures = $item->get_pictures();
+
+            if (isset($_GET["param2"])) {
+                $from = substr(stristr($_GET["param2"], "-"), 1);
+                if (isset($_GET["param3"]) && is_numeric($_GET["param3"])) {
+                    $priority = $_GET["param3"];
                 }
-            }                    
-        } else{
-              throw new Exception("No Item specified or Item not found");
+            }
+        } else {
+            throw new Exception("No Item specified or Item not found");
         }
-        if(!$item->is_open_item() && $user->get_id() !=  $item->owner &&  (count($item->bids)==0 || $user->get_id() != $item->bids['0']->owner)){
-              throw new Exception("This Item seem to not be yours.");
-        }else{
-          $owner_picture = User::get_path_picture($item->owner);
-          $owner_role=User::get_role_by_id($item->owner) ;
+        if (!$item->is_open_item() && $user->get_id() !=  $item->owner &&  (count($item->bids) == 0 || $user->get_id() != $item->bids['0']->owner)) {
+            throw new Exception("This Item seem to not be yours.");
+        } else {
+            $owner_picture = User::get_path_picture($item->owner);
+            $owner_role = User::get_role_by_id($item->owner);
 
-        (new View("item_open"))->show(["item"=>$item,"owner_picture"=>$owner_picture,"owner_role"=>$owner_role,"pictures"=>$pictures,"user"=>$user,"from"=>$from,"priority"=>$priority]);
+            (new View("item_open"))->show(["item" => $item, "owner_picture" => $owner_picture, "owner_role" => $owner_role, "pictures" => $pictures, "user" => $user, "from" => $from, "priority" => $priority]);
         }
-        
     }
- 
+
     public function bid(): void
     {
         $user = $this->get_user_or_redirect();
         $current_date = AppTime::get_current_datetime();
-            if($_POST){
+        if ($_POST) {
             $item_id = $_GET['param1'];
-            $amount = ($_POST['buy']) ? $_POST['buy'] : $_POST['min_bid'] ;
+            $amount = ($_POST['buy']) ? $_POST['buy'] : $_POST['min_bid'];
             Item::buy($user->get_id(), $item_id, $current_date, $amount);
             $this->redirect("item", "open", $item_id);
-            }
-            $this->index();
-        
+        }
+        $this->index();
     }
-    public function edit() : void {
-        $user=$this->get_user_or_redirect();
-        
-        if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
-        $item=Item::get_item_by_id($_GET['param1']);     
-            if($item->owner!= $user->get_id() || !$item->is_open_item() ||count($item->bids)!=0){
+    public function edit(): void
+    {
+        $user = $this->get_user_or_redirect();
+
+        if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
+            $item = Item::get_item_by_id($_GET['param1']);
+            if ($item->owner != $user->get_id() || !$item->is_open_item() || count($item->bids) != 0) {
                 throw new Exception("you can edit this ");
                 return;
             }
-   
         }
         if (count($_POST)) {
             $ok = true;
@@ -179,28 +177,29 @@ class ControllerItem extends Controller
     public function delete(): void
     {
         $user = $this->get_user_or_redirect();
-        if(isset($_GET['param1']) && is_numeric($_GET['param1'])){
-            $item_id=Tools::sanitize($_GET['param1']);
-            $item=Item::get_item_by_id($item_id);
-           
-            if($item->owner!= $user->get_id()|| count($item->bids)!=0 || !$item->is_open_item() ){
-                 throw new Exception("You can't delete this item ");
+        if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
+            $item_id = Tools::sanitize($_GET['param1']);
+            $item = Item::get_item_by_id($item_id);
+
+            if ($item->owner != $user->get_id() || count($item->bids) != 0 || !$item->is_open_item()) {
+                throw new Exception("You can't delete this item ");
             }
             $owner = User::get_full_name_by_id($item->owner);
             (new View("delete_confirm"))->show(["owner" => $owner, "title" => $item->title, "id" => $item_id]);
         }
     }
-    public function delete_item() : void{
-        $user=$this->get_user_or_redirect();
-        $item_id=Tools::sanitize($_GET['param1']);
-        $item=Item::get_item_by_id($item_id);
-       
-        if($item->owner!= $user->get_id() || count($item->bids)!=0 || !$item->is_open_item()){
-                 throw new Exception("You can't delete this item ");
-         } else {
-         $item->delete();   
-         $this->redirect('item','list');
-         }
+    public function delete_item(): void
+    {
+        $user = $this->get_user_or_redirect();
+        $item_id = Tools::sanitize($_GET['param1']);
+        $item = Item::get_item_by_id($item_id);
+
+        if ($item->owner != $user->get_id() || count($item->bids) != 0 || !$item->is_open_item()) {
+            throw new Exception("You can't delete this item ");
+        } else {
+            $item->delete();
+            $this->redirect('item', 'list');
+        }
     }
 
 
@@ -208,28 +207,16 @@ class ControllerItem extends Controller
     {
         $user = $this->get_user_or_redirect();
         $errors = [];
-        if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1']) ) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
+        if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1'])) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
             $item_id = $_GET['param1'];
-            $item= Item::get_item_by_id($item_id);
-            if($item->is_open_item()) {
+            $item = Item::get_item_by_id($item_id);
+            if ($item->is_open_item()) {
                 if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
                     $image = $_FILES["image"];
-
-                        // validation de l'image
+                    // validation de l'image
                     $errors = ImageUtils::validate_image($image);
-                    if (count($errors) == 0) { // si le fichier est valide on peut proceder a son upload
-                        //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
-                        if ($item->get_number_of_pictures() == 0)
-                            mkdir("uploads/items/$item->id");
-                        // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
-                        $formatted_images = $this->create_new_images($image);
-                        // sauvegarde des nouvelles images dans le repertoire uploads
-                        $new_image_path = $this->make_image_path($image, $item->id);
-                        $this->save_new_images($formatted_images, $new_image_path);
-                        // on l'insere dans la db
-                        Item::upload_image($item->id, $new_image_path);
-                        $this->redirect("item", "manage_images", "$item->id");
-                    }
+                    if (count($errors) == 0) // si le fichier est valide on peut proceder a son upload
+                        $this->upload_image($item, $image);
                 }
             }
         }
@@ -239,19 +226,37 @@ class ControllerItem extends Controller
         } else if (isset($_POST["right"])) { // si on a clique sur la fleche de droite
             $this->swap_priority($item->id, $_POST["right"], 1);
         } else if (isset($_POST["delete"])) {
-            $this->delete_image($item->id, $_POST["delete"]);
-            // si le dossier est vide, donc nb_pictures == 0, on le supprime
-            if (Item::get_picture_count($item->id) == 0) 
-                rmdir("uploads/items/$item->id");
+            $this->delete_image($item, $_POST["delete"]);
         }
 
         // recherche des donnees a afficher sur la page (actualisee)
         $item_pictures = Picture::get_pictures($item->id);
 
         // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
-        if (count($_POST) != 0) 
+        if (count($_POST) != 0)
             $this->redirect("item", "manage_images", "$item->id");
         (new View("manage_images"))->show(["user" => $user, "item" => $item, "item_pictures" => $item_pictures, "errors" => $errors]);
+    }
+
+
+    private function upload_image(Item $item, array $image): void
+    {
+        //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
+        $this->create_dir_if_not_exists($item);
+        // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
+        $formatted_images = $this->create_new_images($image);
+        // sauvegarde des nouvelles images dans le repertoire uploads
+        $new_image_path = $this->make_image_path($image, $item->id);
+        $this->save_new_images($formatted_images, $new_image_path);
+        // on l'insere dans la db
+        $item->upload_image($new_image_path);
+        $this->redirect("item", "manage_images", "$item->id");
+    }
+
+    private function create_dir_if_not_exists(Item $item): void
+    {
+        if ($item->get_number_of_pictures() == 0)
+            mkdir("uploads/items/$item->id");
     }
 
     private function create_new_images(array $image): array
@@ -261,7 +266,8 @@ class ControllerItem extends Controller
         return $new_images;
     }
 
-    private function save_new_images(array $images, string $path) : void {
+    private function save_new_images(array $images, string $path): void
+    {
         ImageUtils::save_image_file($images["full_image"], $path);
         ImageUtils::save_image_file($images["thumbnail"], ImageUtils::get_thumbnail_path($path));
     }
@@ -280,11 +286,20 @@ class ControllerItem extends Controller
         Item::swap_priority($item_id, $old_priority, $new_priority);
     }
 
-    private function delete_image(int $item_id, int $priority): void
+    private function delete_image(Item $item, int $priority): void
     {
-        $image_path = Item::get_picture_path($item_id, $priority);
-        Item::delete_picture($item_id, $priority);
+        $image_path = $item->get_path($priority);
+        $item->delete_picture($priority);
         ImageUtils::delete_image_files($image_path);
+        $this->check_for_empty_picture_dir($item);
+    }
+
+    private function check_for_empty_picture_dir(Item $item): void
+    {
+        $item = Item::get_item_by_id($item->id);
+        // si le dossier est vide, donc nb_pictures == 0, on le supprime
+        if ($item->get_number_of_pictures() == 0)
+            rmdir("uploads/items/$item->id");
     }
 
     public  function sales()
@@ -299,16 +314,16 @@ class ControllerItem extends Controller
         (new View("item_closed"))->show(["salesItem" => $salesItem, "info" => $info, "loyer_buyer" => $loyer_buyer, "nom" => $nom, 'user' => $user, 'action' => $action]);
     }
 
-    public function purchases() : void {
-        $user=$this->get_user_or_redirect();
-         $action="purchases";
-         $salesItem=Item::get_purchases_items($user);
-         $info=Item::cal_total_avg_nbrOfSales($salesItem);
-         $top_seller=Item::find_loyer_bider($salesItem,"pseudo");
-         $nom=$this::concate_names($top_seller);
-    
-        (new View("item_closed"))->show(["salesItem"=>$salesItem,'info'=>$info,'loyer_buyer'=>$top_seller,"nom"=>$nom,'user'=>$user,'action'=>$action]);
-        
+    public function purchases(): void
+    {
+        $user = $this->get_user_or_redirect();
+        $action = "purchases";
+        $salesItem = Item::get_purchases_items($user);
+        $info = Item::cal_total_avg_nbrOfSales($salesItem);
+        $top_seller = Item::find_loyer_bider($salesItem, "pseudo");
+        $nom = $this::concate_names($top_seller);
+
+        (new View("item_closed"))->show(["salesItem" => $salesItem, 'info' => $info, 'loyer_buyer' => $top_seller, "nom" => $nom, 'user' => $user, 'action' => $action]);
     }
 
     private function concate_names(array $loyer_buyer): string
