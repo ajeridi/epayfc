@@ -403,18 +403,8 @@ public function get_thumbnail_path(int $priority=1) : string {
     }
 
     
-    public static function swap_priority(int $item_id, int $old_priority, int $new_priority) : void {
-        // Pour update deux champs sous contrainte, il faut faire un assignation avec une variable temp
-        // si old = 1 et new = 2, old = -1, new = 1, old = 2, car sinon erreur
-        Item::update_priority($item_id, $old_priority, -1);
-        Item::update_priority($item_id, $new_priority, $old_priority);
-        Item::update_priority($item_id, -1, $new_priority);
-    }
 
-    public static function update_priority(int $item_id, int $old_priority, int $new_priority) : void {
-        $sql = "UPDATE item_pictures SET priority = :new_priority WHERE priority = :old_priority AND item = :item_id;";    
-        $query = self::execute($sql,["new_priority" => $new_priority, "old_priority" => $old_priority, "item_id" => $item_id]);
-    }
+   
 
 
     public function delete_picture(int $priority) : void{
