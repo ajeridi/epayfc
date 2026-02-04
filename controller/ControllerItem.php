@@ -219,23 +219,18 @@ class ControllerItem extends Controller
                         $this->upload_image($item, $image);
                 }
             }
+            if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
+                $this->swap_priority($item->id, $_POST["left"], -1);
+            } else if (isset($_POST["right"])) { // si on a clique sur la fleche de droite
+                $this->swap_priority($item->id, $_POST["right"], 1);
+            } else if (isset($_POST["delete"])) {
+                $this->delete_image($item, $_POST["delete"]);
+            }
         }
-
-        if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
-            $this->swap_priority($item->id, $_POST["left"], -1);
-        } else if (isset($_POST["right"])) { // si on a clique sur la fleche de droite
-            $this->swap_priority($item->id, $_POST["right"], 1);
-        } else if (isset($_POST["delete"])) {
-            $this->delete_image($item, $_POST["delete"]);
-        }
-
-        // recherche des donnees a afficher sur la page (actualisee)
-        $item_pictures = Picture::get_pictures($item->id);
-
         // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
         if (count($_POST) != 0)
             $this->redirect("item", "manage_images", "$item->id");
-        (new View("manage_images"))->show(["user" => $user, "item" => $item, "item_pictures" => $item_pictures, "errors" => $errors]);
+        (new View("manage_images"))->show(["user" => $user, "item" => $item, "errors" => $errors]);
     }
 
 

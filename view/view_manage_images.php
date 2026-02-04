@@ -54,18 +54,18 @@
                 Current Images
             </div>
             <div class="card-body" style="background-color: #27272a;">
-                <?php if ($item_pictures == []) { ?>
+                <?php if ($item->get_pictures() == []) { ?>
                     <div class="container bg-dark text-white-50" style="border: 1px solid #495057; border-radius: 5px; padding-top: 10px;">
                         <p>No images yet for this item. Upload some images above to get started.</p>
                     </div>
                 <?php } else { ?>
                     <form method="post" action='item/manage_images/<?= $item->id ?>'>
-                        <?php foreach ($item_pictures as $picture) { ?>
+                        <?php foreach ($item->get_pictures() as $picture) { ?>
                             <figure class='d-inline-block' style="margin: 10px;">
                                 <img src='<?= $picture->get_thumbnail_path() ?>' class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px;">
                                 <figcaption style="text-align: center;">
                                     <button type="submit" class="btn btn-secondary" name="left" value="<?= $picture->get_priority() ?>" <?= $picture->get_priority() == 1 ? "disabled" : "" ?>><i class="bi bi-arrow-left"></i></button>
-                                    <button type="submit" class="btn btn-secondary" name="right" value="<?= $picture->get_priority() ?>" <?= $picture->get_priority() == count($item_pictures) ? "disabled" : "" ?>><i class="bi bi-arrow-right"></i></button>
+                                    <button type="submit" class="btn btn-secondary" name="right" value="<?= $picture->get_priority() ?>" <?= $picture->get_priority() == $item->get_number_of_pictures() ? "disabled" : "" ?>><i class="bi bi-arrow-right"></i></button>
                                     <button type="submit" class="btn btn-danger" name="delete" value="<?= $picture->get_priority() ?>"><i class="bi bi-x-lg"></i></button>
                                 </figcaption>
                             </figure>
