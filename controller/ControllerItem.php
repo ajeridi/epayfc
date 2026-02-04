@@ -93,31 +93,32 @@ class ControllerItem extends Controller
     {
         $info =[]; 
 
-        if(!$first) {
-            if($item!=null){
-                $info['id']=$item->id;
-            } else {
-                 $info['id']=0;
-            }
-            $info['title'] =Tools::sanitize($_POST['title']);
-            $info['description'] =Tools::sanitize($_POST['description']);
-            $info['duration_days'] = Tools::sanitize($_POST['duration_days']);
-            $info['starting_bid'] =  Tools::sanitize($_POST['starting_bid']);
-            $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']);
-            $info['saleprice'] = Tools::sanitize($_POST['saleprice']);
-        } else {
-            $info['id']=$item->id;
-            $info['title'] =$item->title;
-            $info['description'] =$item->description;
-            $info['duration_days'] =$item->duration_days;
-            $info['starting_bid'] =  $item->starting_bid;
-            if($item->starting_bid != null){
-                $info['buy_now_price'] = $item->buy_now_price;
-            }else {
-                $info['saleprice'] = $item->buy_now_price;
-            }
+        if($item!==null){
         
-        }
+            $info['id']=$item->id;
+            $info['title'] = $first ? $item->title : Tools::sanitize($_POST['title']) ;
+            $info['description'] =$first ? $item->description :Tools::sanitize($_POST['description']);
+            $info['duration_days'] =$first ? $item->duration_days : Tools::sanitize($_POST['duration_days']);;
+            $info['starting_bid'] =$first ?  $item->starting_bid :Tools::sanitize($_POST['starting_bid']); ;
+            if($item->starting_bid != null){
+                $info['buy_now_price'] = $first ? $item->buy_now_price : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']); ;
+                $info['saleprice']=$first ? null :  $info['saleprice'] = Tools::sanitize($_POST['saleprice']);
+            }else {
+                $info['saleprice'] =  $first ? $item->buy_now_price :$info['saleprice'] = Tools::sanitize($_POST['saleprice']);
+                $info['buy_now_price']= $first ? null : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']); 
+            }
+            
+        } else  {
+            
+            $info['id']=null; 
+            $info['title']=$first ? null : Tools::sanitize($_POST['title']);
+            $info['description']=$first ? null : Tools::sanitize($_POST['description']);
+            $info['duration_days']=$first ? null : Tools::sanitize($_POST['duration_days']);
+            $info['starting_bid'] =$first ? null : Tools::sanitize($_POST['starting_bid']);
+            $info['buy_now_price']=$first ? null : Tools::sanitize($_POST['buy_now_price']);
+            $info['saleprice']=$first ? null : Tools::sanitize($_POST['saleprice']);
+    }
+
         return $info ;
     }
 
@@ -140,7 +141,7 @@ class ControllerItem extends Controller
             $errors=$this::build_errors_array();
             $info=$this::build_info_array($item,true);
 
-            (new View('item_edit'))->show(['info'=>$info,'errors'=>$errors,'action'=>'edit']);
+            (new View('item_edit'))->show(['info'=>$info,'errors'=>$errors]);
         } else {
 
             $info=$this::build_info_array($item,false);
@@ -148,34 +149,33 @@ class ControllerItem extends Controller
             $errors=Item::validat_item($user->get_id(), $info,$errors);
               if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days'])==0
                && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0){
-                Item::put_edition_item($info['id'], $user->get_id(), $info);
+                Item::put_edition_item( $user->get_id(), $info);
                  $this->redirect("item", "open",$info['id'], "from-items");
                } else {
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, "action"=>"edit"]);
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors]);
                }      
         }
         
     }
 
 
-    public function add()
+    public function add() :  void
     {
         $user = $this->get_user_or_redirect();
         $action="add";
-        $info['id']=0;
         $errors=$this::build_errors_array();
         if(!$_POST){
-            $info=[];
-            (new View("item_edit"))->show(['info' => $info['id'], 'errors' => $errors,'action'=>$action]);
+            $info=$this::build_info_array(null,true);
+            (new View("item_edit"))->show(['info' => $info, 'errors' => $errors]);
         } else{
             $info=$this::build_info_array(null,false);
             $errors=Item::validat_item($user->get_id(),$info,$errors);
             if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days'])==0
                && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0){
-                $info['id']=Item::put_edition_item($info['id'], $user->get_id(), $info);
+                $info['id']=Item::put_edition_item( $user->get_id(), $info);
                  $this->redirect("item", "open",$info['id'], "from-items");
                } else {
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, "action"=>"edit"]);
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors]);
                }      
         }   
     }

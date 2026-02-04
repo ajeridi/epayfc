@@ -296,8 +296,7 @@ public function get_thumbnail_path(int $priority=1) : string {
  
        if( !Item::unicite_title_for_owner($owner,$info['title']) ){
         $errors['title'][]="This title already exist, Please choose another one !";
-       }
-        
+       }     
         if(strlen($info['title'])==0){
             $errors['title'][]="Title is required";
         }
@@ -321,7 +320,7 @@ public function get_thumbnail_path(int $priority=1) : string {
             $errors["buy_now_price"][]="Type requiered";
              $errors["saleprice"][]="Type requiered";
         }
-        if($info['starting_bid']  != "" && $info['buy_now_price']!="" && $info['buy_now_price']<$info['starting_bid'] ){
+        if($info['starting_bid']  != "" && $info['buy_now_price']!="" && $info['buy_now_price']<$info['starting_bid'] && $info['saleprice']=="" ){
             $errors["buy_now_price"][]="the buy now price most be sup then the starting bid";
            
         }
@@ -350,10 +349,9 @@ public function get_thumbnail_path(int $priority=1) : string {
 
 
     }
-    public static function put_edition_item($id,$owner,$info): int {
+    public static function put_edition_item($owner,$info): int {
         $current_date_time=AppTime::get_current_datetime();
-        
-
+        $id=$info['id'];
         if($info['buy_now_price'] == ""){
             if($info['starting_bid'] != "" && $info['starting_bid'] !=0){
                 $info['buy_now_price']=null;
