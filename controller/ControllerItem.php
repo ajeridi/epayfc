@@ -213,8 +213,7 @@ class ControllerItem extends Controller
             if ($item->is_open_item()) {
                 if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
                     $image = $_FILES["image"];
-                    // validation de l'image
-                    $errors = ImageUtils::validate_image($image);
+                    $errors = ImageUtils::validate_image($image);// validation de l'image
                     if (count($errors) == 0) // si le fichier est valide on peut proceder a son upload
                         $this->upload_image($item, $image);
                 }
@@ -227,8 +226,7 @@ class ControllerItem extends Controller
                 $this->delete_image($item, $_POST["delete"]);
             }
         }
-        // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
-        if (count($_POST) != 0)
+        if (count($_POST) != 0) // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
             $this->redirect("item", "manage_images", "$item->id");
         (new View("manage_images"))->show(["user" => $user, "item" => $item, "errors" => $errors]);
     }
