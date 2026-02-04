@@ -215,21 +215,24 @@ class ControllerItem extends Controller
                 if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
                     $image = $_FILES["image"];
 
-                    // validation de l'image
-            $errors = ImageUtils::validate_image($image);
-            if (count($errors) == 0) { // si le fichier est valide on peut proceder a son upload
-                //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
-                if ($item->get_number_of_pictures() == 0)
-                    mkdir("uploads/items/$item->id");
-                // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
-                $formatted_images = $this->create_new_images($image);
-                // sauvegarde des nouvelles images dans le repertoire uploads
-                $new_image_path = $this->make_image_path($image, $item->id);
-                $this->save_new_images($formatted_images, $new_image_path);
-                // on l'insere dans la db
-                Item::upload_image($item->id, $new_image_path);
-                $this->redirect("item", "manage_images", "$item->id");
+                        // validation de l'image
+                    $errors = ImageUtils::validate_image($image);
+                    if (count($errors) == 0) { // si le fichier est valide on peut proceder a son upload
+                        //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
+                        if ($item->get_number_of_pictures() == 0)
+                            mkdir("uploads/items/$item->id");
+                        // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
+                        $formatted_images = $this->create_new_images($image);
+                        // sauvegarde des nouvelles images dans le repertoire uploads
+                        $new_image_path = $this->make_image_path($image, $item->id);
+                        $this->save_new_images($formatted_images, $new_image_path);
+                        // on l'insere dans la db
+                        Item::upload_image($item->id, $new_image_path);
+                        $this->redirect("item", "manage_images", "$item->id");
+                    }
+                }
             }
+        }
 
         if (isset($_POST["left"])) { // si on a clique sur la fleche de gauche
             $this->swap_priority($item->id, $_POST["left"], -1);
