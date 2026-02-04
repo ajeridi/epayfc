@@ -271,12 +271,6 @@ public function get_thumbnail_path(int $priority=1) : string {
     }
         */
 
-  
-    public static function get_item_ino(int $item_id): array {
-        $query=self::execute("SELECT id ,title,description ,duration_days,starting_bid,buy_now_price from items where id=:id",["id"=>$item_id]);
-        $data=$query->fetch();
-        return $data;
-    }
     public static function buy($owner,$item_id,$at,$amount): void {
         $item=item::get_item_by_id($item_id);
           if (!preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $amount)) {
@@ -294,7 +288,7 @@ public function get_thumbnail_path(int $priority=1) : string {
         
     
  
-       if( !Item::unicite_title_for_owner($owner,$info['title']) ){
+       if( !Item::unicite_title_for_owner($owner,$info['title'],$info['id']) ){
         $errors['title'][]="This title already exist, Please choose another one !";
        }     
         if(strlen($info['title'])==0){
@@ -338,11 +332,11 @@ public function get_thumbnail_path(int $priority=1) : string {
      
         return $errors;
     }
-    private static function unicite_title_for_owner($owner ,$title): bool {
+    private static function unicite_title_for_owner($owner ,$title,$id): bool {
 
         $query=self::execute("SELECT * from items i where i.owner = :owner and i.title = :title ",["owner"=>$owner,"title"=>$title]);
         $query->fetchAll();
-       if($query->rowCount() != 0){
+       if(($id==0 && $query->rowCount() != 0) || ($id!=0 && $query->rowCount()>1) ){
         return false; 
        }
         return true;
