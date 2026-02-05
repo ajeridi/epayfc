@@ -40,7 +40,13 @@
                   <div class="text-muted small mb-2"><?= $item->description ?></div>
                   <div class="text-muted small">
                     <div><span class="label">Start:</span> <?= $item->created_at ?></div>
+                    <?php 
+                    if($item->is_open_item()){
+                    ?>
                     <div><span class="label">Ends:</span> <?= $item->end_at() ?></div>
+                    <?php } else {?>
+                      <div><span class="label">Closed:</span> <?= $item->closed_at() ?></div>
+                      <?php } ?>
                   </div>
                 </div>
                 <?php if($item->starting_bid != null){?>

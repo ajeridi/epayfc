@@ -451,7 +451,10 @@ public function get_thumbnail_path(int $priority=1) : string {
         return $query->fetchColumn();
     }
     public function closed_at() : string {
+        if(count($this->bids)>0){
         return $this->buy_now_price<=$this->bids['0']->get_amount() ? $this->bids['0']->get_created_at() : $this->end_at();
+        }
+        return $this->end_at();
     }
 
      public function end_at() : string {
