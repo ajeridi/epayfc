@@ -57,7 +57,7 @@
             <div class="thumbs d-flex gap-2 flex-wrap">
               <?php
                 foreach ($pictures as $picture) { ?>
-                  <a class="thumb <?= $picture->get_priority() == 1 ? 'active' : '' ?>"  href="item/open/<?= $item->id?>/from-browse/<?= $picture->get_priority() ?>">
+                  <a class="thumb <?= $picture->get_priority() == 1 ? 'active' : '' ?>"  href="item/open/<?= $item->id?>/from-<?= $from ?>/<?= $picture->get_priority() ?>">
                     <img src="<?= $picture->get_thumbnail_path() ?>" alt="thumb">
                   </a>
               <?php } ?>
@@ -183,7 +183,7 @@
               <div class="section-title mb-3">Seller Information</div>
 
               <div class="d-flex align-items-center gap-3">
-                <div class="avatar rounded-circle"><img src="<?= $user->get_owner ?>"  class="w-100"></div>
+                <div class="avatar rounded-circle"><img src="<?= $owner_picture ?>"  class="w-100"></div>
                 <div>
                   <div class="fw-semibold"><?= $item->pseudo  ?></div>
                   <div class="text-muted small"><?= $owner_role ?></div>
