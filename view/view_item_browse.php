@@ -124,7 +124,7 @@
                                             <?php } else { ?>
                                                 <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ") ?></p>
                                             <?php } ?>
-                                            <span class="card-text <?= (str_contains($item->get_period(), 'd')) ? "text-success" : ((str_contains($item->get_period(), '0h')) ? "text-danger" : "text-warning") ?> fw-bold"><i class="bi bi-clock"></i><?= $item->get_period() ?> left</span>
+                                            <span class="card-text <?= (str_contains($item->get_period(), 'd')) ? "text-success" : ((str_contains($item->get_period(), '0h')) ? "text-danger" : "text-warning") ?> fw-bold"><i class="bi bi-clock"></i> <?= $item->get_period() ?> left</span>
                                         </div>
                                     </div>
                                 </a>
