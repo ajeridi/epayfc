@@ -110,7 +110,7 @@ class ControllerItem extends Controller
             
         } else  {
             
-            $info['id']=null; 
+            $info['id']=0; 
             $info['title']=$first ? null : Tools::sanitize($_POST['title']);
             $info['description']=$first ? null : Tools::sanitize($_POST['description']);
             $info['duration_days']=$first ? null : Tools::sanitize($_POST['duration_days']);
