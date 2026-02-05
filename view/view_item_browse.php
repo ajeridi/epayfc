@@ -29,7 +29,7 @@
 
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4 mb-5">
-                    <div class="row text-white g-3">
+                    <div class="row text-white g-4">
                         <?php
                         foreach ($items_participated_in as $item) {
                         ?>
@@ -93,7 +93,7 @@
 
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4" style="margin-bottom: 150px;">
-                    <div class="row text-white g-3">
+                    <div class="row text-white g-4">
                         <?php
                         foreach ($other_available_items as $item) {
                         ?>
