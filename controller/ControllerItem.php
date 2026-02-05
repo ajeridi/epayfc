@@ -215,9 +215,17 @@ class ControllerItem extends Controller
         if ($item->owner != $user->get_id() || count($item->bids) != 0 || !$item->is_open_item()) {
             throw new Exception("You can't delete this item ");
         } else {
+            $this->delete_item_files($item);
             $item->delete();
             $this->redirect('item', 'list');
         }
+    }
+
+    private function delete_item_files(Item $item) : void {
+        foreach($item->get_pictures() as $picture) {
+            ImageUtils::delete_image_files($picture->get_path());
+        }
+        rmdir("uploads/items/$item->id");
     }
 
 
