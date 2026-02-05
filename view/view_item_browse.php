@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,19 +25,18 @@
     <main class="main-content-margins" style="margin-top : 60px ;">
         <?php if ($user != false) { ?>
             <div class="items_participated_in float-start">
-                <h3 class="text-blue"> <?= (count($items_participated_in) > 0)  ? "Items I\n'm Participating In" : ""?> </h3>
+                <h3 class="text-blue"> <?= (count($items_participated_in) > 0)  ? "Items I\n'm Participating In" : "" ?> </h3>
 
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4 mb-5">
                     <div class="row text-white g-3">
-                        <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
                         foreach ($items_participated_in as $item) {
-                            ?>
-                            <div class="col-3">
+                        ?>
+                            <div class="col-auto">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" :   "src=".$item->get_thumbnail_path() ?> class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">
+                                        <img <?= ($item->get_path() == "") ? "src=uploads/items/default.jpg" :   "src=" . $item->get_thumbnail_path() ?> class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">
                                         <div class="card-img-overlay">
                                             <?php if ($item->is_highest_bidder($user->get_id())) { ?>
                                                 <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
@@ -47,15 +45,15 @@
                                             <?php } ?>
                                             <div class="float-end d-flex flex-column gap-2" style="height: 150px;">
                                                 <?php
-                                                if ($item->starting_bid != null ) { ?>
+                                                if ($item->starting_bid != null) { ?>
                                                     <span class="badge rounded-pill" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
                                                 <?php  }
-                                                if ($item->starting_bid == null or $item->buy_now_price !== null ) { ?>
+                                                if ($item->starting_bid == null or $item->buy_now_price !== null) { ?>
                                                     <span class="badge rounded-pill text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
                                                 <?php } ?>
                                                 <?php if ($item->get_number_of_pictures() > 1) {
                                                 ?>
-                                                    <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_number_of_pictures()?> images</span>
+                                                    <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_number_of_pictures() ?> images</span>
                                                 <?php } ?>
                                             </div>
                                         </div>
@@ -79,7 +77,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <span class="card-text <?= (str_contains($item->get_period(),'d')) ? "text-success" : ((str_starts_with($item->get_period(),'0h')) ? "text-danger" : "text-warning") ?> fw-bold"><i class="bi bi-clock"></i> <?= $item->get_period() ?> left</span>
+                                            <span class="card-text <?= (str_contains($item->get_period(), 'd')) ? "text-success" : ((str_starts_with($item->get_period(), '0h')) ? "text-danger" : "text-warning") ?> fw-bold"><i class="bi bi-clock"></i> <?= $item->get_period() ?> left</span>
                                         </div>
                                     </div>
                                 </a>
@@ -96,21 +94,20 @@
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4" style="margin-bottom: 150px;">
                     <div class="row text-white g-3">
-                        <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                         <?php
                         foreach ($other_available_items as $item) {
-                         ?>
-                            <div class="col-3">
+                        ?>
+                            <div class="col-auto">
                                 <a href="item/open/<?= $item->id ?>/from-browse" style="text-decoration: none;">
                                     <div class="card" style="width: 18rem;">
-                                        <img <?=  ($item->get_path()=="") ? "src=uploads/items/default.jpg" : "src=".$item->get_thumbnail_path() ?> class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">
+                                        <img <?= ($item->get_path() == "") ? "src=uploads/items/default.jpg" : "src=" . $item->get_thumbnail_path() ?> class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">
                                         <div class="card-img-overlay">
                                             <div class="float-end d-flex flex-column gap-2" style="height: 150px;">
                                                 <?php
                                                 if ($item->starting_bid != null) { ?>
                                                     <span class="badge" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
                                                 <?php }
-                                                if ($item->buy_now_price != null ) { ?>
+                                                if ($item->buy_now_price != null) { ?>
                                                     <span class="badge text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
                                                 <?php } ?>
                                                 <?php if ($item->get_number_of_pictures() > 1) {
@@ -127,7 +124,7 @@
                                             <?php } else { ?>
                                                 <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ") ?></p>
                                             <?php } ?>
-                                            <span class="card-text <?= (str_contains($item->get_period(),'d')) ? "text-success" : ((str_contains($item->get_period(),'0h')) ? "text-danger" : "text-warning") ?> fw-bold"><i class="bi bi-clock"></i><?= $item->get_period() ?> left</span>
+                                            <span class="card-text <?= (str_contains($item->get_period(), 'd')) ? "text-success" : ((str_contains($item->get_period(), '0h')) ? "text-danger" : "text-warning") ?> fw-bold"><i class="bi bi-clock"></i><?= $item->get_period() ?> left</span>
                                         </div>
                                     </div>
                                 </a>
