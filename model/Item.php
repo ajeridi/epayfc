@@ -6,8 +6,8 @@ require_once "model/Bid.php";
 require_once "model/Picture.php";
 
 function cmp(Item $i1,Item $i2) : int {
-        $date1=($i1->buy_now_price <= $i1->bids['0']->get_amount()) ? $i1->bids['0']->get_created_at() : $i1->end_at();
-        $date2=($i2->buy_now_price <= $i2->bids['0']->get_amount()) ? $i2->bids['0']->get_created_at() : $i2->end_at();
+        $date1=$i1->closed_at();
+        $date2=$i2->closed_at();
         
         $dates1=new DateTime($date1);
         $dates2=new DateTime($date2);
@@ -449,6 +449,9 @@ public function get_thumbnail_path(int $priority=1) : string {
         $sql = "SELECT COUNT(*) as nb_pictures FROM item_pictures WHERE item = :item_id";
         $query = self::execute($sql, ["item_id" => $item_id]);
         return $query->fetchColumn();
+    }
+    public function closed_at() : string {
+        return $this->buy_now_price<=$this->bids['0']->get_amount() ? $this->bids['0']->get_created_at() : $this->end_at();
     }
 
      public function end_at() : string {
