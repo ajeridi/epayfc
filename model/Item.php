@@ -445,11 +445,7 @@ public function get_thumbnail_path(int $priority=1) : string {
         return $loyer_bider;
         
     }
-     public static function get_picture_count(int $item_id) : int {
-        $sql = "SELECT COUNT(*) as nb_pictures FROM item_pictures WHERE item = :item_id";
-        $query = self::execute($sql, ["item_id" => $item_id]);
-        return $query->fetchColumn();
-    }
+
     public function closed_at() : string {
         if(count($this->bids)>0){
         return $this->buy_now_price<=$this->bids['0']->get_amount() ? $this->bids['0']->get_created_at() : $this->end_at();
