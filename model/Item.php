@@ -5,7 +5,7 @@ require_once "utils/AppTime.php";
 require_once "model/Bid.php";
 require_once "model/Picture.php";
 
-function cmp($i1,$i2){
+function cmp(Item $i1,Item $i2) : int {
         $date1=($i1->buy_now_price <= $i1->bids['0']->get_amount()) ? $i1->bids['0']->get_created_at() : $i1->end_at();
         $date2=($i2->buy_now_price <= $i2->bids['0']->get_amount()) ? $i2->bids['0']->get_created_at() : $i2->end_at();
         
@@ -271,7 +271,7 @@ public function get_thumbnail_path(int $priority=1) : string {
     }
         */
 
-    public static function buy($owner,$item_id,$at,$amount): void {
+    public static function buy(int $owner,int $item_id,string $at,float $amount): void {
         $item=item::get_item_by_id($item_id);
           if (!preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $amount)) {
                 
@@ -284,7 +284,7 @@ public function get_thumbnail_path(int $priority=1) : string {
                 }
                
     }
-    public static function validat_item($owner,$info,$errors): array {
+    public static function validat_item(int $owner,array $info,array $errors): array {
         
     
  
@@ -332,7 +332,7 @@ public function get_thumbnail_path(int $priority=1) : string {
      
         return $errors;
     }
-    private static function unicite_title_for_owner($owner ,$title,$id): bool {
+    private static function unicite_title_for_owner(int $owner ,string $title,int $id): bool {
 
         $query=self::execute("SELECT * from items i where i.owner = :owner and i.title = :title ",["owner"=>$owner,"title"=>$title]);
         $query->fetchAll();
@@ -343,7 +343,7 @@ public function get_thumbnail_path(int $priority=1) : string {
 
 
     }
-    public static function put_edition_item($owner,$info): int {
+    public static function put_edition_item(int $owner,array $info): int {
         $current_date_time=AppTime::get_current_datetime();
         $id=$info['id'];
         if($info['buy_now_price'] == ""){
@@ -424,7 +424,7 @@ public function get_thumbnail_path(int $priority=1) : string {
         return $info;
 
     }
-    public static function find_loyer_bider($buyer,String $indice): ? array {
+    public static function find_loyer_bider(array $buyer,String $indice): ? array {
         if(empty($buyer)){
             return [] ;
         }
