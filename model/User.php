@@ -229,5 +229,6 @@ public function is_unique_full_name() : bool {
         $query = self::execute($sql, ["user_id" => $this->id]);
         return $query->fetchColumn() != null;
     }
+
 }
 ?>

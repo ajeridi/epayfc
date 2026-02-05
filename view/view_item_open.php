@@ -183,7 +183,7 @@
               <div class="section-title mb-3">Seller Information</div>
 
               <div class="d-flex align-items-center gap-3">
-                <div class="avatar rounded-circle"><img src="<?= $owner_picture ?>"  class="w-100"></div>
+                <div class="avatar rounded-circle"><img src="<?= $user->get_owner ?>"  class="w-100"></div>
                 <div>
                   <div class="fw-semibold"><?= $item->pseudo  ?></div>
                   <div class="text-muted small"><?= $owner_role ?></div>
