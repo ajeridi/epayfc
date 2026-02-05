@@ -52,7 +52,7 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="card-text fw-bolder mb-0"><?= $item->title ?></p>
-                                            <p class="card-text fw-light fs-6">By <?= User::get_full_name_by_id($item->owner) ?></p>
+                                            <p class="card-text fw-light fs-6">By <?= $user->get_pseudo() ?></p>
                                             <div class="container">
                                                 <div class="row align-items-center">
                                                     <div class="col-md-6">
@@ -113,7 +113,7 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="card-text fw-bolder mb-0"><?= $item->title ?></p>
-                                            <p class="card-text fw-light fs-6">By <?= User::get_full_name_by_id($item->owner) ?></p>
+                                            <p class="card-text fw-light fs-6">By <?= $user->get_pseudo() ?></p>
                                             <div class="container">
                                                 <div class="row align-items-center">
                                                     <div class="col-md-6">
@@ -174,7 +174,7 @@
                                             </div>
                                             <div class="card-body">
                                                 <p class="card-text fw-bolder mb-0"><?= $item->title ?></p>
-                                                <p class="card-text fw-light fs-6">By <?= User::get_full_name_by_id($item->owner) ?></p>
+                                                <p class="card-text fw-light fs-6">By <?= $user->get_pseudo() ?></p>
                                                 <div class="container">
                                                     <div class="row align-items-center">
                                                         <div class="col-md-6">
