@@ -486,4 +486,12 @@ class Item extends Model
         }
         return $this->bids['0']->get_owner() == $user_id;
     }
+
+    public function has_bidder(int $id) : bool {
+        foreach ($this->bids as $bid){
+            if ($bid->get_owner() == $id)
+                return true;
+        }
+        return false;
+    }
 }
