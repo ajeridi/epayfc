@@ -162,7 +162,6 @@ class ControllerItem extends Controller
     public function add() :  void
     {
         $user = $this->get_user_or_redirect();
-        $action="add";
         $errors=$this::build_errors_array();
         if(!$_POST){
             $info=$this::build_info_array(null,true);
@@ -324,7 +323,7 @@ class ControllerItem extends Controller
             rmdir("uploads/items/$item->id");
     }
 
-    public  function sales()
+    public  function sales() : void
     {
         $user = $this->get_user_or_redirect();
         $action = "sales";

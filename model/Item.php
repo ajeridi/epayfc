@@ -1,5 +1,7 @@
 <?php
 
+use PSpell\Config;
+
 require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 require_once "model/Bid.php";
@@ -279,14 +281,14 @@ class Item extends Model
     }
     private static function check_title(int $owner_id,string $title, int $item_id,array $errors ) : array {
         if (!self::unicite_title_for_owner($owner_id, $title, $item_id)) {
-            $errors[] = "This title already exist, Please choose another one !";
+            $errors[] = Configuration::get("unicity_title");
         }
          if (strlen($title) == 0) {
-            $errors[] = "Title is required";
+            $errors[] = Configuration::get("title_required");
         }
         
         if (strlen($title) < Configuration::get("title_min_length") ||strlen($title) > Configuration::get("title_max_length") ) {
-            $errors[] = "Title lenght must be between 3 and 255 characters";
+            $errors[] = Configuration::get("lenght_title");
         }
         return $errors; 
 
@@ -294,20 +296,20 @@ class Item extends Model
     private static function check_description(string $description,array $errors) :  array {
         
         if ($description != null && strlen($description) < Configuration::get("description_min_lenght") ||strlen($description) > Configuration::get("description_max_lenght") ) {
-            $errors[] = "Description lenght must be betwenn 3 and 255 characters";
+            $errors[] = Configuration::get("description_lenght");
         }
         return $errors; 
     }
     private static function check_duration_days(string $duration_days,array $errors) : array {
 
         if (!preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $duration_days)) {
-            $errors[] = "Duartion is required and most be integer positif and between 1 and 60";
+            $errors[] = Configuration::get("duration_days");
         }
         return $errors ;
     }
     private static function check_starting_bid(string $starting_bid,array $errors) : array {
         if ($starting_bid != ""  &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $starting_bid)) {
-            $errors[] = "Starting bid must be a nomber positif ";
+            $errors[] =Configuration::get("starting_bid");
         }
         return $errors ;
         
@@ -315,25 +317,25 @@ class Item extends Model
     private static function check_buy_now_price(string $buy_now_price,string $starting_bid,string $saleprice ,array $errors,bool $buy) : array {
         if ($buy_now_price != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $buy_now_price)) {
             if($buy) {
-                $errors[] = "the buy now price must be a nomber positif";
+                $errors[] = Configuration::get("buy_now_positif");
             }
         }
         if ( $saleprice != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $saleprice)) {
             if(!$buy) {
-                $errors[] = "the buy now price must be a nomber positif";
+                $errors[] = Configuration::get("buy_now_positif");
             }
            
         }
         if ($starting_bid  == "" && $saleprice == "") {
-            $errors[] = "Type requiered";
+            $errors[] = Configuration::get("option_required");
         }
         if ( $starting_bid  != "" && $buy_now_price != "" && $buy_now_price < $starting_bid && $saleprice == "") {
             if($buy) {
-                 $errors[] = "the buy now price most be sup then the starting bid";
+                 $errors[] =Configuration::get("buy_now_sup_starting_bid");
             }
         }
          if (($starting_bid  != "" && $saleprice != "") || ($saleprice != "" && $buy_now_price != "")) {
-            $errors[] = "Cannot create both auction and direct sale";
+            $errors[] = Configuration::get("both");
          }
          return $errors ;
 
