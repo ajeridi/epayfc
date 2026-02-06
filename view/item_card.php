@@ -25,29 +25,27 @@
             <div class="card-body">
                 <p class="card-text fw-bolder mb-0"><?= $item->title ?></p>
                 <p class="card-text fw-light fs-6">By <?= $item->pseudo ?></p>
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-6 text-start">
-                            <?php if ($item->buy_now_price == NULL) { ?>
-                                <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= number_format($item->starting_bid, 2, ",", " ") ?></p>
-                            <?php } else { ?>
-                                <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ") ?></p>
-                            <?php } ?>
-                        </div>
-                        <?php if ($item->get_max_bid() != NULL) { ?>
-                            <div class="col-md-6 text-end">
-                                <div class="d-flex flex-column">
-                                    <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
-                                    <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->bids['0']->get_amount(), 2, ",", " ") ?><span>
-                                </div>
-                            </div>
+                <div class="row align-items-center mb-2">
+                    <div class="col-md-6 text-start">
+                        <?php if ($item->buy_now_price == NULL) { ?>
+                            <p class="card-text fw-bolder fs-5" style="color: #f59e0c;">€ <?= number_format($item->starting_bid, 2, ",", " ") ?></p>
+                        <?php } else { ?>
+                            <p class="card-text fw-bolder fs-5" style="color: #397deb;">€ <?= number_format($item->buy_now_price, 2, ",", " ") ?></p>
                         <?php } ?>
                     </div>
+                    <?php if ($item->get_max_bid() != NULL) { ?>
+                        <div class="col-md-6 text-end">
+                            <div class="d-flex flex-column">
+                                <span class="card-text fw-light fs-6 mb-0 text-muted">Current bid</span>
+                                <span class="card-text fs-6" style="color: green;">€ <?= number_format($item->bids['0']->get_amount(), 2, ",", " ") ?><span>
+                            </div>
+                        </div>
+                    <?php } ?>
                 </div>
-                <?php if ($item->is_open_item()){ ?>
-                <span class="card-text <?= (str_contains($item->get_period(), 'd')) ? "text-success" : ((str_starts_with($item->get_period(), '0h')) ? "text-danger" : "text-warning") ?> fw-bold"><i class="bi bi-clock"></i> <?= $item->get_period() ?> left</span>
-                <?php }else { ?>
-                <span class="card-text text-secondary fw-bold"><i class="bi bi-clock"></i> Closed</span>
+                <?php if ($item->is_open_item()) { ?>
+                    <span class="card-text <?= (str_contains($item->get_period(), 'd')) ? "text-success" : ((str_starts_with($item->get_period(), '0h')) ? "text-danger" : "text-warning") ?> fw-bold"><i class="bi bi-clock"></i> <?= $item->get_period() ?> left</span>
+                <?php } else { ?>
+                    <span class="card-text text-secondary fw-bold"><i class="bi bi-clock"></i> Closed</span>
                 <?php } ?>
             </div>
         </div>
