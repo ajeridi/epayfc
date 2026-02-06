@@ -312,15 +312,25 @@ class Item extends Model
         return $errors ;
         
     }
-    private static function check_buy_now_price(string $buy_now_price,string $starting_bid,string $saleprice ,array $errors) : array {
+    private static function check_buy_now_price(string $buy_now_price,string $starting_bid,string $saleprice ,array $errors,bool $buy) : array {
         if ($buy_now_price != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $buy_now_price)) {
-            $errors[] = "the buy now price must be a nomber positif";
+            if($buy) {
+                $errors[] = "the buy now price must be a nomber positif";
+            }
+        }
+        if ( $saleprice != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $saleprice)) {
+            if(!$buy) {
+                $errors[] = "the buy now price must be a nomber positif";
+            }
+           
         }
         if ($starting_bid  == "" && $saleprice == "") {
             $errors[] = "Type requiered";
         }
-        if (key($errors)=='buy_now_price'&&  $starting_bid  != "" && $buy_now_price != "" && $buy_now_price < $starting_bid && $saleprice == "") {
-            $errors[] = "the buy now price most be sup then the starting bid";
+        if ( $starting_bid  != "" && $buy_now_price != "" && $buy_now_price < $starting_bid && $saleprice == "") {
+            if($buy) {
+                 $errors[] = "the buy now price most be sup then the starting bid";
+            }
         }
          if (($starting_bid  != "" && $saleprice != "") || ($saleprice != "" && $buy_now_price != "")) {
             $errors[] = "Cannot create both auction and direct sale";
@@ -328,6 +338,7 @@ class Item extends Model
          return $errors ;
 
     }
+    
 
 
 
@@ -337,8 +348,8 @@ class Item extends Model
         $errors['description']=self::check_description($info['description'],$errors['description']);
         $errors['duration_days']=self::check_duration_days($info['duration_days'],$errors['duration_days']);
         $errors['starting_bid']=self::check_starting_bid($info['starting_bid'],$errors['starting_bid']);
-        $errors['buy_now_price']=self::check_buy_now_price($info['buy_now_price'],$info['starting_bid'],$info['saleprice'],$errors['buy_now_price']);
-        $errors['saleprice']=self::check_buy_now_price($info['saleprice'],$info['starting_bid'],$info['buy_now_price'],$errors['saleprice']);
+        $errors['buy_now_price']=self::check_buy_now_price($info['buy_now_price'],$info['starting_bid'],$info['saleprice'],$errors['buy_now_price'],true);
+        $errors['saleprice']=self::check_buy_now_price($info['buy_now_price'],$info['starting_bid'],$info['saleprice'],$errors['saleprice'],false);
 
         return $errors;
     }
@@ -392,16 +403,7 @@ class Item extends Model
             return $id;
         }
     }
-    public static function is_Direct_sale(int $item_id): bool
-    {
-        $item = Item::get_item_by_id($item_id);
-
-        if ($item->starting_bid == null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+   
     public static function get_item_title(int $item_id): string
     {
         $query = self::execute(
