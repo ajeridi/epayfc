@@ -70,7 +70,7 @@ class User extends Model {
                 $errors[] = "Wrong password. Please try again.";
             }
         } else {
-            $errors[]="Can't find a member with the email '$email'.Please signe up";
+            $errors[]="Can't find a member with the email '$email'. Please sign up";
         }
         return $errors;
 
@@ -181,7 +181,7 @@ public function is_unique_full_name() : bool {
         $errors = [];
         $regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])[\x20-\x7E]{8,16}$/";
         if (!preg_match($regex, $newPasssword)){
-            $errors[] = "Password not valid.";
+            $errors[] = "Password not valid (must be 8-16 characters long with uppercase, number and punctuation)";
         }
         return $errors;
     }

@@ -81,8 +81,8 @@
                             </p>    
                     </div>
                     <?php if(count($errors)!=0): ?>
-                        <div >
-                            <p>Please correct the folowing error(s):</p>
+                        <div class="text-danger mx-5">
+                            <p>Please correct the following error(s):</p>
                             <ul>
                                 <?php foreach($errors as $error): ?>
                                     <li><?= $error ?></li>
