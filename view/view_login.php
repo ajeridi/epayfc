@@ -77,7 +77,7 @@
                 
                
                             <p class="text-center mt-2 mb-0">
-                                <a href="user/signup" class="link-light text-decoration-underline">New here ? Click here to subscribe ! </a>
+                                <a href="user/signup" class="link-light text-decoration-underline text-primary">New here ? Click here to subscribe ! </a>
                             </p>    
                     </div>
                     <?php if(count($errors)!=0): ?>
@@ -94,10 +94,10 @@
                     <div class="text-center mb-4">
                         <h2 class="h6 text-warning fw-bold mb-3">For Debug Purpose</h2>
 
-                        <p><a href="user/debug/1"  class="text-decoration-none  text-light">Lgin as <strong>boverhaegen@epfc.eu</strong></a></p>
-                        <p><a href="user/debug/2" class="text-decoration-none  text-light">Lgin as <strong>mamichel@epfc.eu</strong></a></p>
-                        <p><a href="user/debug/3" class="text-decoration-none text-light">Lgin as <strong>quhouben@epfc.eu</strong></a></p>
-                        <p><a href="user/debug/4" class="text-decoration-none  text-light">Lgin as <strong>xapigeolet@epfc.eu</strong></a></p>
+                        <p><a href="user/debug/1"  class="text-decoration-none  text-light">Login as <strong>boverhaegen@epfc.eu</strong></a></p>
+                        <p><a href="user/debug/2" class="text-decoration-none  text-light">Login as <strong>mamichel@epfc.eu</strong></a></p>
+                        <p><a href="user/debug/3" class="text-decoration-none text-light">Login as <strong>quhouben@epfc.eu</strong></a></p>
+                        <p><a href="user/debug/4" class="text-decoration-none  text-light">Login as <strong>xapigeolet@epfc.eu</strong></a></p>
                         <p><a href="setup" class="text-decoration-none text-success">Restore original data</a></p>
                         <p><a href="setup/backup" class="text-decoration-none text-warning">Backup personal data</a></p>
                         <p><a href="setup/restore" class="text-decoration-none text-warning">Restore personal data</a></p>
