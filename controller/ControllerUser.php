@@ -118,7 +118,7 @@ class ControllerUser extends Controller
 
                 $full_image = ImageUtils::scale_image($image, 100, 101);
                 $thumbnail = ImageUtils::scale_image($image, 100, 101);
-                $file_name = pathinfo($image["name"], PATHINFO_FILENAME);
+                $file_name = str_replace(" ", "", pathinfo($image["name"], PATHINFO_FILENAME));
                 $picture_path = "uploads/users/$user_id/$file_name.jpg";
                 // creation du repertoire uploads/users/user_id si pas de picture_path
                 if (!$user->has_profile_picture()) {
