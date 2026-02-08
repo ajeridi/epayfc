@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
     <meta charset="UTF-8">
     <title>🛒 Browse items</title>
@@ -22,13 +21,13 @@
             </div>
         </nav>
     </header>
-    <main class="main-content-margins" style="margin-top : 60px ;">
+    <main style="margin-top: 100px; margin-bottom: 200px;">
         <?php if ($user != false) { ?>
-            <div class="items_participated_in float-start">
+            <div class="items_participated_in container">
                 <h3 class="text-blue"> <?= (count($items_participated_in) > 0)  ? "Items I\n'm Participating In" : "" ?> </h3>
 
                 <!-- tableau contenant les cartes des items -->
-                <div class="container mt-4 mb-5">
+                <div class="mt-4 mb-5">
                     <div class="row text-white g-4">
                         <?php
                         foreach ($items_participated_in as $item) {
@@ -38,21 +37,21 @@
                     </div>
                 </div>
             </div>
-            <?php } ?>
-            <div class="other-available-items float-start">
-                <h3 class="text-blue"><?= ($user == false) ? "" : "Other" ?> Available Items</h3>
+        <?php } ?>
+        <div class="other-available-items container">
+            <h3 class="text-blue"><?= ($user == false) ? "" : "Other" ?> Available Items</h3>
 
-                <!-- tableau contenant les cartes des items -->
-                <div class="container mt-4" style="margin-bottom: 150px;">
-                    <div class="row text-white g-4">
-                        <?php
-                        foreach ($other_available_items as $item) {
-                            require 'item_card.php';
-                        }
-                        ?>
-                    </div>
+            <!-- tableau contenant les cartes des items -->
+            <div class="mt-4">
+                <div class="row text-white g-4">
+                    <?php
+                    foreach ($other_available_items as $item) {
+                        require 'item_card.php';
+                    }
+                    ?>
                 </div>
             </div>
+        </div>
     </main>
     <footer>
         <?php require 'navbar_user.php'; ?>
