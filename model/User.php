@@ -107,8 +107,9 @@ class User extends Model {
 
     private function validate_full_name() : array {
         $errors = [];
+        $min_length = Configuration::get("name_min_length");
         if (strlen($this->full_name) < Configuration::get("name_min_length")){
-            $errors[] = "Full name must be at least 3 characters long.";
+            $errors[] = "Full name must be at least $min_length characters long.";
         }
         if (!$this->is_unique_full_name($this->full_name)){
             $errors[] = "Full name is not unique.";
@@ -118,8 +119,10 @@ class User extends Model {
 
     private function validate_username() : array {
         $errors = [];
-        if (strlen($this->pseudo) < Configuration::get("name_min_length") || strlen($this->pseudo) > Configuration::get("name_max_length")){
-            $errors[] = "Username must be between 3 and 30 characters long.";
+        $min_length = Configuration::get("name_min_length");
+        $max_length = Configuration::get("name_max_length");
+        if (strlen($this->pseudo) < $min_length || strlen($this->pseudo) > $max_length){
+            $errors[] = "Username must be between $min_length and $max_length characters long.";
         }
         if (!$this->is_unique_pseudo($this->pseudo)){
             $errors[] = "Username is not unique.";
