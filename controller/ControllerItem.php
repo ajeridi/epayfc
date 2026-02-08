@@ -234,7 +234,7 @@ class ControllerItem extends Controller
     {
         $user = $this->get_user_or_redirect();
         $errors = [];
-        if (isset($_GET['param1']) && $user->is_item_owner($_GET['param1'])) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
+        if (isset($_GET['param1']) && is_numeric($_GET['param1']) && $user->is_item_owner($_GET['param1'])) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
             $item_id = $_GET['param1'];
             $item = Item::get_item_by_id($item_id);
             if (!$item->is_open_item())
