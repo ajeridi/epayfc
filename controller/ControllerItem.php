@@ -282,8 +282,8 @@ class ControllerItem extends Controller
 
     private function create_new_images(array $image): array
     {
-        $new_images["full_image"] = ImageUtils::scale_image($image, 1080);
-        $new_images["thumbnail"] = ImageUtils::scale_image($image, 360);
+        $new_images["full_image"] = ImageUtils::scale_image($image, Configuration::get("picture_resolution"));
+        $new_images["thumbnail"] = ImageUtils::scale_image($image, Configuration::get("thumbnail_resolution"));
         return $new_images;
     }
 
