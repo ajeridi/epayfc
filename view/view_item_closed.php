@@ -64,7 +64,7 @@
                 <!-- chaque colonne a une largeur de 3 car 12 max par row, donc pour afficher 4 items, faut 12/4 = 3 par items -->
                 <?php
                 foreach ($salesItem as $item) { ?>
-                    <div class="col-2  ">
+                    <div class="col-auto">
                         <a href="item/open/<?= $item->id ?>/from-<?= $action ?>" style="text-decoration: none;">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="card-head">
