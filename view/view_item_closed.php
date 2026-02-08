@@ -73,7 +73,7 @@
                                         <?php if ($action == "purchases") { ?>
                                             <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
                                         <?php } ?>
-                                        <div class="float-end d-flex flex-column gap-2 h-50">
+                                        <div class="float-end d-flex flex-column gap-2" style="height: 150px;">
                                             <?php
                                             if ($item->starting_bid != null) { ?>
                                                 <span class="badge rounded-pill" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
