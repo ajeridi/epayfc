@@ -32,8 +32,8 @@ class Item extends Model
         public int $duration_days,
         public ?string $pseudo,
         public ?string $description = null,
-        public ?int $buy_now_price = null,
-        public ?int $starting_bid = null,
+        public ?float $buy_now_price = null,
+        public ?float $starting_bid = null,
         public ?array $bids = [],
         public ?array $pictures = []
     ) {
@@ -268,7 +268,7 @@ class Item extends Model
     }
 
 
-    public static function buy(int $owner, int $item_id, string $at, float $amount): void
+    public static function buy(int $owner, int $item_id, string $at, string $amount): void
     {
         $item = item::get_item_by_id($item_id);
         if (!preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $amount)) {
