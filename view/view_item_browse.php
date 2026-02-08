@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>🛒 Browse items</title>
-    <base href="<?= $web_root ?>" ?>
+    <base href="<?= $web_root ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -37,6 +37,7 @@
                         ?>
                     </div>
                 </div>
+            </div>
             <?php } ?>
             <div class="other-available-items float-start">
                 <h3 class="text-blue"><?= ($user == false) ? "" : "Other" ?> Available Items</h3>
@@ -51,6 +52,7 @@
                         ?>
                     </div>
                 </div>
+            </div>
     </main>
     <footer>
         <?php require 'navbar_user.php'; ?>
