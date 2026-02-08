@@ -22,8 +22,8 @@
         </nav>
     </header>
     <main class="main-content-margins" style="margin-top: 100px;">
+         <div class="active_items float-start">
         <?php if (count($active_items)) { ?>
-            <div class="active_items float-start">
                 <h3 class="text-blue">Active items</h3>
                 <!-- tableau contenant les cartes des items -->
                 <div class="container mt-4 mb-5">

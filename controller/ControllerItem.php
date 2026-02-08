@@ -124,6 +124,7 @@ class ControllerItem extends Controller
 
     public function edit() : void 
     {
+        $action='edit';
         $user=$this->get_user_or_redirect();
         
         if(!isset($_GET['param1']) || !is_numeric($_GET['param1'])){
@@ -141,7 +142,7 @@ class ControllerItem extends Controller
             $errors=$this::build_errors_array();
             $info=$this::build_info_array($item,true);
 
-            (new View('item_edit'))->show(['info'=>$info,'errors'=>$errors]);
+            (new View('item_edit'))->show(['info'=>$info,'errors'=>$errors,'action'=>$action]);
         } else {
 
             $info=$this::build_info_array($item,false);
@@ -161,21 +162,21 @@ class ControllerItem extends Controller
 
     public function add() :  void
     {
+        $action='add';
         $user = $this->get_user_or_redirect();
-        $action="add";
         $errors=$this::build_errors_array();
         if(!$_POST){
             $info=$this::build_info_array(null,true);
-            (new View("item_edit"))->show(['info' => $info, 'errors' => $errors]);
+            (new View("item_edit"))->show(['info' => $info, 'errors' => $errors,'action'=>$action]);
         } else{
             $info=$this::build_info_array(null,false);
             $errors=Item::validat_item($user->get_id(),$info,$errors);
             if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days'])==0
                && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0){
                 $info['id']=Item::put_edition_item( $user->get_id(), $info);
-                 $this->redirect("item", "open",$info['id'], "from-items");
+                 $this->redirect("item", "open",$info['id']);
                } else {
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors]);
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors,'action'=>$action]);
                }      
         }   
     }
@@ -324,7 +325,7 @@ class ControllerItem extends Controller
             rmdir("uploads/items/$item->id");
     }
 
-    public  function sales()
+    public  function sales() : void
     {
         $user = $this->get_user_or_redirect();
         $action = "sales";

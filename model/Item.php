@@ -1,5 +1,7 @@
 <?php
 
+use PSpell\Config;
+
 require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 require_once "model/Bid.php";
@@ -277,47 +279,79 @@ class Item extends Model
             }
         }
     }
+    private static function check_title(int $owner_id,string $title, int $item_id,array $errors ) : array {
+        if (!self::unicite_title_for_owner($owner_id, $title, $item_id)) {
+            $errors[] = Configuration::get("unicity_title");
+        }
+         if (strlen($title) == 0) {
+            $errors[] = Configuration::get("title_required");
+        }
+        
+        if (strlen($title) < Configuration::get("title_min_length") ||strlen($title) > Configuration::get("title_max_length") ) {
+            $errors[] = Configuration::get("lenght_title");
+        }
+        return $errors; 
+
+    }
+    private static function check_description(string $description,array $errors) :  array {
+        
+        if ($description != null && strlen($description) < Configuration::get("description_min_lenght") ||strlen($description) > Configuration::get("description_max_lenght") ) {
+            $errors[] = Configuration::get("description_lenght");
+        }
+        return $errors; 
+    }
+    private static function check_duration_days(string $duration_days,array $errors) : array {
+
+        if (!preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $duration_days)) {
+            $errors[] = Configuration::get("duration_days");
+        }
+        return $errors ;
+    }
+    private static function check_starting_bid(string $starting_bid,array $errors) : array {
+        if ($starting_bid != ""  &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $starting_bid)) {
+            $errors[] =Configuration::get("starting_bid");
+        }
+        return $errors ;
+        
+    }
+    private static function check_buy_now_price(string $buy_now_price,string $starting_bid,string $saleprice ,array $errors,bool $buy) : array {
+        if ($buy_now_price != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $buy_now_price)) {
+            if($buy) {
+                $errors[] = Configuration::get("buy_now_positif");
+            }
+        }
+        if ( $saleprice != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $saleprice)) {
+            if(!$buy) {
+                $errors[] = Configuration::get("buy_now_positif");
+            }
+           
+        }
+        if ($starting_bid  == "" && $saleprice == "") {
+            $errors[] = Configuration::get("option_required");
+        }
+        if ( $starting_bid  != "" && $buy_now_price != "" && $buy_now_price < $starting_bid && $saleprice == "") {
+            if($buy) {
+                 $errors[] =Configuration::get("buy_now_sup_starting_bid");
+            }
+        }
+         if (($starting_bid  != "" && $saleprice != "") || ($saleprice != "" && $buy_now_price != "")) {
+            $errors[] = Configuration::get("both");
+         }
+         return $errors ;
+
+    }
+    
+
+
+
     public static function validat_item(int $owner, array $info, array $errors): array
     {
-
-
-
-        if (!Item::unicite_title_for_owner($owner, $info['title'], $info['id'])) {
-            $errors['title'][] = "This title already exist, Please choose another one !";
-        }
-        if (strlen($info['title']) == 0) {
-            $errors['title'][] = "Title is required";
-        }
-        if (strlen($info['title']) < 3) {
-            $errors['title'][] = "Title lenght must be between 3 and 255 characters";
-        }
-        if ($info['description'] != null && strlen($info['description']) < 3) {
-            $errors['description'][] = "Description lenght must be betwenn 3 and 255 characters";
-        }
-        if ($info['starting_bid'] != ""  &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $info['starting_bid'])) {
-            $errors["starting_bid"][] = "Starting bid must be a nomber positif ";
-        }
-        if ($info['buy_now_price'] != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $info['buy_now_price'])) {
-            $errors['buy_now_price'][] = "the buy now price must be a nomber positif";
-        }
-        if ($info['starting_bid']  == "" && $info['saleprice'] == "") {
-            $errors["buy_now_price"][] = "Type requiered";
-            $errors["saleprice"][] = "Type requiered";
-        }
-        if ($info['starting_bid']  != "" && $info['buy_now_price'] != "" && $info['buy_now_price'] < $info['starting_bid'] && $info['saleprice'] == "") {
-            $errors["buy_now_price"][] = "the buy now price most be sup then the starting bid";
-        }
-        if (($info['starting_bid']  != "" && $info['saleprice'] != "") || ($info['saleprice'] != "" && $info['buy_now_price'] != "")) {
-            $errors["buy_now_price"][] = "Cannot create both auction and direct sale";
-            $errors["saleprice"][] = "Cannot create both auction and direct sale";
-        }
-        if (!preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $info['duration_days'])) {
-
-            $errors["duration_days"][] = "Duartion is required and most be integer positif and between 1 and 60";
-        }
-        if ($info['starting_bid']  == "" && $info['saleprice'] != "" &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $info['saleprice'])) {
-            $errors["saleprice"][] = "Sale price most be a nomber positif ";
-        }
+        $errors['title']=self::check_title($owner,$info['title'],$info['id'],$errors['title']);
+        $errors['description']=self::check_description($info['description'],$errors['description']);
+        $errors['duration_days']=self::check_duration_days($info['duration_days'],$errors['duration_days']);
+        $errors['starting_bid']=self::check_starting_bid($info['starting_bid'],$errors['starting_bid']);
+        $errors['buy_now_price']=self::check_buy_now_price($info['buy_now_price'],$info['starting_bid'],$info['saleprice'],$errors['buy_now_price'],true);
+        $errors['saleprice']=self::check_buy_now_price($info['buy_now_price'],$info['starting_bid'],$info['saleprice'],$errors['saleprice'],false);
 
         return $errors;
     }
@@ -371,16 +405,7 @@ class Item extends Model
             return $id;
         }
     }
-    public static function is_Direct_sale(int $item_id): bool
-    {
-        $item = Item::get_item_by_id($item_id);
-
-        if ($item->starting_bid == null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+   
     public static function get_item_title(int $item_id): string
     {
         $query = self::execute(
