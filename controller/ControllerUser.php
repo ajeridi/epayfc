@@ -80,7 +80,7 @@ class ControllerUser extends Controller
             $errors = $newUser->validate();
             // si on a aucune erreur et que le newUser n'est pas null, on doit le sauvegarder dans la db et rediriger vers profile
             if ($this->has_no_errors($errors)) {
-                $newUser->save_user();
+                $newUser->persist();
                 $_SESSION["user"] = $newUser;
                 $this->redirect("user", "profile");
             }
@@ -118,7 +118,7 @@ class ControllerUser extends Controller
 
                 $full_image = ImageUtils::scale_image($image, 100, 101);
                 $thumbnail = ImageUtils::scale_image($image, 100, 101);
-                $file_name = pathinfo($image["name"], PATHINFO_FILENAME);
+                $file_name = str_replace(" ", "", pathinfo($image["name"], PATHINFO_FILENAME));
                 $picture_path = "uploads/users/$user_id/$file_name.jpg";
                 // creation du repertoire uploads/users/user_id si pas de picture_path
                 if (!$user->has_profile_picture()) {
@@ -199,13 +199,13 @@ class ControllerUser extends Controller
             $password = Tools::sanitize($_POST["password"]);
             $confirmPassword = Tools::sanitize($_POST["confirmPassword"]);
 
-            $newUser = new User(-1, $pseudo, password_hash($password, PASSWORD_BCRYPT), $email, $fullname, "user");
+            $newUser = new User(null, $pseudo, password_hash($password, PASSWORD_BCRYPT), $email, $fullname, "user");
             $errors = $newUser->validate();
             $errors["password"] = $newUser->validate_password($password);
             $errors["confirmPassword"] = User::confirm_password($password, $confirmPassword);
 
             if ($this->has_no_errors($errors)) {
-                $newUser->insert_new_user();
+                $newUser->persist();
                 $this->log_user(User::get_user_by_email($email), "item", "browse");
             }
         }

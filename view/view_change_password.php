@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title> 🛒 Change Password</title>
-    <base href="<?= $web_root ?>" ?>
+    <base href="<?= $web_root ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -20,7 +20,7 @@
                 <div class="container-fluid">
                     <a class="navbar-brand text-blue" href="user/profile"><i class="bi bi-arrow-left"></i> </a>
                     <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Change Password <i class=" bi bi-cart4 fs-4 text-white"></i></span>
-                    <button type="submit" name="savePassword" value="true" class="btn navbar-brand text-blue position-absolute top-50 end-0 translate-middle-y"><i class="bi bi-floppy2-fill"></i></a>
+                    <button type="submit" name="savePassword" value="true" class="btn navbar-brand text-blue position-absolute top-50 end-0 translate-middle-y"><i class="bi bi-floppy2-fill"></i></button>
                 </div>
             </nav>
         </header>

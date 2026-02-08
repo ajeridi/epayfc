@@ -1,398 +1,436 @@
 <?php
 
+use PSpell\Config;
+
 require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 require_once "model/Bid.php";
-function cmp($i1,$i2){
-        $date1=($i1->buy_now_price <= $i1->bids['0']->amount) ? $i1->bids['0']->created_at : $i1->end_at();
-        $date2=($i2->buy_now_price <= $i2->bids['0']->amount) ? $i2->bids['0']->created_at : $i2->end_at();
-        
-        $dates1=new DateTime($date1);
-        $dates2=new DateTime($date2);
-        if($dates1==$dates2){
-            return 0;
-        }
+require_once "model/Picture.php";
 
-        return ($dates1 > $dates2) ? 1 : -1 ;
+function cmp(Item $i1, Item $i2): int
+{
+    $date1 = $i1->closed_at();
+    $date2 = $i2->closed_at();
 
+    $dates1 = new DateTime($date1);
+    $dates2 = new DateTime($date2);
+    if ($dates1 == $dates2) {
+        return 0;
     }
 
-class Item extends Model {
-   
-    public function __construct(public int $id ,
-     public string $title ,
-     public int $owner,
-     public string $created_at,
-     public int $duration_days,
-     public ?string $description=null,
-     public ?int $buy_now_price=null,
-     public ? int $starting_bid=null,
-     public ? array $bids=[] )
+    return ($dates1 > $dates2) ? 1 : -1;
+}
+
+class Item extends Model
+{
+
+    public function __construct(
+        public int $id,
+        public string $title,
+        public int $owner,
+        public string $created_at,
+        public int $duration_days,
+        public ?string $pseudo,
+        public ?string $description = null,
+        public ?float $buy_now_price = null,
+        public ?float $starting_bid = null,
+        public ?array $bids = [],
+        public ?array $pictures = []
+    ) {
+        $this->id = $id;
+        $this->title = $title;
+        $this->owner = $owner;
+        $this->pseudo = $pseudo;
+        $this->created_at = $created_at;
+        $this->duration_days = $duration_days;
+        $this->description = $description;
+        $this->buy_now_price = $buy_now_price;
+        $this->starting_bid = $starting_bid;
+    }
+    private static function build_Item(array | bool $array): Item
     {
-        $this->id=$id;
-        $this->title=$title;
-        $this->owner=$owner;
-        $this->created_at=$created_at;
-        $this->duration_days=$duration_days;
-        $this->description=$description;
-        $this->buy_now_price=$buy_now_price;
-        $this->starting_bid=$starting_bid;
-        
-    } 
-    private static function build_Item(array | bool $array) : Item  {
-        if(is_bool($array)){
-             throw new Exception("Unable to find the data record in the table");
-        } else{
-       
-        $item= new Item($array['id'],$array['title'],$array['owner'],$array['created_at'],$array['duration_days'],$array['description'],$array['buy_now_price'],$array['starting_bid']);
-        $item->bids=Bid::get_item_bids($item->id);
-        return $item;
-        }
-        
-    }
-   
+        if (is_bool($array)) {
+            throw new Exception("Unable to find the data record in the table");
+        } else {
 
-    public static function get_items_participatedIn(int $user_id) : array {
-        $items=Item::get_other_items($user_id);
-        $data=[];
-        foreach($items as $item){
-            if($item->is_open_item() && $item->is_participated($user_id)){
-                $data[]=$item;
-            }
+            $item = new Item(
+                $array['id'],
+                $array['title'],
+                $array['owner'],
+                $array['created_at'],
+                $array['duration_days'],
+                $array['pseudo'],
+                $array['description'],
+                $array['buy_now_price'],
+                $array['starting_bid']
+            );
+            $item->bids = Bid::get_item_bids($item->id);
+            $item->pictures = Picture::get_pictures($item->id);
+            return $item;
         }
-        return $data;         
     }
-    public static function get_other_available_item(int $user_id) : array {
-        $items=Item::get_other_items($user_id);
-        $data=[];
-        foreach($items as $item){
-            if($item->is_open_item() && !$item->is_participated($user_id)){
-                $data[]=$item;
+
+
+
+    public static function get_items_participatedIn(int $user_id): array
+    {
+        $items = Item::get_other_items($user_id);
+        $data = [];
+        foreach ($items as $item) {
+            if ($item->is_open_item() && $item->is_participated($user_id)) {
+                $data[] = $item;
             }
         }
         return $data;
     }
-   
-    public static function get_user_active_item(int $user_id) : array {
-         $items=Item::get_my_items($user_id);
-         $data=[];
-         foreach($items as $item){
-            if($item->is_open_item()){
-                $data[]=$item;
-                }
-        }
-        return $data ;
-    }
-
-     public static function get_user_closed_unsold_item(int $user_id): array{
-         $items=Item::get_my_items($user_id);
-         $data=[];
-         foreach($items as $item){
-            if(!$item->is_open_item() && $item->get_max_bid()==null){
-                $data[]=$item;
-                }
-        }
-        return $data ;
-
-    }
-     public static function  get_user_sold_item(int $user_id): array{
-         $items=Item::get_my_items($user_id);
-         $data=[];
-         foreach($items as $item){
-            if(!$item->is_open_item() && $item->get_max_bid()!=null){
-                $data[]=$item;
-                }
-        }
-        usort($data,'cmp');
-
-        return $data ;
-     }
-     public static function get_purchases_items( $user) : array {
-        $items=Item::get_other_items($user->get_id());
-        $data=[];
-        foreach($items as $item){
-            if(!$item->is_open_item() && $user->is_heigth_bider($item->id) ){
-                $data[]=$item;
+    public static function get_other_available_item(int $user_id): array
+    {
+        $items = Item::get_other_items($user_id);
+        $data = [];
+        foreach ($items as $item) {
+            if ($item->is_open_item() && !$item->is_participated($user_id)) {
+                $data[] = $item;
             }
         }
-        usort($data,'cmp');
-        
-        return $data ;
-     }
-
-    private static function get_other_items(int $user_id) : array {
-        
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid
-        FROM items i join v_items_status vi on vi.id=i.id Where i.owner != :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
-        $data= $query->fetchAll();
-        $array=[];
-        foreach($data as $item){
-            $array[]=Item::build_Item($item);
-        }   
-        return $array;     
+        return $data;
     }
 
-    private static function get_my_items(int $user_id) : array {
-       
-        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid
-         FROM items i join v_items_status vi on vi.id=i.id Where i.owner = :user_id ORDER BY vi.end_at ",[":user_id"=>$user_id]);
-         $data= $query->fetchAll();
-        $array=[];
-        foreach($data as $item){
-            $array[]=Item::build_Item($item);
-        }   
-        return $array; 
-    }     
+    public static function get_user_active_item(int $user_id): array
+    {
+        $items = Item::get_my_items($user_id);
+        $data = [];
+        foreach ($items as $item) {
+            if ($item->is_open_item()) {
+                $data[] = $item;
+            }
+        }
+        return $data;
+    }
 
-    private function is_participated(int $user_id) : bool {
-        $query=self::execute("SELECT * FROM bids b WHERE  b.owner = :user_id AND b.item= :item_id",["user_id"=>$user_id,"item_id"=>$this->id]);
-        if($query->rowCount() == 0){
+    public static function get_user_closed_unsold_item(int $user_id): array
+    {
+        $items = Item::get_my_items($user_id);
+        $data = [];
+        foreach ($items as $item) {
+            if (!$item->is_open_item() && $item->get_max_bid() == null) {
+                $data[] = $item;
+            }
+        }
+        return $data;
+    }
+    public static function  get_user_sold_item(int $user_id): array
+    {
+        $items = Item::get_my_items($user_id);
+        $data = [];
+        foreach ($items as $item) {
+            if (!$item->is_open_item() && $item->get_max_bid() != null) {
+                $data[] = $item;
+            }
+        }
+        usort($data, 'cmp');
+
+        return $data;
+    }
+    public static function get_purchases_items($user): array
+    {
+        $items = Item::get_other_items($user->get_id());
+        $data = [];
+        foreach ($items as $item) {
+            if (!$item->is_open_item() && $item->is_highest_bidder($user->get_id())) {
+                $data[] = $item;
+            }
+        }
+        usort($data, 'cmp');
+
+        return $data;
+    }
+
+    private static function get_other_items(int $user_id): array
+    {
+
+        $query = self::execute(
+            "SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days
+                                ,i.description,i.buy_now_price,i.starting_bid,u.pseudo,vi.end_at 
+                                FROM items i join users u on i.owner = u.id join v_items_status vi
+                                  on vi.id = i.id  Where i.owner != :user_id ORDER BY vi.end_at ",
+            [":user_id" => $user_id]
+        );
+        $data = $query->fetchAll();
+        $array = [];
+        foreach ($data as $item) {
+            $array[] = Item::build_Item($item);
+        }
+        return $array;
+    }
+
+    private static function get_my_items(int $user_id): array
+    {
+
+        $query = self::execute("SELECT Distinct i.id,i.title,i.owner,i.created_at,i.duration_days
+                             ,i.description,i.buy_now_price,i.starting_bid, users.pseudo
+                                FROM items i join v_items_status vi on vi.id=i.id join users on
+                             users.id = i.owner Where i.owner = :user_id ORDER BY vi.end_at ", [":user_id" => $user_id]);
+        $data = $query->fetchAll();
+        $array = [];
+        foreach ($data as $item) {
+            $array[] = Item::build_Item($item);
+        }
+        return $array;
+    }
+
+    private function is_participated(int $user_id): bool
+    {
+        foreach ($this->bids as $bid) {
+            if ($bid->get_owner() == $user_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public  function is_open_item(): bool
+    {
+        $current_date_time = AppTime::get_current_datetime();
+        if (($this->end_at() < $current_date_time || count($this->bids) != 0 && ($this->buy_now_price != null && $this->buy_now_price <= $this->bids['0']->get_amount()))) {
             return false;
-        }else{
-            return true ;
         }
+        return true;
     }
 
 
-    public  function is_open_item(): bool {
-        $current_date_time=AppTime::get_current_datetime();
-        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$this->id,"current_date_time"=> $current_date_time]);
-        if($query->rowCount()==0){
-            return false ;
-        }else{
-            return true; 
+    public function get_path(int $priority = 1): string
+    {
+        if ($this->pictures == [] || !isset($this->pictures[$priority - 1]))
+            return "";
+        return $this->pictures[$priority - 1]->get_path();
+    }
+
+    public function get_thumbnail_path(int $priority = 1): string
+    {
+        if ($this->pictures == [] || !isset($this->pictures[$priority - 1]))
+            return "";
+        return $this->pictures[$priority - 1]->get_thumbnail_path();
+    }
+
+
+    public function get_pictures_by_id(): array
+    {
+        return Picture::get_pictures($this->id);
+    }
+
+    public function get_pictures(): array
+    {
+        return $this->pictures;
+    }
+
+    public function get_picture(int $priority): Picture
+    {
+        return $this->pictures[$priority - 1];
+    }
+
+
+    public function get_number_of_pictures(): int
+    {
+        return count($this->pictures);
+    }
+
+    public function get_max_bid(): float | null
+    {
+
+        if (count($this->bids) == 0) {
+            return null;
         }
+        return $this->bids['0']->get_amount();
     }
 
-    public function get_path(int $priority=1) : String | null {
-        $query = self::execute("SELECT ip.picture_path FROM item_pictures ip where ip.item = :item_id and ip.priority= :nb",["item_id"=>$this->id,"nb"=>$priority]);
-        $data=$query->fetch();
-        if($query->rowCount()==0 ){
-            if($priority>1){
-                 throw new Exception("Unable to find the data record in the table");
-                
-            } else {
-                return null ;
-            }
-        }
-        return $data['picture_path'];
-    }
 
-    public function get_pictures_by_id() : array {
-        $query=self::execute("SELECT ip.picture_path FROM item_pictures ip where ip.item=:item_id",["item_id"=>$this->id]);
-        $data=$query->fetchAll();
-        return $data; 
-    }
-
-    public function get_nomber_of_pictures(): int {
-         return  count($this->get_pictures_by_id());
-    }
-
-    public function get_max_bid(): float | null {
-        $query=self::execute("SELECT MAX(b.amount) as max FROM bids b where b.item = :item_id ",["item_id"=>$this->id]);
-        $data=$query->fetch();
-        if($query->rowCount()==0){
-            return null ;
-        }
-        return (double) $data['max'] ;
-    }
-    public function delete() : void {
+    public function delete(): void
+    {
         self::execute("DELETE FROM bids WHERE item= :id  ;
                          DELETE FROM item_pictures WHERE item= :id ;
-                         DELETE FROM items WHERE id = :id",["id"=>$this->id]);        
+                         DELETE FROM items WHERE id = :id", ["id" => $this->id]);
     }
 
 
-    public static function get_item_by_id(int $item_id) : Item | bool {
-       
-        
-        $query=self::execute("SELECT  i.id,i.title,i.owner,i.created_at,i.duration_days,i.description,i.buy_now_price,i.starting_bid FROM items i WHERE i.id= :id ",["id"=>$item_id]);
-        $array=$query->fetch(); 
-        $item=Item::build_Item($array);
-        
-        
-        return $item; 
-        
+    public static function get_item_by_id(int $item_id): Item | bool
+    {
+
+
+        $query = self::execute("SELECT  i.id,i.title,i.owner,i.created_at,
+                             i.duration_days,i.description,i.buy_now_price,i.starting_bid,users.pseudo
+                           FROM items i join users on users.id = i.owner WHERE i.id= :id ", ["id" => $item_id]);
+        $array = $query->fetch();
+        $item = Item::build_Item($array);
+
+
+        return $item;
     }
 
-    public static function get_other_pictures_by_id(int $item_id): array {
-        $query=self::execute("SELECT * FROM item_pictures WHERE item = :item ",["item"=>$item_id]);
-        $data=$query->fetchAll();
-        return $data;
-    }
 
-       public static function is_open_anonce(int $item_id): bool {
-         $current_date_time=AppTime::get_current_datetime();
-        $query=self::execute("SELECT * FROM v_items_status Where id= :id and end_at > :current_date_time and ((is_auction = 1 and buy_now_reached = 0 ) or (is_direct_sale=1 and not_purchased_direct_sale=1))",["id"=>$item_id,"current_date_time"=> $current_date_time]);
-
-        if($query->rowCount()==0){
-            return false ;
-        }else{
-            return true; 
-        }
-
-    }
-    public static function get_item_ino(int $item_id): array {
-        $query=self::execute("SELECT id ,title,description ,duration_days,starting_bid,buy_now_price from items where id=:id",["id"=>$item_id]);
-        $data=$query->fetch();
-        return $data;
-    }
-    public static function buy($owner,$item_id,$at,$amount): void {
-        $item=item::get_item_by_id($item_id);
-          if (!preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $amount)) {
-                
+    public static function buy(int $owner, int $item_id, string $at, string $amount): void
+    {
+        $item = item::get_item_by_id($item_id);
+        if (!preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $amount)) {
         } else {
-                    $amount = str_replace(',', '.', $amount);
-                    if($amount>$item->get_max_bid() && $amount>=$item->starting_bid){
-                            $query=self::execute("INSERT INTO bids(owner,item,created_at,amount) VALUES (:owner,:item,:created_at,:amount)",["owner"=>$owner,"item"=>$item_id,"created_at"=>$at,"amount"=>$amount]);
-                    } 
-
-                }
-               
+            $amount = str_replace(',', '.', $amount);
+            if ($amount > $item->get_max_bid() && $amount >= $item->starting_bid) {
+                $query = self::execute("INSERT INTO bids(owner,item,created_at,amount) VALUES (:owner,:item,:created_at,:amount)", ["owner" => $owner, "item" => $item_id, "created_at" => $at, "amount" => $amount]);
+            }
+        }
     }
-    public static function validat_item($owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): array {
+    private static function check_title(int $owner_id,string $title, int $item_id,array $errors ) : array {
+        if (!self::unicite_title_for_owner($owner_id, $title, $item_id)) {
+            $errors[] = Configuration::get("unicity_title");
+        }
+         if (strlen($title) == 0) {
+            $errors[] = Configuration::get("title_required");
+        }
         
-        $errors[]=[];
-        $errors['title']=[];
-        $errors['description']=[];
-        $errors['buy_now_price']=[];
-        $errors['starting_bid']=[];
-        $errors['saleprice']=[];
-        $errors['duration_days']=[];
- 
-       if( !Item::unicite_title_for_owner($owner,$title) ){
-        $errors['title'][]="This title already exist, Please choose another one !";
-       }
-        
-        if(strlen($title)==0){
-            $errors['title'][]="Title is required";
+        if (strlen($title) < Configuration::get("title_min_length") ||strlen($title) > Configuration::get("title_max_length") ) {
+            $errors[] = Configuration::get("lenght_title");
         }
-        if(strlen($title)<3){
-            $errors['title'][]="Title lenght must be between 3 and 255 characters";
-            
-        }
-        if($description!=null && strlen($description)<3){
-            $errors['description'][]="Description lenght must be betwenn 3 and 255 characters";
-           
-        }
-        if($starting_bid != ""  &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $starting_bid)){
-            $errors["starting_bid"][]="Starting bid must be a nomber positif ";
-            
-        }
-        if( $buy_now_price != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/",$buy_now_price) ){
-            $errors['buy_now_price'][]="the buy now price must be a nomber positif";
-            
-        }
-        if($starting_bid =="" && $saleprice==""){
-            $errors["buy_now_price"][]="Type requiered";
-             $errors["saleprice"][]="Type requiered";
-        }
-        if($starting_bid != "" && $buy_now_price!="" && $buy_now_price<$starting_bid ){
-            $errors["buy_now_price"][]="the buy now price most be sup then the starting bid";
-           
-        }
-        if(($starting_bid != "" &&  $saleprice != "")|| ($saleprice!="" && $buy_now_price!="")){
-            $errors["buy_now_price"][]="Cannot create both auction and direct sale";
-            $errors["saleprice"][]="Cannot create both auction and direct sale";
-        }
-        if (!preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $duration_days)) {
+        return $errors; 
 
-            $errors["duration_days"][]="Duartion is required and most be integer positif and between 1 and 60";
+    }
+    private static function check_description(string $description,array $errors) :  array {
+        
+        if ($description != null && strlen($description) < Configuration::get("description_min_lenght") ||strlen($description) > Configuration::get("description_max_lenght") ) {
+            $errors[] = Configuration::get("description_lenght");
         }
-        if($starting_bid == "" && $saleprice !="" &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $saleprice)){
-             $errors["saleprice"][]="Sale price most be a nomber positif ";
+        return $errors; 
+    }
+    private static function check_duration_days(string $duration_days,array $errors) : array {
+
+        if (!preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $duration_days)) {
+            $errors[] = Configuration::get("duration_days");
         }
-     
+        return $errors ;
+    }
+    private static function check_starting_bid(string $starting_bid,array $errors) : array {
+        if ($starting_bid != ""  &&  !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $starting_bid)) {
+            $errors[] =Configuration::get("starting_bid");
+        }
+        return $errors ;
+        
+    }
+    private static function check_buy_now_price(string $buy_now_price,string $starting_bid,string $saleprice ,array $errors,bool $buy) : array {
+        if ($buy_now_price != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $buy_now_price)) {
+            if($buy) {
+                $errors[] = Configuration::get("buy_now_positif");
+            }
+        }
+        if ( $saleprice != "" &&   !preg_match("/^[1-9]\d*(?:[.,]\d{1,2})?$/", $saleprice)) {
+            if(!$buy) {
+                $errors[] = Configuration::get("buy_now_positif");
+            }
+           
+        }
+        if ($starting_bid  == "" && $saleprice == "") {
+            $errors[] = Configuration::get("option_required");
+        }
+        if ( $starting_bid  != "" && $buy_now_price != "" && $buy_now_price < $starting_bid && $saleprice == "") {
+            if($buy) {
+                 $errors[] =Configuration::get("buy_now_sup_starting_bid");
+            }
+        }
+         if (($starting_bid  != "" && $saleprice != "") || ($saleprice != "" && $buy_now_price != "")) {
+            $errors[] = Configuration::get("both");
+         }
+         return $errors ;
+
+    }
+    
+
+
+
+    public static function validat_item(int $owner, array $info, array $errors): array
+    {
+        $errors['title']=self::check_title($owner,$info['title'],$info['id'],$errors['title']);
+        $errors['description']=self::check_description($info['description'],$errors['description']);
+        $errors['duration_days']=self::check_duration_days($info['duration_days'],$errors['duration_days']);
+        $errors['starting_bid']=self::check_starting_bid($info['starting_bid'],$errors['starting_bid']);
+        $errors['buy_now_price']=self::check_buy_now_price($info['buy_now_price'],$info['starting_bid'],$info['saleprice'],$errors['buy_now_price'],true);
+        $errors['saleprice']=self::check_buy_now_price($info['buy_now_price'],$info['starting_bid'],$info['saleprice'],$errors['saleprice'],false);
+
         return $errors;
     }
-    private static function unicite_title_for_owner($owner ,$title): bool {
+    private static function unicite_title_for_owner(int $owner, string $title, int $id): bool
+    {
 
-        $query=self::execute("SELECT * from items i where i.owner = :owner and i.title = :title ",["owner"=>$owner,"title"=>$title]);
-        $data=$query->fetchAll();
-       if($query->rowCount() != 0){
-        return false; 
-       }
+        $query = self::execute("SELECT * from items i where i.owner = :owner and i.title = :title ", ["owner" => $owner, "title" => $title]);
+        $query->fetchAll();
+        if (($id == 0 && $query->rowCount() != 0) || ($id != 0 && $query->rowCount() > 1)) {
+            return false;
+        }
         return true;
-
-
     }
-    public static function put_edition_item($id,$owner,$title,$description,$duration_days,$buy_now_price,$starting_bid,$saleprice): int {
-        $current_date_time=AppTime::get_current_datetime();
-        
-
-        if($buy_now_price == ""){
-            if($starting_bid != "" && $starting_bid !=0){
-                $buy_now_price=null;
-            } else{
-            $buy_now_price=$saleprice;
+    public static function put_edition_item(int $owner, array $info): int
+    {
+        $current_date_time = AppTime::get_current_datetime();
+        $id = $info['id'];
+        if ($info['buy_now_price'] == "") {
+            if ($info['starting_bid'] != "" && $info['starting_bid'] != 0) {
+                $info['buy_now_price'] = null;
+            } else {
+                $info['buy_now_price'] = $info['saleprice'];
             }
         }
 
-        $starting_bid= str_replace(',','.',$starting_bid);
-        $buy_now_price=str_replace(',','.',$buy_now_price);
-        if($id==0){
-            self::execute("INSERT INTO items (owner,title,description,duration_days,buy_now_price,starting_bid,created_at)  VALUE (:owner,:title,:description,:duration_days,:buy_now_price,:starting_bid,:created_at) ",['owner'=>$owner,'title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price,'created_at'=>$current_date_time]);
-            $id_nv=self::lastInsertId();
+        $starting_bid = str_replace(',', '.', $info['starting_bid']);
+        $buy_now_price = str_replace(',', '.', $info['buy_now_price']);
+        if ($id == 0) {
+            self::execute("INSERT INTO items (owner,title,description,duration_days,buy_now_price,starting_bid,created_at)  VALUE 
+            (:owner,:title,:description,:duration_days,:buy_now_price,:starting_bid,:created_at) ", [
+                'owner' => $owner,
+                'title' => $info['title'],
+                'description' => $info['description'],
+                'duration_days' => $info['duration_days'],
+                'starting_bid' => $starting_bid,
+                'buy_now_price' => $buy_now_price,
+                'created_at' => $current_date_time
+            ]);
+            $id_nv = self::lastInsertId();
             return $id_nv;
-        } else{
-            self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,starting_bid=:starting_bid WHERE id =:id ",['title'=>$title,'description'=>$description,'duration_days'=>$duration_days,'starting_bid'=>$starting_bid,'buy_now_price'=>$buy_now_price, 'id' => $id]);
+        } else {
+            self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,
+            starting_bid=:starting_bid WHERE id =:id ", [
+                'title' => $info['title'],
+                'description' => $info['description'],
+                'duration_days' => $info['duration_days'],
+                'starting_bid' => $starting_bid,
+                'buy_now_price' => $buy_now_price,
+                'id' => $id
+            ]);
             return $id;
         }
     }
-    public static function is_Direct_sale(int $item_id): bool {
-         $item=Item::get_item_by_id($item_id);
-
-         if($item->starting_bid==null){
-            return true;
-         }else{
-            return false;
-         }
-
-    }   
-    public static function get_item_title(int $item_id) : string {
-        $query = self::execute("SELECT title from items WHERE id = :item_id", 
-        ["item_id" => $item_id]);
+   
+    public static function get_item_title(int $item_id): string
+    {
+        $query = self::execute(
+            "SELECT title from items WHERE id = :item_id",
+            ["item_id" => $item_id]
+        );
         $result = $query->fetch();
         return $result["title"];
     }
 
-    public static function upload_image(int $item_id, string $picture_path) : void {
+    public function upload_image(string $picture_path): void
+    {
         // on regarde quelle est la priorite de la derniere image de l'item
-        $priority = Item::get_new_picture_priority($item_id);
-        $query = self::execute("INSERT INTO item_pictures(item, priority, picture_path) VALUES (:item_id, :priority, :picture_path)",
-        ["item_id" => $item_id, "priority" => $priority ,"picture_path" => $picture_path]);
+        Picture::upload_image($this->id, $picture_path);
     }
 
-    public static function get_new_picture_priority(int $item_id) : int {
-        $sql = "SELECT (MAX(priority)+1) as next_priority FROM item_pictures WHERE item = :item_id";
-        $query = self::execute($sql, ["item_id" => $item_id]);
-        $res = $query->fetch();
-        return $res["next_priority"] == null ? 1 : $res["next_priority"];
+
+    public function delete_picture(int $priority): void
+    {
+        $image_to_delete = $this->get_picture($priority);
+        $image_to_delete->delete();
     }
 
-    public static function swap_priority(int $item_id, int $old_priority, int $new_priority) : void {
-        // Pour update deux champs sous contrainte, il faut faire un assignation avec une variable temp
-        // si old = 1 et new = 2, old = -1, new = 1, old = 2, car sinon erreur
-        Item::update_priority($item_id, $old_priority, -1);
-        Item::update_priority($item_id, $new_priority, $old_priority);
-        Item::update_priority($item_id, -1, $new_priority);
-    }
-
-    public static function update_priority(int $item_id, int $old_priority, int $new_priority) : void {
-        $sql = "UPDATE item_pictures SET priority = :new_priority WHERE priority = :old_priority AND item = :item_id;";    
-        $query = self::execute($sql,["new_priority" => $new_priority, "old_priority" => $old_priority, "item_id" => $item_id]);
-    }
-
-    public static function delete_picture(int $item_id, int $priority) : void {
-        // d'abord supprimer l'image    
-        $sql = "DELETE FROM item_pictures WHERE item = :item_id AND priority = :priority";
-        $query = self::execute($sql, ["item_id" => $item_id, "priority" => $priority]);
-        // ensuite il faut actualiser les priorites des images ayant une priorite > $priority, faire -1 a chaque priorite se trouvant apres
-        $sql = "UPDATE item_pictures SET priority = (priority - 1) WHERE priority > :priority AND item = :item_id";
-        $query = self::execute($sql, ["priority" => $priority, "item_id" => $item_id ]);
-    }
-
-    public static function get_picture_path(int $item_id, int $priority) : string {
+    public static function get_picture_path(int $item_id, int $priority): string
+    {
         $sql = "SELECT picture_path FROM item_pictures WHERE item = :item_id AND priority = :priority";
         $query = self::execute($sql, ["item_id" => $item_id, "priority" => $priority]);
         $res = $query->fetch();
@@ -400,72 +438,85 @@ class Item extends Model {
     }
 
 
-    public static function cal_total_avg_nbrOfSales(array $salesItem) :  array{
-        $total=0.0 ;
-        $nbrOfSales=0;
-        foreach($salesItem as $sale){
-            $total=$total + $sale->get_max_bid();
-            $nbrOfSales=$nbrOfSales+1;
+    public static function cal_total_avg_nbrOfSales(array $salesItem): array
+    {
+        $total = 0.0;
+        $nbrOfSales = 0;
+        foreach ($salesItem as $sale) {
+            $total = $total + $sale->get_max_bid();
+            $nbrOfSales = $nbrOfSales + 1;
         }
-        $info['total']=(double)$total;
-        $info['avg']= $nbrOfSales == 0 ? 0 : $total/$nbrOfSales;
-        $info['nbr']=$nbrOfSales;
+        $info['total'] = (float)$total;
+        $info['avg'] = $nbrOfSales == 0 ? 0 : $total / $nbrOfSales;
+        $info['nbr'] = $nbrOfSales;
         return $info;
-
     }
-    public static function find_loyer_bider($buyer,String $indice): ? array {
-        if(empty($buyer)){
-            return [] ;
+    public static function find_loyer_bider(array $buyer, String $indice): ?array
+    {
+        if (empty($buyer)) {
+            return [];
         }
-        $buyrArray=[];
-        foreach($buyer  as $item) {
-            if($indice=='pseudo'){
-                 $buyrArray[]=User::get_pseudo_by_id($item->owner);
-            } 
-            if($indice=='buyer'){
-                $buyrArray[]=User::get_pseudo_by_id($item->bids['0']->owner);
+        $buyrArray = [];
+        foreach ($buyer  as $item) {
+            if ($indice == 'pseudo') {
+                $buyrArray[] = User::get_pseudo_by_id($item->owner);
             }
-
+            if ($indice == 'buyer') {
+                $buyrArray[] = User::get_pseudo_by_id($item->bids['0']->owner);
+            }
         }
 
         $count = array_count_values($buyrArray);
         $max = max($count);
-        $loyer_bider=array_keys($count,$max,true);
+        $loyer_bider = array_keys($count, $max, true);
         return $loyer_bider;
-        
     }
-     public static function get_picture_count(int $item_id) : int {
-        $sql = "SELECT COUNT(*) as nb_pictures FROM item_pictures WHERE item = :item_id";
-        $query = self::execute($sql, ["item_id" => $item_id]);
-        return $query->fetchColumn();
+
+    public function closed_at() : string {
+        if(count($this->bids)>0){
+        return $this->buy_now_price<=$this->bids['0']->get_amount() ? $this->bids['0']->get_created_at() : $this->end_at();
+        }
+        return $this->end_at();
     }
-    public function end_at() : string {
-        $query=self::execute("SELECT end_at from v_items_status where id= :id",["id"=>$this->id]);
-        $data=$query->fetch();
-        return $data['end_at'];
+
+    public function end_at(): string
+    {
+        $end_at = new DateTime($this->created_at);
+        $end_at->modify('+' . $this->duration_days . 'days');
+
+        return $end_at->format('Y-m-d H:i:s');
     }
-    
-     function cmp($i1,$i2){
-        $date1=($i1->buy_now_price <= $i1->bids['0']->amount) ? $i1->bids['0']->created_at : $i1->end_at();
-        $date2=($i2->buy_now_price <= $i2->bids['0']->amount) ? $i2->bids['0']->created_at : $i2->end_at();
-        
-        $dates1=new DateTime($date1);
-        $dates2=new DateTime($date2);
-        if($dates1==$dates2){
-            return 0;
+
+    public function get_period(): string
+    {
+        $current_date_time = AppTime::get_current_datetime();
+        $query = self::execute("SELECT  TIMESTAMPDIFF(DAY, :current_date_time, end_at) as d,
+                                TIMESTAMPDIFF(HOUR, :current_date_time, end_at) % 24 h,
+                                TIMESTAMPDIFF(MINUTE, :current_date_time, end_at) % 60 m
+                                 FROM v_items_status vi WHERE vi.id= :id ", ["id" => $this->id, ":current_date_time" => $current_date_time]);
+        $data = $query->fetch();
+        $result = "";
+        if ($data['d'] != 0) {
+            $result = $data['d'] . 'd ' . $data['h'] . 'h';
+        } else {
+            $result = $data['h'] . 'h ' . $data['m'] . 'm';
         }
 
-        return ($dates1 > $dates2) ? 1 : -1 ;
-
+        return $result;
+    }
+    public function is_highest_bidder(int $user_id): bool
+    {
+        if (count($this->bids) == 0) {
+            return false;
+        }
+        return $this->bids['0']->get_owner() == $user_id;
     }
 
-
-   
-    
-    
-    
-
-   
-   
+    public function has_bidder(int $id) : bool {
+        foreach ($this->bids as $bid){
+            if ($bid->get_owner() == $id)
+                return true;
+        }
+        return false;
+    }
 }
-?>

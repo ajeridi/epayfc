@@ -1,7 +1,7 @@
 <?php
 require_once "framework/Model.php";
 class User extends Model {
-    public function __construct(private int $id, private string $pseudo,private string $hashed_password,private string $email,private string $full_name, private string $role,private ?string $picture_path = null, private ?string $iban=null){}
+    public function __construct(private ? int $id, private string $pseudo,private string $hashed_password,private string $email,private string $full_name, private string $role,private ?string $picture_path = null, private ?string $iban=null){}
 
     public function get_id(): int {
         return $this->id ;
@@ -51,16 +51,7 @@ class User extends Model {
         }
         return $errors;
     }
-     public function is_heigth_bider(int $item_id) : bool {
-        $query=self::execute("SELECT b.owner FROM bids b where b.item = :item_id order by b.created_at DESC",["item_id"=>$item_id]);
-        $data=$query->fetch();
-        if($query->rowCount()!=0 && $data['owner'] === $this->id){
-            return true; 
-        } else {
-            return false ;
-        }
-    }
-
+   
 
     public static function get_user_by_email(string $email): User | false{
         $query =self::execute("SELECT * FROM users where email= :email",["email"=>$email]);
@@ -79,7 +70,7 @@ class User extends Model {
                 $errors[] = "Wrong password. Please try again.";
             }
         } else {
-            $errors[]="Can't find a member with the email '$email'.Please signe up";
+            $errors[]="Can't find a member with the email '$email'. Please sign up";
         }
         return $errors;
 
@@ -116,8 +107,9 @@ class User extends Model {
 
     private function validate_full_name() : array {
         $errors = [];
+        $min_length = Configuration::get("name_min_length");
         if (strlen($this->full_name) < Configuration::get("name_min_length")){
-            $errors[] = "Full name must be at least 3 characters long.";
+            $errors[] = "Full name must be at least $min_length characters long.";
         }
         if (!$this->is_unique_full_name($this->full_name)){
             $errors[] = "Full name is not unique.";
@@ -127,8 +119,10 @@ class User extends Model {
 
     private function validate_username() : array {
         $errors = [];
-        if (strlen($this->pseudo) < Configuration::get("name_min_length") || strlen($this->pseudo) > Configuration::get("name_max_length")){
-            $errors[] = "Username must be between 3 and 30 characters long.";
+        $min_length = Configuration::get("name_min_length");
+        $max_length = Configuration::get("name_max_length");
+        if (strlen($this->pseudo) < $min_length || strlen($this->pseudo) > $max_length){
+            $errors[] = "Username must be between $min_length and $max_length characters long.";
         }
         if (!$this->is_unique_pseudo($this->pseudo)){
             $errors[] = "Username is not unique.";
@@ -172,6 +166,14 @@ public function is_unique_full_name() : bool {
         return $errors;
     }
 
+
+    public function persist() : void {
+        if ($this->id)
+            $this->save_user();
+        else
+            $this->insert_new_user();
+    }
+
     public function save_user() : void {
         $sql = "UPDATE users SET 
                     full_name = :full_name,
@@ -190,7 +192,7 @@ public function is_unique_full_name() : bool {
         $errors = [];
         $regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])[\x20-\x7E]{8,16}$/";
         if (!preg_match($regex, $newPasssword)){
-            $errors[] = "Password not valid.";
+            $errors[] = "Password not valid (must be 8-16 characters long with uppercase, number and punctuation)";
         }
         return $errors;
     }
@@ -238,5 +240,6 @@ public function is_unique_full_name() : bool {
         $query = self::execute($sql, ["user_id" => $this->id]);
         return $query->fetchColumn() != null;
     }
+
 }
 ?>
