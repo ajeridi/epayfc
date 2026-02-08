@@ -34,8 +34,18 @@ class AppTime {
     }
 
     public static function get_current_datetime(): string {
+        $dt = self::get_current();
+        return $dt->format("Y-m-d H:i:s");
+    }
+
+    private static function get_current() : DateTime {
         $dt = new DateTime();
         $dt->modify("+" . self::get_offset() . " seconds");
-        return $dt->format("Y-m-d H:i:s");
+        return $dt;
+    }
+
+    public static function get_current_datetime_euro_format() : string {
+        $dt = self::get_current();
+        return $dt->format("d/m/Y H:i");
     }
 }

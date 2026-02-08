@@ -2,7 +2,7 @@
    <nav class="navbar bg-transparent" style="backdrop-filter: blur(20px);">
        <div class="container-fluid">
            <div class="navbar-brand text-white">
-               <span><i class="bi bi-clock"></i> <?= AppTime::get_current_datetime() ?></span>
+               <span><i class="bi bi-clock"></i> <?= AppTime::get_current_datetime_euro_format() ?></span>
            </div>
            <ul class="list-group list-group-horizontal">
                <li class="list-group-item border-0 bg-transparent py-0 px-1">
