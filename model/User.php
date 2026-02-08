@@ -1,7 +1,7 @@
 <?php
 require_once "framework/Model.php";
 class User extends Model {
-    public function __construct(private int $id, private string $pseudo,private string $hashed_password,private string $email,private string $full_name, private string $role,private ?string $picture_path = null, private ?string $iban=null){}
+    public function __construct(private ? int $id, private string $pseudo,private string $hashed_password,private string $email,private string $full_name, private string $role,private ?string $picture_path = null, private ?string $iban=null){}
 
     public function get_id(): int {
         return $this->id ;
@@ -161,6 +161,14 @@ public function is_unique_full_name() : bool {
             $errors[] = "IBAN format not valid.";
         }
         return $errors;
+    }
+
+
+    public function persist() : void {
+        if ($this->id)
+            $this->save_user();
+        else
+            $this->insert_new_user();
     }
 
     public function save_user() : void {

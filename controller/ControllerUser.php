@@ -80,7 +80,7 @@ class ControllerUser extends Controller
             $errors = $newUser->validate();
             // si on a aucune erreur et que le newUser n'est pas null, on doit le sauvegarder dans la db et rediriger vers profile
             if ($this->has_no_errors($errors)) {
-                $newUser->save_user();
+                $newUser->persist();
                 $_SESSION["user"] = $newUser;
                 $this->redirect("user", "profile");
             }
@@ -199,13 +199,13 @@ class ControllerUser extends Controller
             $password = Tools::sanitize($_POST["password"]);
             $confirmPassword = Tools::sanitize($_POST["confirmPassword"]);
 
-            $newUser = new User(-1, $pseudo, password_hash($password, PASSWORD_BCRYPT), $email, $fullname, "user");
+            $newUser = new User(null, $pseudo, password_hash($password, PASSWORD_BCRYPT), $email, $fullname, "user");
             $errors = $newUser->validate();
             $errors["password"] = $newUser->validate_password($password);
             $errors["confirmPassword"] = User::confirm_password($password, $confirmPassword);
 
             if ($this->has_no_errors($errors)) {
-                $newUser->insert_new_user();
+                $newUser->persist();
                 $this->log_user(User::get_user_by_email($email), "item", "browse");
             }
         }
