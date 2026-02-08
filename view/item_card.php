@@ -3,11 +3,14 @@
         <div class="card" style="width: 18rem;">
             <img <?= ($item->get_path() == "") ? "src=uploads/items/default.jpg" :   "src=" . $item->get_thumbnail_path() ?> class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">
             <div class="card-img-overlay">
-                <?php if ($item->is_highest_bidder($user->get_id())) { ?>
-                    <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
-                <?php } else if ($item->has_bidder($user->get_id())) { ?>
-                    <span class="badge rounded-pill text-bg-secondary"><i class="ti ti-gavel"></i> Bidder</span>
-                <?php } ?>
+
+                <?php if ($user != false) {
+                    if ($item->is_highest_bidder($user->get_id())) { ?>
+                        <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
+                    <?php } else if ($item->has_bidder($user->get_id())) { ?>
+                        <span class="badge rounded-pill text-bg-secondary"><i class="ti ti-gavel"></i> Bidder</span>
+                <?php }
+                } ?>
                 <div class="float-end d-flex flex-column gap-2" style="height: 150px;">
                     <?php
                     if ($item->starting_bid != null) { ?>
