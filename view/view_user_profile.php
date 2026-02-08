@@ -18,7 +18,7 @@
             <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Profile 🛒 </div>
         </nav>
     </header>
-    <main class="container mt-3" style="margin-bottom: 150px;">
+    <main class="container mt-3" style="margin-bottom: 200px;">
         <!-- Information utilisateur !-->
         <div class="container mb-3">
             <div class="card text-center bg-dark">
