@@ -72,7 +72,8 @@ class ControllerItem extends Controller
         $current_date = AppTime::get_current_datetime();
         if ($_POST) {
             $item_id = $_GET['param1'];
-            $amount = ($_POST['buy']) ? $_POST['buy'] : $_POST['min_bid'];
+            $amount = str_replace(",", ".",($_POST['buy']) ? $_POST['buy'] : $_POST['min_bid']);
+            
             Item::buy($user->get_id(), $item_id, $current_date, $amount);
             $this->redirect("item", "open", $item_id);
         }

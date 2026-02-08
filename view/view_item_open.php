@@ -86,7 +86,7 @@
                       <div class="fw-semibold"><?= $bid->get_pseudo() ?></div>
                       <div class="small text-muted"><?= $bid->get_created_at() ?></div>
                     </div>
-                    <div class="price-green fw-semibold">€ <?= $bid->get_amount() ?></div>
+                    <div class="price-green fw-semibold">€ <?= number_format($bid->get_amount(), 2, ",", " ") ?></div>
                   </div>
                 </div>
               <?php  } ?>
@@ -108,14 +108,14 @@
                 <span class="text-muted">Current Bid</span>
                 <span class="price-green fw-semibold">
                   <?php if($item->bids==NULL){?>
-                  <i class="bi bi-currency-euro"></i><?= $item->starting_bid ?>
+                  <i class="bi bi-currency-euro"></i><?= number_format($item->starting_bid, 2, ",", " ") ?>
                 </span>
               </div>
                 <div class="d-flex justify-content-between small mb-2">
-                <span class="text-muted">starting at € <?= $item->starting_bid ?> </span>    
+                <span class="text-muted">starting at € <?= number_format($item->starting_bid, 2, ",", " ") ?> </span>    
                 </div>
                   <?php }else {?>
-                    <i class="bi bi-currency-euro"></i><?= $item->bids['0']->get_amount() ?>
+                    <i class="bi bi-currency-euro"></i><?= number_format($item->bids['0']->get_amount(), 2, ",", " ") ?>
                 </span>
               </div>       
                     <?php } ?> 
@@ -125,7 +125,7 @@
                 <?php if($item->buy_now_price != null){ ?>
                 <span class="text-muted">Buy Now</span>
                 <span class="fw-semibold">
-                  <i class="bi bi-currency-euro"></i><?= $item->buy_now_price ?>
+                  <i class="bi bi-currency-euro"></i><?= number_format($item->buy_now_price, 2, ",", " ") ?>
                 </span>
                 <?php } ?>    
               </div>
@@ -138,10 +138,10 @@
                 <div class="input-group input-dark mb-3">
                   <span class="input-group-text">€</span>
                   <input
-                    type="text"
+                    type="number"
                     name="min_bid"
                     class="form-control"
-                    value="<?= ($item->bids == null) ?  $item->starting_bid :( $item->bids['0']->get_amount()+1 ) ?>"
+                    value="<?= ($item->bids == null) ?  $item->starting_bid : $item->bids['0']->get_amount()+1 ?>"
                     required
                   >
                 </div>
@@ -151,7 +151,7 @@
               </form>  
                   <?php if($item->buy_now_price != null && $item->starting_bid !=null){ ?>
                   <button class="btn btn-outline-primary " type="submit" name="buy" value="<?= $item->buy_now_price ?>">
-                    Buy Now at € <?= $item->buy_now_price ?>
+                    Buy Now at € <?= number_format($item->buy_now_price, 2, ",", " ") ?>
                   </button>
                   <?php } ?>
                 </div>
@@ -167,9 +167,9 @@
               <?php }if(!$item->is_open_item()){
                 if(count($item->bids)!=0){
                 if($user->get_id()===$item->bids['0']->get_owner()){?>
-                <p> Congratulation! You purchased this item for € <?= $item->bids['0']->get_amount() ?> </p>
+                <p> Congratulation! You purchased this item for € <?= number_format($item->bids['0']->get_amount(), 2, ",", " ") ?> </p>
                 <?php }else {?>
-                <p><?= $item->bids['0']->get_pseudo() ?> Won this item for € <?= $item->bids['0']->get_amount() ?></p> 
+                <p><?= $item->bids['0']->get_pseudo() ?> Won this item for € <?= number_format($item->bids['0']->get_amount(), 2, ",", " ") ?></p> 
               <?php } }  else {?>
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
