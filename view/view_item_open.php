@@ -138,7 +138,7 @@
                 <div class="input-group input-dark mb-3">
                   <span class="input-group-text">€</span>
                   <input
-                    type="number"
+                    type="text"
                     name="min_bid"
                     class="form-control"
                     value="<?= ($item->bids == null) ?  $item->starting_bid : $item->bids['0']->get_amount()+1 ?>"
