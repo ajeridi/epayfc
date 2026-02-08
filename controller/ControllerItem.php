@@ -38,7 +38,7 @@ class ControllerItem extends Controller
 
     public function open(): void
     {
-        $user = $this->get_user_or_redirect();
+        $user = $this->get_user_or_false();
 
         $from = "";
         $priority = 1;
