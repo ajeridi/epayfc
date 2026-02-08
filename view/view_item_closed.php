@@ -14,7 +14,7 @@
             <nav class="navbar bg-navy-gray" data-bs-theme="dark">
                 <div class="container-fluid">
                     <a class="navbar-brand text-blue" href="user/profile"><i class="bi bi-arrow-left"></i> </a>
-                    <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue"><?= $_GET['action'] ?><i class=" bi bi-cart4 fs-4 text-white"></i></span>
+                    <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue"><?= $action ?><i class=" bi bi-cart4 fs-4 text-white"></i></span>
                 </div>
             </nav>
         </header>
@@ -23,19 +23,19 @@
             <div class="container mb-3" style=" margin-top:25px;max-width: 100%;">
                 <div class="row ">
                     <div class="col "  >
-                    <h2> <?= ($_GET['action']=="sales") ? "Completed Sales" : "My Purchases" ?>  </h2>          
-                    <p class="card-text small"><?= ($_GET['action']=="sales") ? "A snapshot of the deals you've wrapped up." : "Track the gear you've successfully secured." ?></p>
+                    <h2> <?= ($action=="sales") ? "Completed Sales" : "My Purchases" ?>  </h2>          
+                    <p class="card-text small"><?= ($action=="sales") ? "A snapshot of the deals you've wrapped up." : "Track the gear you've successfully secured." ?></p>
                     </div>
-                <div class=" col-1 small text-bg-<?= ($_GET['action']=="sales") ?"success":"primary"?> text-center h-25 " style="border-radius:25px;height:auto;width: auto;"><?=  $info['nbr'] ?> <?= ($_GET['action']=="sales") ? "sales": "purchases" ?></div>    
+                <div class=" col-1 small text-bg-<?= ($action=="sales") ?"success":"primary"?> text-center h-25 " style="border-radius:25px;height:auto;width: auto;"><?=  $info['nbr'] ?> <?= ($action=="sales") ? "sales": "purchases" ?></div>    
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-4 mb-3 mb-sm-0 ">
                     <div class="card bg-dark text-white">
                         <div class="card-body">
-                            <h5 class="text-light"><?= ($_GET['action']=="sales") ? "TOTAL REVENUE" : "TOTAL SPENT" ?></h1>
+                            <h5 class="text-light"><?= ($action=="sales") ? "TOTAL REVENUE" : "TOTAL SPENT" ?></h1>
                             <p>€ <?=number_format($info['total'],2,',',' ')?></p>
-                            <p>Across <?=($_GET['action']=="sales") ? $info['nbr']." sales": "pas encore" ?> </p>
+                            <p>Across <?=($action=="sales") ? $info['nbr']." sales": "pas encore" ?> </p>
                         </div>
                     </div>
                 </div>
@@ -44,16 +44,16 @@
                         <div class="card-body">
                             <h5 class="text-light">Average Ticket</h1>
                             <p>€ <?= number_format($info['avg'],2,',',' ') ?></p>
-                            <p><?=($_GET['action']=="sales") ? "Median buyer appetite indicator": "Helps you plan future bids" ?></p>
+                            <p><?=($action=="sales") ? "Median buyer appetite indicator": "Helps you plan future bids" ?></p>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-4 mb-3 mb-sm-0 ">   
                     <div class="card bg-dark text-white">
                         <div class="card-body">
-                            <h5 class="text-light"><?=($_GET['action']=="sales") ? "LOYAL BIDER" : "TOP SELLER" ?></h1>
+                            <h5 class="text-light"><?=($action=="sales") ? "LOYAL BIDER" : "TOP SELLER" ?></h1>
                             <p><?= $nom ?></p>
-                            <p><?=($_GET['action']=="sales") ? "Most recurring winning bidder" : "Who you've bought from the most" ?></p>
+                            <p><?=($action=="sales") ? "Most recurring winning bidder" : "Who you've bought from the most" ?></p>
                         </div>
                     </div>
                 </div>
@@ -64,12 +64,12 @@
                         <?php
                         foreach ($salesItem as $item) { ?>
                                 <div class="col-2  " >
-                                    <a href="item/open/<?= $item->id?>/from-<?= $_GET['action'] ?>" style="text-decoration: none;">
+                                    <a href="item/open/<?= $item->id?>/from-<?= $action ?>" style="text-decoration: none;">
                                         <div class="card border-0" style="width: 18rem;">
                                             <div class="card-head">    
-                                            <img src='<?=$item->get_path()?>' class="card-img-top" alt="image item">
+                                            <img src='<?=$item->get_path() == "" ? "uploads/items/default.jpg" : $item->get_path()?>' class="card-img-top" alt="image item">
                                             <div class="card-img-overlay">
-                                                <?php if ($_GET['action']=="purchases") { ?>
+                                                <?php if ($action=="purchases") { ?>
                                                             <span class="badge rounded-pill text-bg-success"><i class="bi bi-trophy"></i> Highest Bidder</span>
                                                 <?php }?>
                                                 <div class="float-end d-flex flex-column gap-2 h-50">
@@ -77,10 +77,10 @@
                                                         if ($item->starting_bid != null){?>
                                                             <span class="badge rounded-pill" style="background-color: #f59e0c ; color: white;"><i class="ti ti-gavel"></i> Auction</span>
                                                     <?php  }
-                                                        if ($item->starting_bid != null OR $item->buy_now_price != null){?>
+                                                        if ( $item->buy_now_price != null){?>
                                                             <span class="badge rounded-pill text-bg-primary mb-auto"><i class="bi bi-bag"></i> Buy Now</span>
                                                         <?php } ?>    
-                                                            <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_nomber_of_pictures() ?> images</span>
+                                                            <span class="badge rounded-pill text-bg-dark mt-auto"><i class="bi bi-images"></i> <?= $item->get_number_of_pictures() ?> images</span>
                                                 </div>
                                             </div>
                                             </div>
@@ -107,12 +107,12 @@
                                                 <span class="card-text text-tertiary  fw-bold"><i class="bi bi-clock"></i> Closed</span>
                                             </div>
                                             <div class="card-footer text-light " style="background-color: #1e1231;" >
-                                             <?php if($_GET['action']=="sales"){?>  
-                                               <p><span><i class="bi bi-currency-dollar fs-5"> <?php } else {?><p><span><i class="bi bi-tag fs-5"><?php } ?> </i><?= ($_GET['action']=="sales") ? "Final price € ".number_format($item->get_max_bid(),2,',',' ') : "Paid ".number_format($item->get_max_bid(),2,',',' ') ?> </span></p>
-                                              <?php if($_GET['action']=="sales") {?>  <p><span><i class="bi bi-trophy"></i> <?= User::get_pseudo_by_id($item->bids['0']->owner) ?></span></p>
+                                             <?php if($action=="sales"){?>  
+                                               <p><span><i class="bi bi-currency-dollar fs-5"> <?php } else {?><p><span><i class="bi bi-tag fs-5"><?php } ?> </i><?= ($action=="sales") ? "Final price € ".number_format($item->get_max_bid(),2,',',' ') : "Paid ".number_format($item->get_max_bid(),2,',',' ') ?> </span></p>
+                                              <?php if($action=="sales") {?>  <p><span><i class="bi bi-trophy"></i> <?= User::get_pseudo_by_id($item->bids['0']->owner) ?></span></p>
                                                 <?php } ?>
                                                 
-                                                <p><span><i class="bi bi-clock fs-5"></i> Closed on <?= $item->bids['0']->created_at ?> </span></p>
+                                                <p><span><i class="bi bi-clock fs-5"></i> Closed on <?= $item->closed_at()?> </span></p>
 
                                             </div>
                                         </div>

@@ -13,7 +13,7 @@ class ControllerTime extends Controller {
         (new View("time"))->show();
     }
 
-    private function redirect_back() {
+    private function redirect_back() : void  {
         // Redirect back to the same page 
         $referer = $_SERVER['HTTP_REFERER'] ?? '';
         if ($referer) {

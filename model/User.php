@@ -51,16 +51,7 @@ class User extends Model {
         }
         return $errors;
     }
-     public function is_heigth_bider(int $item_id) : bool {
-        $query=self::execute("SELECT b.owner FROM bids b where b.item = :item_id order by b.created_at DESC",["item_id"=>$item_id]);
-        $data=$query->fetch();
-        if($query->rowCount()!=0 && $data['owner'] === $this->id){
-            return true; 
-        } else {
-            return false ;
-        }
-    }
-
+   
 
     public static function get_user_by_email(string $email): User | false{
         $query =self::execute("SELECT * FROM users where email= :email",["email"=>$email]);
@@ -116,7 +107,7 @@ class User extends Model {
 
     private function validate_full_name() : array {
         $errors = [];
-        if (strlen($this->full_name) < 3){
+        if (strlen($this->full_name) < Configuration::get("name_min_length")){
             $errors[] = "Full name must be at least 3 characters long.";
         }
         if (!$this->is_unique_full_name($this->full_name)){
@@ -127,7 +118,7 @@ class User extends Model {
 
     private function validate_username() : array {
         $errors = [];
-        if (strlen($this->pseudo) < 3 || strlen($this->pseudo) > 30){
+        if (strlen($this->pseudo) < Configuration::get("name_min_length") || strlen($this->pseudo) > Configuration::get("name_max_length")){
             $errors[] = "Username must be between 3 and 30 characters long.";
         }
         if (!$this->is_unique_pseudo($this->pseudo)){
@@ -232,5 +223,12 @@ public function is_unique_full_name() : bool {
         $data=$query->fetch();
         return $data['role'];
     }
+
+    public function has_profile_picture() : bool{
+        $sql = "SELECT picture_path FROM users WHERE id = :user_id";
+        $query = self::execute($sql, ["user_id" => $this->id]);
+        return $query->fetchColumn() != null;
+    }
+
 }
 ?>

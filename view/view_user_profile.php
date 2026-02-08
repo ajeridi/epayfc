@@ -13,17 +13,17 @@
      <header>
         <header>
             <!-- Barre  -->
-            <nav class="navbar bg-navy-gray" data-bs-theme="dark"> <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Profile 🛒 </div> </nav>
+            <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark"> <div class="container-fluid justify-content-center text-blue text-decoration-bold fw-bold fs-4 "> Profile 🛒 </div> </nav>
          </header>   
 
     </header>
-    <body class="bg-navy"> 
+    <body class="bg-navy" style="margin-top: 70px;"> 
         <main class="container mt-3" style="margin-bottom: 150px;">
             <!-- Information utilisateur !-->
             <div class="container mb-3">
                 <div class="card text-center bg-dark">
                     <div class="card-body container-fluid justify-content-center text-white">
-                        <img src="<?= $user->get_picture_path() ?>"  class="avatar rounded-circle"> 
+                        <img src="<?= $user->get_picture_path() == null ? 'https://cdn.jsdelivr.net/npm/bootstrap-icons/icons/person-circle.svg' : $user->get_picture_path() ?>" width="80" height="80" class="avatar rounded-circle"> 
                         <h5 class="card-text"><?= $user->get_full_name(); ?></p>
                         <p class="card-text small">@<?= $user->get_pseudo() ?></p>
                         <p class="card-text small"><?= $user->get_email()?></p>
