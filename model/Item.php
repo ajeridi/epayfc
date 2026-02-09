@@ -25,17 +25,17 @@ class Item extends Model
 {
 
     public function __construct(
-        public int $id,
-        public string $title,
-        public int $owner,
-        public string $created_at,
-        public int $duration_days,
-        public ?string $pseudo,
-        public ?string $description = null,
-        public ?float $buy_now_price = null,
-        public ?float $starting_bid = null,
-        public ?array $bids = [],
-        public ?array $pictures = []
+        private int $id,
+        private string $title,
+        private int $owner,
+        private string $created_at,
+        private int $duration_days,
+        private ?string $pseudo,
+        private ?string $description = null,
+        private ?float $buy_now_price = null,
+        private ?float $starting_bid = null,
+        private ?array $bids = [],
+        private ?array $pictures = []
     ) {
         $this->id = $id;
         $this->title = $title;
@@ -47,6 +47,51 @@ class Item extends Model
         $this->buy_now_price = $buy_now_price;
         $this->starting_bid = $starting_bid;
     }
+
+    public function get_id() : int {
+        return $this->id;
+    }
+
+    public function get_title() : string {
+        return $this->title;
+    }
+
+    public function get_owner() : int {
+        return $this->owner;
+    }
+
+    public function get_created_at() : string {
+        return $this->created_at;
+    }
+
+    public function get_duration_days() : int {
+        return $this->duration_days;
+    }
+
+    public function get_pseudo() : string | null {
+        return $this->pseudo;
+    }
+
+    public function get_description() : string | null {
+        return $this->description;
+    }
+
+    public function get_buy_now_price() : float | null {
+        return $this->buy_now_price;
+    }
+
+    public function get_starting_bid() : float | null {
+        return $this->starting_bid;
+    }
+
+    public function get_bids() : array | null {
+        return $this->bids;
+    }
+    
+    public function get_pictures(): array | null {
+        return $this->pictures;
+    }
+    
     private static function build_Item(array | bool $array): Item
     {
         if (is_bool($array)) {
@@ -219,10 +264,6 @@ class Item extends Model
         return Picture::get_pictures($this->id);
     }
 
-    public function get_pictures(): array
-    {
-        return $this->pictures;
-    }
 
     public function get_picture(int $priority): Picture
     {

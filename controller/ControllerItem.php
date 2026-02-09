@@ -56,11 +56,11 @@ class ControllerItem extends Controller
         } else {
             throw new Exception("No Item specified or Item not found");
         }
-        if (!$item->is_open_item() && $user->get_id() !=  $item->owner &&  (count($item->bids) == 0 || $user->get_id() != $item->bids['0']->owner)) {
+        if (!$item->is_open_item() && $user->get_id() !=  $item->get_owner() &&  (count($item->get_bids()) == 0 || $user->get_id() != $item->get_bids()['0']->owner)) {
             throw new Exception("This Item seem to not be yours.");
         } else {
-            $owner_picture = User::get_path_picture($item->owner);
-            $owner_role = User::get_role_by_id($item->owner);
+            $owner_picture = User::get_path_picture($item->get_owner());
+            $owner_role = User::get_role_by_id($item->get_owner());
 
             (new View("item_open"))->show(["item" => $item, "owner_picture" => $owner_picture, "owner_role" => $owner_role, "pictures" => $pictures, "user" => $user, "from" => $from, "priority" => $priority]);
         }
@@ -96,16 +96,16 @@ class ControllerItem extends Controller
 
         if($item!==null){
         
-            $info['id']=$item->id;
-            $info['title'] = $first ? $item->title : Tools::sanitize($_POST['title']) ;
-            $info['description'] =$first ? $item->description :Tools::sanitize($_POST['description']);
-            $info['duration_days'] =$first ? $item->duration_days : Tools::sanitize($_POST['duration_days']);;
-            $info['starting_bid'] =$first ?  $item->starting_bid :Tools::sanitize($_POST['starting_bid']); ;
-            if($item->starting_bid != null){
-                $info['buy_now_price'] = $first ? $item->buy_now_price : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']); ;
+            $info['id']=$item->get_id();
+            $info['title'] = $first ? $item->get_title() : Tools::sanitize($_POST['title']) ;
+            $info['description'] =$first ? $item->get_description() :Tools::sanitize($_POST['description']);
+            $info['duration_days'] =$first ? $item->get_duration_days() : Tools::sanitize($_POST['duration_days']);;
+            $info['starting_bid'] =$first ?  $item->get_starting_bid() :Tools::sanitize($_POST['starting_bid']); ;
+            if($item->get_starting_bid() != null){
+                $info['buy_now_price'] = $first ? $item->get_buy_now_price() : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']); ;
                 $info['saleprice']=$first ? null :  $info['saleprice'] = Tools::sanitize($_POST['saleprice']);
             }else {
-                $info['saleprice'] =  $first ? $item->buy_now_price :$info['saleprice'] = Tools::sanitize($_POST['saleprice']);
+                $info['saleprice'] =  $first ? $item->get_buy_now_price() :$info['saleprice'] = Tools::sanitize($_POST['saleprice']);
                 $info['buy_now_price']= $first ? null : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']); 
             }
             
@@ -132,7 +132,7 @@ class ControllerItem extends Controller
             $this->index();
         } else {
             $item=Item::get_item_by_id($_GET['param1']);           
-            if($item->owner!= $user->get_id() || !$item->is_open_item() ||count($item->bids)!=0){
+            if($item->get_owner()!= $user->get_id() || !$item->is_open_item() ||count($item->get_bids())!=0){
                 throw new Exception("you can edit this ");
                 return;
             }
@@ -201,11 +201,11 @@ class ControllerItem extends Controller
             $item_id = Tools::sanitize($_GET['param1']);
             $item = Item::get_item_by_id($item_id);
 
-            if ($item->owner != $user->get_id() || count($item->bids) != 0 || !$item->is_open_item()) {
+            if ($item->get_owner() != $user->get_id() || count($item->get_bids()) != 0 || !$item->is_open_item()) {
                 throw new Exception("You can't delete this item ");
             }
-            $owner = User::get_full_name_by_id($item->owner);
-            (new View("delete_confirm"))->show(["owner" => $owner, "title" => $item->title, "id" => $item_id]);
+            $owner = User::get_full_name_by_id($item->get_owner());
+            (new View("delete_confirm"))->show(["owner" => $owner, "title" => $item->get_title(), "id" => $item_id]);
         }
     }
     public function delete_item(): void
@@ -214,7 +214,7 @@ class ControllerItem extends Controller
         $item_id = Tools::sanitize($_GET['param1']);
         $item = Item::get_item_by_id($item_id);
 
-        if ($item->owner != $user->get_id() || count($item->bids) != 0 || !$item->is_open_item()) {
+        if ($item->get_owner() != $user->get_id() || count($item->get_bids()) != 0 || !$item->is_open_item()) {
             throw new Exception("You can't delete this item ");
         } else {
             $this->delete_item_files($item);
@@ -227,7 +227,7 @@ class ControllerItem extends Controller
         foreach($item->get_pictures() as $picture) {
             ImageUtils::delete_image_files($picture->get_path());
         }
-        rmdir("uploads/items/$item->id");
+        rmdir("uploads/items/".$item->get_id());
     }
 
 
@@ -247,12 +247,12 @@ class ControllerItem extends Controller
                     $this->upload_image($item, $image);
             }
             if (isset($_POST["move"])) { // si on a clique sur la fleche de gauche
-                $this->swap_priority($item->id, $_POST["move"]);
+                $this->swap_priority($item->get_id(), $_POST["move"]);
             } else if (isset($_POST["delete"])) {
                 $this->delete_image($item, $_POST["delete"]);
             }
             if (count($_POST) != 0) // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
-                $this->redirect("item", "manage_images", "$item->id");
+                $this->redirect("item", "manage_images", "".$item->get_id());
             (new View("manage_images"))->show(["user" => $user, "item" => $item, "errors" => $errors]);
         }
         else{
@@ -268,17 +268,17 @@ class ControllerItem extends Controller
         // redimensionner le fichier en deux images une en 1080p et une autre en 360px 
         $formatted_images = $this->create_new_images($image);
         // sauvegarde des nouvelles images dans le repertoire uploads
-        $new_image_path = $this->make_image_path($image, $item->id);
+        $new_image_path = $this->make_image_path($image, $item->get_id());
         $this->save_new_images($formatted_images, $new_image_path);
         // on l'insere dans la db
         $item->upload_image($new_image_path);
-        $this->redirect("item", "manage_images", "$item->id");
+        $this->redirect("item", "manage_images", "".$item->get_id());
     }
 
     private function create_dir_if_not_exists(Item $item): void
     {
         if ($item->get_number_of_pictures() == 0)
-            mkdir("uploads/items/$item->id");
+            mkdir("uploads/items/".$item->get_id());
     }
 
     private function create_new_images(array $image): array
@@ -320,10 +320,10 @@ class ControllerItem extends Controller
 
     private function check_for_empty_picture_dir(Item $item): void
     {
-        $item = Item::get_item_by_id($item->id);
+        $item = Item::get_item_by_id($item->get_id());
         // si le dossier est vide, donc nb_pictures == 0, on le supprime
         if ($item->get_number_of_pictures() == 0)
-            rmdir("uploads/items/$item->id");
+            rmdir("uploads/items/".$item->get_id());
     }
 
     public  function sales() : void

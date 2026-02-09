@@ -2,7 +2,7 @@
 <html lang="en">
      <head>
         <meta charset="UTF-8">
-        <title>🛒 <?= $item->title ?> </title>
+        <title>🛒 <?= $item->get_title() ?> </title>
         <base href="<?= $web_root ?>">
          <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -36,10 +36,10 @@
             <div class="card-body">
               <div class="d-flex justify-content-between gap-3">
                 <div>
-                  <div class="h5 mb-1"><?= $item->title ?></div>
-                  <div class="text-muted small mb-2"><?= $item->description ?></div>
+                  <div class="h5 mb-1"><?= $item->get_title() ?></div>
+                  <div class="text-muted small mb-2"><?= $item->get_description() ?></div>
                   <div class="text-muted small">
-                    <div><span class="label">Start:</span> <?= $item->created_at ?></div>
+                    <div><span class="label">Start:</span> <?= $item->get_created_at() ?></div>
                     <?php 
                     if($item->is_open_item()){
                     ?>
@@ -49,7 +49,7 @@
                       <?php } ?>
                   </div>
                 </div>
-                <?php if($item->starting_bid != null){?>
+                <?php if($item->get_starting_bid() != null){?>
                 <span class="badge badge-pill">Auction</span>
                 <?php } ?>
               </div>
@@ -63,7 +63,7 @@
             <div class="thumbs d-flex gap-2 flex-wrap">
               <?php
                 foreach ($pictures as $picture) { ?>
-                  <a class="thumb <?= $picture->get_priority() == 1 ? 'active' : '' ?>"  href="item/open/<?= $item->id?>/from-<?= $from ?>/<?= $picture->get_priority() ?>">
+                  <a class="thumb <?= $picture->get_priority() == 1 ? 'active' : '' ?>"  href="item/open/<?= $item->get_id()?>/from-<?= $from ?>/<?= $picture->get_priority() ?>">
                     <img src="<?= $picture->get_thumbnail_path() ?>" alt="thumb">
                   </a>
               <?php } ?>
@@ -75,11 +75,11 @@
             <div class="d-flex align-items-center justify-content-between px-3 pt-3">
               <div class="section-title mb-0">Bid History</div>
           
-              <span class="badge badge-dark"><?= count($item->bids)?> entries</span>
+              <span class="badge badge-dark"><?= count($item->get_bids())?> entries</span>
             </div>
 
             <div class="list-group list-group-flush list-dark mt-3">
-              <?php foreach ($item->bids as $bid){ ?>
+              <?php foreach ($item->get_bids() as $bid){ ?>
                 <div class="list-group-item">
                   <div class="d-flex justify-content-between align-items-start">
                     <div>
@@ -103,45 +103,45 @@
           <div class="card card-dark border-0">
             <div class="card-body">
               <div class="section-title mb-3">Pricing</div>
-              <?php if($item->starting_bid!= null) {?>
+              <?php if($item->get_starting_bid() != null) {?>
               <div class="d-flex justify-content-between small mb-0">
                 <span class="text-muted">Current Bid</span>
                 <span class="price-green fw-semibold">
-                  <?php if($item->bids==NULL){?>
-                  <i class="bi bi-currency-euro"></i><?= number_format($item->starting_bid, 2, ",", " ") ?>
+                  <?php if($item->get_bids() ==NULL){?>
+                  <i class="bi bi-currency-euro"></i><?= number_format($item->get_starting_bid(), 2, ",", " ") ?>
                 </span>
               </div>
                 <div class="d-flex justify-content-between small mb-2">
-                <span class="text-muted">starting at € <?= number_format($item->starting_bid, 2, ",", " ") ?> </span>    
+                <span class="text-muted">starting at € <?= number_format($item->get_starting_bid(), 2, ",", " ") ?> </span>    
                 </div>
                   <?php }else {?>
-                    <i class="bi bi-currency-euro"></i><?= number_format($item->bids['0']->get_amount(), 2, ",", " ") ?>
+                    <i class="bi bi-currency-euro"></i><?= number_format($item->get_bids()['0']->get_amount(), 2, ",", " ") ?>
                 </span>
               </div>       
                     <?php } ?> 
                 <?php } ?>           
               <div class="d-flex justify-content-between small mb-3">
                 
-                <?php if($item->buy_now_price != null){ ?>
+                <?php if($item->get_buy_now_price() != null){ ?>
                 <span class="text-muted">Buy Now</span>
                 <span class="fw-semibold">
-                  <i class="bi bi-currency-euro"></i><?= number_format($item->buy_now_price, 2, ",", " ") ?>
+                  <i class="bi bi-currency-euro"></i><?= number_format($item->get_buy_now_price(), 2, ",", " ") ?>
                 </span>
                 <?php } ?>    
               </div>
             
               <hr class="hr-soft">
-              <fieldset <?php if($user == false || $user->get_id() == $item->owner ){?> disabled <?php } ?>>
-              <?php  if($item->starting_bid !=null) {?>
+              <fieldset <?php if($user == false || $user->get_id() == $item->get_owner() ){?> disabled <?php } ?>>
+              <?php  if($item->get_starting_bid() !=null) {?>
               <?php if($item->is_open_item()){?>
-              <form method="post" action="item/bid/<?= $item->id?>">
+              <form method="post" action="item/bid/<?= $item->get_id()?>">
                 <div class="input-group input-dark mb-3">
                   <span class="input-group-text">€</span>
                   <input
                     type="text"
                     name="min_bid"
                     class="form-control"
-                    value="<?= ($item->bids == null) ?  $item->starting_bid : $item->bids['0']->get_amount()+1 ?>"
+                    value="<?= ($item->get_bids() == null) ?  $item->get_starting_bid() : $item->get_bids()['0']->get_amount()+1 ?>"
                     required
                   >
                 </div>
@@ -149,32 +149,32 @@
                 <div class="d-grid gap-2">
                   <button class="btn btn-success" type="submit">Place Bid</button>
               </form>  
-                  <?php if($item->buy_now_price != null && $item->starting_bid !=null){ ?>
-                  <button class="btn btn-outline-primary " type="submit" name="buy" value="<?= $item->buy_now_price ?>">
-                    Buy Now at € <?= number_format($item->buy_now_price, 2, ",", " ") ?>
+                  <?php if($item->get_buy_now_price() != null && $item->get_starting_bid() !=null){ ?>
+                  <button class="btn btn-outline-primary " type="submit" name="buy" value="<?= $item->get_buy_now_price() ?>">
+                    Buy Now at € <?= number_format($item->get_buy_now_price(), 2, ",", " ") ?>
                   </button>
                   <?php } ?>
                 </div>
               <?php } ?>
               <?php } ?>
-              <?php  if($item->starting_bid==null && $item->is_open_item() ) {?>
-                <form method="post" action="item/bid/<?= $item->id?>">
+              <?php  if($item->get_starting_bid() ==null && $item->is_open_item() ) {?>
+                <form method="post" action="item/bid/<?= $item->get_id()?>">
                 <div class="d-grid gap-2">
-                 <button class="btn btn-outline-primary " type="submit" name="buy" value="<?= $item->buy_now_price ?>">Buy Now</button>
+                 <button class="btn btn-outline-primary " type="submit" name="buy" value="<?= $item->get_buy_now_price() ?>">Buy Now</button>
                 </div>
                 </form>
               </fieldset>   
               <?php }if(!$item->is_open_item()){
-                if(count($item->bids)!=0){
-                if($user->get_id()===$item->bids['0']->get_owner()){?>
-                <p> Congratulation! You purchased this item for € <?= number_format($item->bids['0']->get_amount(), 2, ",", " ") ?> </p>
+                if(count($item->get_bids())!=0){
+                if($user->get_id()===$item->get_bids()['0']->owner){?>
+                <p> Congratulation! You purchased this item for € <?= number_format($item->get_bids()['0']->get_amount(), 2, ",", " ") ?> </p>
                 <?php }else {?>
-                <p><?= $item->bids['0']->get_pseudo() ?> Won this item for € <?= number_format($item->bids['0']->get_amount(), 2, ",", " ") ?></p> 
+                <p><?= $item->get_bids()['0']->get_pseudo() ?> Won this item for € <?= number_format($item->get_bids()['0']->get_amount(), 2, ",", " ") ?></p> 
               <?php } }  else {?>
                 <p>This listing ended whitout a buyer</p>
                 <?php } }?> 
 
-                <?php if($user == true && $user->get_pseudo() === $item->owner && $item->is_open_item()){?>
+                <?php if($user == true && $user->get_pseudo() === $item->get_owner() && $item->is_open_item()){?>
                 <p>You cannot bid on your own listing</p>
                 <?php } ?> 
                 <?php if($user == false && $item->is_open_item()){?>
@@ -191,29 +191,29 @@
               <div class="d-flex align-items-center gap-3">
                 <div class="avatar rounded-circle"><img src="<?= $owner_picture ?>"  class="w-100"></div>
                 <div>
-                  <div class="fw-semibold"><?= $item->pseudo  ?></div>
+                  <div class="fw-semibold"><?= $item->get_pseudo()  ?></div>
                   <div class="text-muted small"><?= $owner_role ?></div>
                 </div>
               </div>
             </div>
           </div>
-          <?php if($user == true && $user->get_id() === $item->owner  && $item->is_open_item()){?>
+          <?php if($user == true && $user->get_id() === $item->get_owner()  && $item->is_open_item()){?>
           <div class="card card-dark border-0 mt-3">
             <div class="card-body">
               <div class="section-title mb-3">Manage Your Item</div>
                 <div class="row g-3">
                 <div class="d-grid gap-2">  
-                  <a class="btn btn-outline-success <?php if(count($item->bids)!=0){?>disabled <?php } ?> "  href="item/edit/<?= $item->id?>">
+                  <a class="btn btn-outline-success <?php if(count($item->get_bids())!=0){?>disabled <?php } ?> "  href="item/edit/<?= $item->get_id()?>">
                     Edit item Details
                     </a>
                 </div>
                 <div class="d-grid gap-2">    
-                    <a class="btn btn-outline-info" href="item/manage_images/<?= $item->id?>">
+                    <a class="btn btn-outline-info" href="item/manage_images/<?= $item->get_id()?>">
                       Manage Images
                     </a>
                 </div>
                 <div class="d-grid gap-2">    
-                    <a class="btn btn-outline-danger  <?php if(count($item->bids)!=0){?>disabled <?php } ?> " href="item/delete/<?= $item->id ?>">
+                    <a class="btn btn-outline-danger  <?php if(count($item->get_bids())!=0){?>disabled <?php } ?> " href="item/delete/<?= $item->get_id() ?>">
                       Delete Item 
                     </a>
                 </div>    
