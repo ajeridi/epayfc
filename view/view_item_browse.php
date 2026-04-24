@@ -14,16 +14,37 @@
     <script src="lib\jquery-4.0.0.min.js" type="text/javascript"></script>
     <script>
         let search_box, search_input;
+        let items_participated_in = <?= json_encode($items_participated_in) ?>;
+        let other_available_items = <?= json_encode($other_available_items) ?>;
 
         $(function () {
             search_box = $("#search"); // on prend la reference vers l'element qui va contenir la search bar
             createSearchBar(); // on cree la searchbar d'abord, puis apres on prend la ref vers le input
             search_input = $("#search_input");
+
+            /*
+            // creation des carte des items
+            displayItemsParticipatedIn();
+            displayOtherAvailableItems();
+            */
+
         });
 
         function createSearchBar() {
             let html = '<span class="input-group-text" id="searchHelp"><i class="bi bi-search"></i></span><input id="search_input" type="text" class="form-control d-block" name="search" placeholder="Search items..." aria-label="Search" aria-describedby="searchHelp" value="">';
             search_box.html(html);
+        }
+
+        function displayItemsParticipatedIn() {
+            // va display les carte des items
+            let html = "";
+            for (let item in items_participated_in){
+                createItemCard(item);
+            }
+        }
+
+        function createItemCard(item){
+            let html = '<div class="col-auto">';
         }
 
     </script>
