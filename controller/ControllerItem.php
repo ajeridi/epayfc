@@ -360,4 +360,67 @@ class ControllerItem extends Controller
         }
         return $nom;
     }
+
+
+
+    // SERVICES
+    public function is_highest_bidder_service() : void {
+        if ($this->get_user_or_false()) {
+            $item_id = "";
+            $user_id = "";
+            if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+                $item_id = $_GET["param1"];
+            }
+            if (isset($_GET["param2"]) && $_GET["param2"] != ""){
+                $user_id = $_GET["param2"];
+            }
+
+            $item = Item::get_item_by_id($item_id);
+            echo $item->is_highest_bidder($user_id);
+        }
+        echo false;
+    }
+
+
+    public function has_bidder_service() : void {
+        if ($this->get_user_or_false()) {
+            $item_id = "";
+            $user_id = "";
+            if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+                $item_id = $_GET["param1"];
+            }
+            if (isset($_GET["param2"]) && $_GET["param2"] != ""){
+                $user_id = $_GET["param2"];
+            }
+
+            $item = Item::get_item_by_id($item_id);
+            echo $item->has_bidder($user_id);
+        }
+        echo false;
+    }
+
+    public function is_open_item_service() : void {
+        if ($this->get_user_or_false()) {
+            $item_id = "";
+            if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+                $item_id = $_GET["param1"];
+            }
+            $item = Item::get_item_by_id($item_id);
+            echo $item->is_open_item();
+        }
+        echo false;
+    }
+
+
+    public function get_item_period_service() : void {
+        if ($this->get_user_or_false()) {
+            $item_id = "";
+            if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+                $item_id = $_GET["param1"];
+            }
+            $item = Item::get_item_by_id($item_id);
+            echo $item->get_period();
+        }
+        echo false;
+    }
 }
