@@ -27,29 +27,42 @@
             items_participated_in_container = $("#items_participated_in");
             other_available_items_container = $("#other_available_items");
             // creation des carte des items
-            displayItemsParticipatedIn();
-            displayOtherAvailableItems();
+            displayItems(search_input.val());
+
+
+            search_input.on('input', async function() {
+                displayItems(search_input.val());
+            })
         });
+
+        async function displayItems(search_criteria) {
+            items_participated_in_container.html("");
+            other_available_items_container.html("");
+            displayItemsParticipatedIn(search_criteria);
+            displayOtherAvailableItems(search_criteria);
+        }
 
         function createSearchBar() {
             let html = '<span class="input-group-text" id="searchHelp"><i class="bi bi-search"></i></span><input id="search_input" type="text" class="form-control d-block" name="search" placeholder="Search items..." aria-label="Search" aria-describedby="searchHelp" value="">';
             search_box.html(html);
         }
 
-        async function displayItemsParticipatedIn() {
+        async function displayItemsParticipatedIn(search_criteria) {
             // va display les carte des items
-            items_participated_in.html("");
             for (let item of items_participated_in) { // for respecte mieux le await que le forEach
-                let card = await createItemCard(item);
-                items_participated_in_container.append(card); 
+                if (search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase())) {
+                    let card = await createItemCard(item);
+                    items_participated_in_container.append(card);
+                }
             }
         }
 
-        async function displayOtherAvailableItems() {
-            other_available_items_container.html("");
+        async function displayOtherAvailableItems(search_criteria) {
             for (let item of other_available_items) {
-                let card = await createItemCard(item);
-                other_available_items_container.append(card);
+                if (search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase())) {
+                    let card = await createItemCard(item);
+                    other_available_items_container.append(card);
+                }
             }
         }
 

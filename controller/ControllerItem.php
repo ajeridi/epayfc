@@ -74,15 +74,16 @@ class ControllerItem extends Controller
         if ($_POST) {
             $item_id = $_GET['param1'];
             $amount = ($_POST['buy']) ? $_POST['buy'] : $_POST['min_bid'];
-            
+
             Item::buy($user->get_id(), $item_id, $current_date, $amount);
             $this->redirect("item", "open", $item_id);
         }
         $this->index();
     }
 
-    private function build_errors_array() : array
-    {   $errors[] = [];
+    private function build_errors_array(): array
+    {
+        $errors[] = [];
         $errors['title'] = [];
         $errors['description'] = [];
         $errors['duration_days'] = [];
@@ -91,96 +92,98 @@ class ControllerItem extends Controller
         $errors['saleprice'] = [];
         return $errors;
     }
-    private function build_info_array(Item | null  $item,bool $first ) : array
+    private function build_info_array(Item | null  $item, bool $first): array
     {
-        $info =[]; 
+        $info = [];
 
-        if($item!==null){
-        
-            $info['id']=$item->get_id();
-            $info['title'] = $first ? $item->get_title() : Tools::sanitize($_POST['title']) ;
-            $info['description'] =$first ? $item->get_description() :Tools::sanitize($_POST['description']);
-            $info['duration_days'] =$first ? $item->get_duration_days() : Tools::sanitize($_POST['duration_days']);;
-            $info['starting_bid'] =$first ?  $item->get_starting_bid() :Tools::sanitize($_POST['starting_bid']); ;
-            if($item->get_starting_bid() != null){
-                $info['buy_now_price'] = $first ? $item->get_buy_now_price() : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']); ;
-                $info['saleprice']=$first ? null :  $info['saleprice'] = Tools::sanitize($_POST['saleprice']);
-            }else {
-                $info['saleprice'] =  $first ? $item->get_buy_now_price() :$info['saleprice'] = Tools::sanitize($_POST['saleprice']);
-                $info['buy_now_price']= $first ? null : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']); 
+        if ($item !== null) {
+
+            $info['id'] = $item->get_id();
+            $info['title'] = $first ? $item->get_title() : Tools::sanitize($_POST['title']);
+            $info['description'] = $first ? $item->get_description() : Tools::sanitize($_POST['description']);
+            $info['duration_days'] = $first ? $item->get_duration_days() : Tools::sanitize($_POST['duration_days']);;
+            $info['starting_bid'] = $first ?  $item->get_starting_bid() : Tools::sanitize($_POST['starting_bid']);;
+            if ($item->get_starting_bid() != null) {
+                $info['buy_now_price'] = $first ? $item->get_buy_now_price() : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']);;
+                $info['saleprice'] = $first ? null :  $info['saleprice'] = Tools::sanitize($_POST['saleprice']);
+            } else {
+                $info['saleprice'] =  $first ? $item->get_buy_now_price() : $info['saleprice'] = Tools::sanitize($_POST['saleprice']);
+                $info['buy_now_price'] = $first ? null : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']);
             }
-            
-        } else  {
-            
-            $info['id']=0; 
-            $info['title']=$first ? null : Tools::sanitize($_POST['title']);
-            $info['description']=$first ? null : Tools::sanitize($_POST['description']);
-            $info['duration_days']=$first ? null : Tools::sanitize($_POST['duration_days']);
-            $info['starting_bid'] =$first ? null : Tools::sanitize($_POST['starting_bid']);
-            $info['buy_now_price']=$first ? null : Tools::sanitize($_POST['buy_now_price']);
-            $info['saleprice']=$first ? null : Tools::sanitize($_POST['saleprice']);
+        } else {
+
+            $info['id'] = 0;
+            $info['title'] = $first ? null : Tools::sanitize($_POST['title']);
+            $info['description'] = $first ? null : Tools::sanitize($_POST['description']);
+            $info['duration_days'] = $first ? null : Tools::sanitize($_POST['duration_days']);
+            $info['starting_bid'] = $first ? null : Tools::sanitize($_POST['starting_bid']);
+            $info['buy_now_price'] = $first ? null : Tools::sanitize($_POST['buy_now_price']);
+            $info['saleprice'] = $first ? null : Tools::sanitize($_POST['saleprice']);
+        }
+
+        return $info;
     }
 
-        return $info ;
-    }
-
-    public function edit() : void 
+    public function edit(): void
     {
-        $action='edit';
-        $user=$this->get_user_or_redirect();
-        
-        if(!isset($_GET['param1']) || !is_numeric($_GET['param1'])){
+        $action = 'edit';
+        $user = $this->get_user_or_redirect();
+
+        if (!isset($_GET['param1']) || !is_numeric($_GET['param1'])) {
             $this->index();
         } else {
-            $item=Item::get_item_by_id($_GET['param1']);           
-            if($item->get_owner()!= $user->get_id() || !$item->is_open_item() ||count($item->get_bids())!=0){
+            $item = Item::get_item_by_id($_GET['param1']);
+            if ($item->get_owner() != $user->get_id() || !$item->is_open_item() || count($item->get_bids()) != 0) {
                 throw new Exception("you can edit this ");
                 return;
             }
-        }  
-        if(!$_POST){
-            $item=Item::get_item_by_id($_GET['param1']);  
+        }
+        if (!$_POST) {
+            $item = Item::get_item_by_id($_GET['param1']);
 
-            $errors=$this::build_errors_array();
-            $info=$this::build_info_array($item,true);
+            $errors = $this::build_errors_array();
+            $info = $this::build_info_array($item, true);
 
-            (new View('item_edit'))->show(['info'=>$info,'errors'=>$errors,'action'=>$action]);
+            (new View('item_edit'))->show(['info' => $info, 'errors' => $errors, 'action' => $action]);
         } else {
 
-            $info=$this::build_info_array($item,false);
+            $info = $this::build_info_array($item, false);
             $errors = $this::build_errors_array();
-            $errors=Item::validat_item($user->get_id(), $info,$errors);
-              if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days'])==0
-               && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0){
-                Item::put_edition_item( $user->get_id(), $info);
-                 $this->redirect("item", "open",$info['id'], "from-items");
-               } else {
+            $errors = Item::validat_item($user->get_id(), $info, $errors);
+            if (
+                count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days']) == 0
+                && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0
+            ) {
+                Item::put_edition_item($user->get_id(), $info);
+                $this->redirect("item", "open", $info['id'], "from-items");
+            } else {
                 (new View("item_edit"))->show(['info' => $info, 'errors' => $errors]);
-               }      
+            }
         }
-        
     }
 
 
-    public function add() :  void
+    public function add(): void
     {
-        $action='add';
+        $action = 'add';
         $user = $this->get_user_or_redirect();
-        $errors=$this::build_errors_array();
-        if(!$_POST){
-            $info=$this::build_info_array(null,true);
-            (new View("item_edit"))->show(['info' => $info, 'errors' => $errors,'action'=>$action]);
-        } else{
-            $info=$this::build_info_array(null,false);
-            $errors=Item::validat_item($user->get_id(),$info,$errors);
-            if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days'])==0
-               && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0){
-                $info['id']=Item::put_edition_item( $user->get_id(), $info);
-                 $this->redirect("item", "open",$info['id']);
-               } else {
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors,'action'=>$action]);
-               }      
-        }   
+        $errors = $this::build_errors_array();
+        if (!$_POST) {
+            $info = $this::build_info_array(null, true);
+            (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action]);
+        } else {
+            $info = $this::build_info_array(null, false);
+            $errors = Item::validat_item($user->get_id(), $info, $errors);
+            if (
+                count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days']) == 0
+                && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0
+            ) {
+                $info['id'] = Item::put_edition_item($user->get_id(), $info);
+                $this->redirect("item", "open", $info['id']);
+            } else {
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action]);
+            }
+        }
     }
 
 
@@ -225,11 +228,12 @@ class ControllerItem extends Controller
         }
     }
 
-    private function delete_item_files(Item $item) : void {
-        foreach($item->get_pictures() as $picture) {
+    private function delete_item_files(Item $item): void
+    {
+        foreach ($item->get_pictures() as $picture) {
             ImageUtils::delete_image_files($picture->get_path());
         }
-        rmdir("uploads/items/".$item->get_id());
+        rmdir("uploads/items/" . $item->get_id());
     }
 
 
@@ -254,11 +258,10 @@ class ControllerItem extends Controller
                 $this->delete_image($item, $_POST["delete"]);
             }
             if (count($_POST) != 0) // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
-                $this->redirect("item", "manage_images", "".$item->get_id());
+                $this->redirect("item", "manage_images", "" . $item->get_id());
             (new View("manage_images"))->show(["user" => $user, "item" => $item, "errors" => $errors]);
-        }
-        else{
-        $this->redirect("item");
+        } else {
+            $this->redirect("item");
         }
     }
 
@@ -274,13 +277,13 @@ class ControllerItem extends Controller
         $this->save_new_images($formatted_images, $new_image_path);
         // on l'insere dans la db
         $item->upload_image($new_image_path);
-        $this->redirect("item", "manage_images", "".$item->get_id());
+        $this->redirect("item", "manage_images", "" . $item->get_id());
     }
 
     private function create_dir_if_not_exists(Item $item): void
     {
         if ($item->get_number_of_pictures() == 0)
-            mkdir("uploads/items/".$item->get_id());
+            mkdir("uploads/items/" . $item->get_id());
     }
 
     private function create_new_images(array $image): array
@@ -307,7 +310,7 @@ class ControllerItem extends Controller
     private function swap_priority(int $item_id, int $post_value): void
     {
         $increment = $post_value < 0 ? -1 : 1;
-        $old_priority = $post_value * $increment; 
+        $old_priority = $post_value * $increment;
         $new_priority = $post_value * $increment + $increment;
         Picture::swap_priorities($item_id, $old_priority, $new_priority);
     }
@@ -325,10 +328,10 @@ class ControllerItem extends Controller
         $item = Item::get_item_by_id($item->get_id());
         // si le dossier est vide, donc nb_pictures == 0, on le supprime
         if ($item->get_number_of_pictures() == 0)
-            rmdir("uploads/items/".$item->get_id());
+            rmdir("uploads/items/" . $item->get_id());
     }
 
-    public  function sales() : void
+    public  function sales(): void
     {
         $user = $this->get_user_or_redirect();
         $action = "sales";
@@ -364,14 +367,15 @@ class ControllerItem extends Controller
 
 
     // SERVICES
-    public function is_highest_bidder_service() : void {
+    public function is_highest_bidder_service(): void
+    {
         if ($this->get_user_or_false()) {
             $item_id = "";
             $user_id = "";
-            if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+            if (isset($_GET["param1"]) && $_GET["param1"] != "") {
                 $item_id = $_GET["param1"];
             }
-            if (isset($_GET["param2"]) && $_GET["param2"] != ""){
+            if (isset($_GET["param2"]) && $_GET["param2"] != "") {
                 $user_id = $_GET["param2"];
             }
 
@@ -382,14 +386,15 @@ class ControllerItem extends Controller
     }
 
 
-    public function has_bidder_service() : void {
+    public function has_bidder_service(): void
+    {
         if ($this->get_user_or_false()) {
             $item_id = "";
             $user_id = "";
-            if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+            if (isset($_GET["param1"]) && $_GET["param1"] != "") {
                 $item_id = $_GET["param1"];
             }
-            if (isset($_GET["param2"]) && $_GET["param2"] != ""){
+            if (isset($_GET["param2"]) && $_GET["param2"] != "") {
                 $user_id = $_GET["param2"];
             }
 
@@ -399,28 +404,26 @@ class ControllerItem extends Controller
         echo false;
     }
 
-    public function is_open_item_service() : void {
-        if ($this->get_user_or_false()) {
-            $item_id = "";
-            if (isset($_GET["param1"]) && $_GET["param1"] != ""){
-                $item_id = $_GET["param1"];
-            }
-            $item = Item::get_item_by_id($item_id);
-            echo $item->is_open_item();
+    public function is_open_item_service(): void
+    {
+        // doit s'afficher en mode invite donc on ne verifie pas si un user est connecte
+        $item_id = "";
+        if (isset($_GET["param1"]) && $_GET["param1"] != "") {
+            $item_id = $_GET["param1"];
         }
-        echo false;
+        $item = Item::get_item_by_id($item_id);
+        echo $item->is_open_item();
     }
 
 
-    public function get_item_period_service() : void {
-        if ($this->get_user_or_false()) {
-            $item_id = "";
-            if (isset($_GET["param1"]) && $_GET["param1"] != ""){
-                $item_id = $_GET["param1"];
-            }
-            $item = Item::get_item_by_id($item_id);
-            echo $item->get_period();
+    public function get_item_period_service(): void
+    {
+        // pas besoin de securite ici, car on en a besoin en mode invite
+        $item_id = "";
+        if (isset($_GET["param1"]) && $_GET["param1"] != "") {
+            $item_id = $_GET["param1"];
         }
-        echo false;
+        $item = Item::get_item_by_id($item_id);
+        echo $item->get_period();
     }
 }
