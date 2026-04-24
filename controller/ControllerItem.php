@@ -24,6 +24,7 @@ class ControllerItem extends Controller
     public function browse(): void
     {
         $user = $this->get_user_or_false();
+        $from = "from-browse";
 
         if ($user != false) { // si $user == false nous sommes en mode invité
             $items_participated_in = Item::get_items_participatedIn($user->get_id());
@@ -32,7 +33,7 @@ class ControllerItem extends Controller
             $items_participated_in = [];
             $other_available_items = Item::get_other_available_item(-1);    // aucun user a l'id -1
         }
-        (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items, "user" => $user]);
+        (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items, "user" => $user, "from" => $from]);
     }
 
 
@@ -190,7 +191,8 @@ class ControllerItem extends Controller
         $active_items = Item::get_user_active_item($user->get_id());
         $closed_unsold_items = Item::get_user_closed_unsold_item($user->get_id());
         $sold_items = Item::get_user_sold_item($user->get_id());
-        (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user" => $user]);
+        $from = "from-items";
+        (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user" => $user, "from" => $from]);
     }
 
 

@@ -1,5 +1,5 @@
 <div class="col-auto">
-    <a href="item/open/<?= $item->get_id() ?>/from-browse" style="text-decoration: none;">
+    <a href="item/open/<?= $item->get_id().($from == "" ? "" : "/".$from) ?>" style="text-decoration: none;">
         <div class="card" style="width: 18rem;">
             <img <?= ($item->get_path() == "") ? "src=uploads/items/default.jpg" :   "src=" . $item->get_thumbnail_path() ?> class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">
             <div class="card-img-overlay">
