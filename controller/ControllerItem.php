@@ -6,6 +6,7 @@ require_once "model/Item.php";
 require_once "framework/Tools.php";
 require_once "model/User.php";
 require_once "utils/ImageUtils.php";
+require_once "utils/EncoderDecoder.php";
 
 
 class ControllerItem extends Controller
@@ -425,5 +426,11 @@ class ControllerItem extends Controller
         }
         $item = Item::get_item_by_id($item_id);
         echo $item->get_period();
+    }
+
+    public function get_encoded_data_service() : void {
+        if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+            echo EncoderDecoder::url_safe_encode($_GET["param1"]);
+        }
     }
 }

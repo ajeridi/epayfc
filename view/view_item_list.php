@@ -67,7 +67,8 @@
         // fonction qui recoit un item json et retourne une carte html de l'item
         async function createItemCard(item) {
             let html = '<div class="col-auto">';
-            html += '<a href="item/open/' + item.id + (from == "" ? '' : '/' + from) + '" style="text-decoration: none;">';
+            let criteria = await $.get("item/get_encoded_data_service/" + search_input.val());
+            html += '<a href="item/open/' + item.id + (from == "" ? '' : '/' + from) + (search_input.val() === "" ? "" : '/' + criteria) + '" style="text-decoration: none;">';
             html += '<div class="card" style="width: 18rem;">';
             html += '<img ' + (!item.pictures || item.pictures.length === 0 || item.pictures[0].path === "" ? "src=uploads/items/default.jpg" : "src=" + item.pictures[0].path) + ' class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">';
             html += '<div class="card-img-overlay">';
