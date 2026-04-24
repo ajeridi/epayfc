@@ -16,9 +16,18 @@ class ControllerItem extends Controller
     {
         $this->browse();
     }
+
+
     public function items(): void
     {
-        $this->redirect("item", "list");
+        $search_criteria = "";
+        if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+            $search_criteria = $_GET["param1"];
+            $this->redirect("item", "list", $search_criteria);
+        }
+        else {
+            $this->redirect("item", "list");
+        }
     }
 
 
@@ -44,6 +53,8 @@ class ControllerItem extends Controller
 
         $from = "";
         $priority = 1;
+        $back_url = "item";
+        $search_criteria = "";
 
         if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) {
             $item = Item::get_item_by_id($_GET["param1"]);
@@ -51,9 +62,15 @@ class ControllerItem extends Controller
 
             if (isset($_GET["param2"])) {
                 $from = substr(stristr($_GET["param2"], "-"), 1);
+                $back_url = $back_url."/".$from;
                 if (isset($_GET["param3"]) && is_numeric($_GET["param3"])) {
                     $priority = $_GET["param3"];
                 }
+                else if (isset($_GET["param3"])) {
+                    $search_criteria = $_GET["param3"];
+                    $back_url = $back_url."/".$search_criteria;                  
+                }
+
             }
         } else {
             throw new Exception("No Item specified or Item not found");
@@ -64,7 +81,7 @@ class ControllerItem extends Controller
             $owner_picture = User::get_path_picture($item->get_owner());
             $owner_role = User::get_role_by_id($item->get_owner());
 
-            (new View("item_open"))->show(["item" => $item, "owner_picture" => $owner_picture, "owner_role" => $owner_role, "pictures" => $pictures, "user" => $user, "from" => $from, "priority" => $priority]);
+            (new View("item_open"))->show(["item" => $item, "owner_picture" => $owner_picture, "owner_role" => $owner_role, "pictures" => $pictures, "user" => $user, "from" => $from, "priority" => $priority, "back_url" => $back_url]);
         }
     }
 
@@ -196,7 +213,13 @@ class ControllerItem extends Controller
         $closed_unsold_items = Item::get_user_closed_unsold_item($user->get_id());
         $sold_items = Item::get_user_sold_item($user->get_id());
         $from = "from-items";
-        (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user" => $user, "from" => $from]);
+
+        //critere de recherche
+        $search_criteria = "";
+        if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+            $search_criteria = EncoderDecoder::url_safe_decode($_GET["param1"]);
+        }
+        (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user" => $user, "from" => $from, "search_criteria" => $search_criteria]);
     }
 
 

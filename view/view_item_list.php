@@ -21,6 +21,7 @@
         let active_items_container, closed_unsold_items_container, sold_items_container;
         let user = <?= json_encode($user) ?>;
         let from = <?= json_encode($from) ?>;
+        let search_criteria = <?= json_encode($search_criteria) ?>;
 
         $(async function() {
             search_box = $("#search"); // on prend la reference vers l'element qui va contenir la search bar
@@ -30,6 +31,9 @@
             closed_unsold_items_container = $("#closed_unsold_items");
             sold_items_container = $("#sold_items");
 
+            if (search_criteria != ""){
+                search_input.val(search_criteria);
+            }
 
             // creation des carte des items
             await displayAllItemCategories(search_input.val())
