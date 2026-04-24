@@ -38,6 +38,7 @@
 
         async function displayItemsParticipatedIn() {
             // va display les carte des items
+            items_participated_in.html("");
             for (let item of items_participated_in) { // for respecte mieux le await que le forEach
                 let card = await createItemCard(item);
                 items_participated_in_container.append(card); 
@@ -45,6 +46,7 @@
         }
 
         async function displayOtherAvailableItems() {
+            other_available_items_container.html("");
             for (let item of other_available_items) {
                 let card = await createItemCard(item);
                 other_available_items_container.append(card);
