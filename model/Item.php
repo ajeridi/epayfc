@@ -21,7 +21,7 @@ function cmp(Item $i1, Item $i2): int
     return ($dates1 > $dates2) ? 1 : -1;
 }
 
-class Item extends Model
+class Item extends Model implements JsonSerializable
 {
 
     public function __construct(
@@ -46,6 +46,24 @@ class Item extends Model
         $this->description = $description;
         $this->buy_now_price = $buy_now_price;
         $this->starting_bid = $starting_bid;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        // converti un item en json
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'owner' => $this->owner,
+            'pseudo' => $this->pseudo,
+            'created_at' => $this->created_at,
+            'duration_days' => $this->duration_days,
+            'description' => $this->description,
+            'buy_now_price' => $this->buy_now_price,
+            'starting_bid' => $this->starting_bid,
+            'bids' => $this->bids,
+            'pictures' => $this->pictures
+        ];
     }
 
     public function get_id() : int {

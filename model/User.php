@@ -1,7 +1,30 @@
 <?php
 require_once "framework/Model.php";
-class User extends Model {
-    public function __construct(private ? int $id, private string $pseudo,private string $hashed_password,private string $email,private string $full_name, private string $role,private ?string $picture_path = null, private ?string $iban=null){}
+class User extends Model implements JsonSerializable{
+    public function __construct(
+        private ? int $id, 
+        private string $pseudo,
+        private string $hashed_password,
+        private string $email,
+        private string $full_name,
+        private string $role,
+        private ?string $picture_path = null,
+        private ?string $iban=null
+    ){}
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+          'id' => $this->id,
+          'pseudo' => $this->pseudo,
+          'hashed_password' => $this->hashed_password, // a voir si je garde le hashed_password, ca m'a l'air peu secure de garder ca 
+          'email' => $this->email,
+          'full_name' => $this->full_name,
+          'role' => $this->role,
+          'picture_path' => $this->picture_path,
+          'iban' => $this->iban
+        ];
+    }
 
     public function get_id(): int {
         return $this->id ;

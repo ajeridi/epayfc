@@ -3,7 +3,7 @@ require_once "framework/Model.php";
 require_once "utils/ImageUtils.php";
 
 
-class Picture extends Model
+class Picture extends Model implements JsonSerializable
 {
 
     public function __construct(
@@ -15,6 +15,15 @@ class Picture extends Model
         $this->item = $item;
         $this->priority = $priority;
         $this->path = $path;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'item' => $this->item,
+            'priority' => $this->priority,
+            'path' => $this->path
+        ];
     }
 
 
