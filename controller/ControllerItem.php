@@ -20,13 +20,14 @@ class ControllerItem extends Controller
 
     public function items(): void
     {
+        // le bouton back dans open from-items renvoie vers item/items
         $search_criteria = "";
-        if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+        if (isset($_GET["param1"]) && $_GET["param1"] != ""){ // si on renvoie un critere de recherche donc item/items/criteria_encoded
             $search_criteria = $_GET["param1"];
-            $this->redirect("item", "list", $search_criteria);
+            $this->redirect("item", "list", $search_criteria); // rediriger vers item/list/criteria_encoded
         }
         else {
-            $this->redirect("item", "list");
+            $this->redirect("item", "list"); // rediriger vers item/list
         }
     }
 
@@ -35,6 +36,7 @@ class ControllerItem extends Controller
     {
         $user = $this->get_user_or_false();
         $from = "from-browse";
+        $search_criteria = "";
 
         if ($user != false) { // si $user == false nous sommes en mode invité
             $items_participated_in = Item::get_items_participatedIn($user->get_id());
@@ -43,7 +45,12 @@ class ControllerItem extends Controller
             $items_participated_in = [];
             $other_available_items = Item::get_other_available_item(-1);    // aucun user a l'id -1
         }
-        (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items, "user" => $user, "from" => $from]);
+
+        if (isset($_GET["param1"]) && $_GET["param1"] != ""){ // si on arrive sur browse avec un critere de recherche
+            $search_criteria = EncoderDecoder::url_safe_decode($_GET["param1"]); // decodage du critere de recherche pour le mettre dans le champs de recherche
+        }
+
+        (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items, "user" => $user, "from" => $from, "search_criteria" => $search_criteria]);
     }
 
 
@@ -216,8 +223,8 @@ class ControllerItem extends Controller
 
         //critere de recherche
         $search_criteria = "";
-        if (isset($_GET["param1"]) && $_GET["param1"] != ""){
-            $search_criteria = EncoderDecoder::url_safe_decode($_GET["param1"]);
+        if (isset($_GET["param1"]) && $_GET["param1"] != ""){ // si on arrive avec item/list/criteria_encoded
+            $search_criteria = EncoderDecoder::url_safe_decode($_GET["param1"]); //on decode le critere de recherche
         }
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user" => $user, "from" => $from, "search_criteria" => $search_criteria]);
     }

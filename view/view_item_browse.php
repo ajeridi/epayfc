@@ -19,6 +19,7 @@
         let items_participated_in_container, other_available_items_container;
         let user = <?= json_encode($user) ?>;
         let from = <?= json_encode($from) ?>;
+        let search_criteria = <?= json_encode($search_criteria) ?>;
 
         $(function() {
             search_box = $("#search"); // on prend la reference vers l'element qui va contenir la search bar
@@ -26,6 +27,11 @@
             search_input = $("#search_input");
             items_participated_in_container = $("#items_participated_in");
             other_available_items_container = $("#other_available_items");
+            
+
+            if (search_criteria != ""){
+                search_input.val(search_criteria);
+            }
             // creation des carte des items
             displayItems(search_input.val());
 
@@ -55,6 +61,9 @@
                     items_participated_in_container.append(card);
                 }
             }
+            if (items_participated_in_container.html() === ""){
+                items_participated_in_container.html('<p>No items found</p>');
+            }
         }
 
         async function displayOtherAvailableItems(search_criteria) {
@@ -63,6 +72,9 @@
                     let card = await createItemCard(item);
                     other_available_items_container.append(card);
                 }
+            }
+            if (other_available_items_container.html() === ""){
+                other_available_items_container.html('<p>No items found</p>');
             }
         }
 
@@ -73,7 +85,8 @@
         async function createItemCard(item) {
 
             let html = '<div class="col-auto">';
-            html += '<a href="item/open/' + item.id + (from == "" ? '' : '/' + from) + '" style="text-decoration: none;">';
+            let criteria = await $.get("item/get_encoded_data_service/" + search_input.val());
+            html += '<a href="item/open/' + item.id + (from == "" ? '' : '/' + from)+ (search_input.val() === "" ? "" : '/' + criteria) + '" style="text-decoration: none;">';
             html += '<div class="card" style="width: 18rem;">';
             html += '<img ' + (!item.pictures || item.pictures.length === 0 || item.pictures[0].path === "" ? "src=uploads/items/default.jpg" : "src=" + item.pictures[0].path) + ' class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">';
             html += '<div class="card-img-overlay">';
