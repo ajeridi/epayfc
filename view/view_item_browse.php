@@ -10,6 +10,23 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link rel="stylesheet" href="css/style.css">
+
+    <script src="lib\jquery-4.0.0.min.js" type="text/javascript"></script>
+    <script>
+        let search_box, search_input;
+
+        $(function () {
+            search_box = $("#search"); // on prend la reference vers l'element qui va contenir la search bar
+            createSearchBar(); // on cree la searchbar d'abord, puis apres on prend la ref vers le input
+            search_input = $("#search_input");
+        });
+
+        function createSearchBar() {
+            let html = '<span class="input-group-text" id="searchHelp"><i class="bi bi-search"></i></span><input id="search_input" type="text" class="form-control d-block" name="search" placeholder="Search items..." aria-label="Search" aria-describedby="searchHelp" value="">';
+            search_box.html(html);
+        }
+
+    </script>
 </head>
 
 <body class="bg-navy">
@@ -22,6 +39,11 @@
         </nav>
     </header>
     <main style="margin-top: 100px; margin-bottom: 200px;">
+
+        <!-- Barre de recherche -->
+        <div id="search" class="input-group mb-3 w-75 container" data-bs-theme="dark">
+        </div>
+
         <?php if ($user != false) { ?>
             <div class="items_participated_in container">
                 <h3 class="text-blue"> <?= (count($items_participated_in) > 0)  ? "Items I\n'm Participating In" : "" ?> </h3>
