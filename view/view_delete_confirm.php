@@ -21,10 +21,10 @@
                     <p style="text-align: center;">This process cannot bo undone.</p>
                     <div class="row " style="padding: 35px;">
                         <div class="col">
-                            <a class="btn bg-secondary text-light" href="item/open/<?= $id ?>">Cancel</a>
+                            <a class="btn bg-secondary text-light" href="item/open/<?= $id ?>/from-items<?= ($search_criteria == "" ? "" : "/" . $search_criteria) ?>">Cancel</a>
                         </div>
                         <div class="col">
-                             <a class="btn bg-danger text-light" href="item/delete_item/<?= $id ?>">Delete</a>
+                             <a class="btn bg-danger text-light" href="item/delete_item/<?= $id . ($search_criteria == "" ? "" : "/" . $search_criteria)?>">Delete</a>
                         </div>  
                     </div>
                 </div>
