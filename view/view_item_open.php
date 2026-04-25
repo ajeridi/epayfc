@@ -218,7 +218,7 @@
               </a>
             </div>
             <div class="d-grid gap-2">
-              <a class="btn btn-outline-danger  <?php if (count($item->get_bids()) != 0) { ?>disabled <?php } ?> " href="item/delete/<?= $item->get_id() ?>">
+              <a class="btn btn-outline-danger  <?php if (count($item->get_bids()) != 0) { ?>disabled <?php } ?> " href="item/delete/<?= $item->get_id() . ($search_criteria == "" ? "" : "/" . $search_criteria) ?>">
                 Delete Item
               </a>
             </div>

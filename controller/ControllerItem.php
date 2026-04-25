@@ -107,7 +107,8 @@ class ControllerItem extends Controller
                 "back_url" => $back_url,
                 "bids_url" => $bids_url,
                 "edit_item_url" => $edit_item_url,
-                "manage_images_url" => $manage_images_url
+                "manage_images_url" => $manage_images_url,
+                "search_criteria" => $search_criteria
             ]);
         }
     }
@@ -282,15 +283,20 @@ class ControllerItem extends Controller
     public function delete(): void
     {
         $user = $this->get_user_or_redirect();
+        $search_criteria = "";
         if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
             $item_id = Tools::sanitize($_GET['param1']);
             $item = Item::get_item_by_id($item_id);
+
+            if (isset($_GET["param2"]) && $_GET["param2"] != ""){ // si critere de recherche
+                $search_criteria = $_GET["param2"];
+            }
 
             if ($item->get_owner() != $user->get_id() || count($item->get_bids()) != 0 || !$item->is_open_item()) {
                 throw new Exception("You can't delete this item ");
             }
             $owner = User::get_full_name_by_id($item->get_owner());
-            (new View("delete_confirm"))->show(["owner" => $owner, "title" => $item->get_title(), "id" => $item_id]);
+            (new View("delete_confirm"))->show(["owner" => $owner, "title" => $item->get_title(), "id" => $item_id, "search_criteria" => $search_criteria]);
         }
     }
     public function delete_item(): void
@@ -299,12 +305,16 @@ class ControllerItem extends Controller
         $item_id = Tools::sanitize($_GET['param1']);
         $item = Item::get_item_by_id($item_id);
 
+        $search_criteria = "";
+        if (isset($_GET["param2"]) && $_GET["param2"] != ""){ // si critere de recherche
+            $search_criteria = $_GET["param2"];
+        }
         if ($item->get_owner() != $user->get_id() || count($item->get_bids()) != 0 || !$item->is_open_item()) {
             throw new Exception("You can't delete this item ");
         } else {
             $this->delete_item_files($item);
             $item->delete();
-            $this->redirect('item', 'list');
+            $this->redirect('item', 'list', $search_criteria);
         }
     }
 
