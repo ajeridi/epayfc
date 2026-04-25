@@ -13,11 +13,13 @@
 </head>
 
 <body>
-    <form method="post" action="item/<?= ($info['id'] == 0) ? "/add" : "edit/" . $info['id']  ?>">
+<!-- SI nouveau item, donc id = 0, le submit se fait vers item/add, sinon vers item/edit/id[/search_criteria]-->
+    <form method="post" action="item/<?= ($info['id'] == 0) ? "add" : "edit/" . $info['id'] . ($search_criteria == "" ? "" : "/" . $search_criteria) ?>">
         <header>
             <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand text-blue" href="item/<?= ($info['id'] == 0) ? "browse" : "open/" . $info['id'] ?>/from-items"><i class="bi bi-arrow-left"></i> </a>
+                    <!-- SI nouveau item, donc id = 0, redirection vers item/browse, sinon redirection vers item/open/id/from-items[/search_criteria] -->
+                    <a class="navbar-brand text-blue" href="<?= ($info['id'] == 0) ? "item/browse" :  $back_url_to_open?>"><i class="bi bi-arrow-left"></i> </a>
                     <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue"><?= $action ?> <i class=" bi bi-cart4 fs-4 text-white"></i></span>
                     <button type="submit" name="saveProfile" value="true" class="btn navbar-brand text-blue position-absolute top-50 end-0 translate-middle-y"><i class="bi bi-floppy2-fill"></i></button>
                 </div>

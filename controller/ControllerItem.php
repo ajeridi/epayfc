@@ -22,11 +22,10 @@ class ControllerItem extends Controller
     {
         // le bouton back dans open from-items renvoie vers item/items
         $search_criteria = "";
-        if (isset($_GET["param1"]) && $_GET["param1"] != ""){ // si on renvoie un critere de recherche donc item/items/criteria_encoded
+        if (isset($_GET["param1"]) && $_GET["param1"] != "") { // si on renvoie un critere de recherche donc item/items/criteria_encoded
             $search_criteria = $_GET["param1"];
             $this->redirect("item", "list", $search_criteria); // rediriger vers item/list/criteria_encoded
-        }
-        else {
+        } else {
             $this->redirect("item", "list"); // rediriger vers item/list
         }
     }
@@ -46,7 +45,7 @@ class ControllerItem extends Controller
             $other_available_items = Item::get_other_available_item(-1);    // aucun user a l'id -1
         }
 
-        if (isset($_GET["param1"]) && $_GET["param1"] != ""){ // si on arrive sur browse avec un critere de recherche
+        if (isset($_GET["param1"]) && $_GET["param1"] != "") { // si on arrive sur browse avec un critere de recherche
             $search_criteria = EncoderDecoder::url_safe_decode($_GET["param1"]); // decodage du critere de recherche pour le mettre dans le champs de recherche
         }
 
@@ -63,26 +62,27 @@ class ControllerItem extends Controller
         // url de navigation preconstruits pour ne pas mettre trop de logique d'URL dans la vue
         $back_url = "item";
         $bids_url = "item/bid/";
+        $edit_item_url = "item/edit/";
         // recuperera le critere de recherche
         $search_criteria = "";
 
         if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) {
             $item = Item::get_item_by_id($_GET["param1"]);
-            $bids_url = $bids_url.$item->get_id();
+            $bids_url = $bids_url . $item->get_id();
+            $edit_item_url = $edit_item_url . $item->get_id();
             $pictures = $item->get_pictures();
 
             if (isset($_GET["param2"])) {
                 $from = substr(stristr($_GET["param2"], "-"), 1);
-                $back_url = $back_url."/".$from;
+                $back_url = $back_url . "/" . $from;
                 if (isset($_GET["param3"]) && is_numeric($_GET["param3"])) {
                     $priority = $_GET["param3"];
-                }
-                else if (isset($_GET["param3"]) && $_GET["param3"] != "") {
+                } else if (isset($_GET["param3"]) && $_GET["param3"] != "") {
                     $search_criteria = $_GET["param3"];
-                    $back_url = $back_url."/".$search_criteria;                  
-                    $bids_url = $bids_url."/".$search_criteria;
+                    $back_url = $back_url . "/" . $search_criteria;
+                    $bids_url = $bids_url . "/" . $search_criteria;
+                    $edit_item_url = $edit_item_url . "/" . $search_criteria;
                 }
-
             }
         } else {
             throw new Exception("No Item specified or Item not found");
@@ -93,8 +93,18 @@ class ControllerItem extends Controller
             $owner_picture = User::get_path_picture($item->get_owner());
             $owner_role = User::get_role_by_id($item->get_owner());
 
-            (new View("item_open"))->show(["item" => $item, "owner_picture" => $owner_picture, "owner_role" => $owner_role, "pictures" => $pictures, "user" => $user, "from" => $from, "priority" => $priority, 
-            "back_url" => $back_url, "bids_url" => $bids_url]);
+            (new View("item_open"))->show([
+                "item" => $item,
+                "owner_picture" => $owner_picture,
+                "owner_role" => $owner_role,
+                "pictures" => $pictures,
+                "user" => $user,
+                "from" => $from,
+                "priority" => $priority,
+                "back_url" => $back_url,
+                "bids_url" => $bids_url,
+                "edit_item_url" => $edit_item_url
+            ]);
         }
     }
 
@@ -110,7 +120,7 @@ class ControllerItem extends Controller
             Item::buy($user->get_id(), $item_id, $current_date, $amount);
 
             // on regarde si le critere de recherce a ete envoye
-            if (isset($_GET["param2"]) && $_GET["param2"] != ""){
+            if (isset($_GET["param2"]) && $_GET["param2"] != "") {
                 $search_criteria = $_GET["param2"];
             }
 
@@ -167,36 +177,57 @@ class ControllerItem extends Controller
     {
         $action = 'edit';
         $user = $this->get_user_or_redirect();
+        $back_url_to_open = "item/open/";
+        $search_criteria = "";
 
         if (!isset($_GET['param1']) || !is_numeric($_GET['param1'])) {
             $this->index();
         } else {
             $item = Item::get_item_by_id($_GET['param1']);
+            // si item n'est  pas celui de l'utilisateur
             if ($item->get_owner() != $user->get_id() || !$item->is_open_item() || count($item->get_bids()) != 0) {
-                throw new Exception("you can edit this ");
+                throw new Exception("you can't edit this ");
                 return;
             }
         }
+        // si pas de post, on vient d'arriver sur la page donc on va vers la vue item/edit
         if (!$_POST) {
             $item = Item::get_item_by_id($_GET['param1']);
 
+            $back_url_to_open = $back_url_to_open . $item->get_id() . "/from-items"; // on dit que l'url de back est item/open/item_id/from-items 
+            // si on a recu un critere de recherche
+            if (isset($_GET["param2"]) && $_GET["param2"] != "") {
+                $search_criteria = $_GET["param2"];
+                $back_url_to_open = $back_url_to_open . "/" . $search_criteria; // url de back devient item/open/item_id/from-items/search_criteria
+            }
             $errors = $this::build_errors_array();
             $info = $this::build_info_array($item, true);
 
-            (new View('item_edit'))->show(['info' => $info, 'errors' => $errors, 'action' => $action]);
-        } else {
+            (new View('item_edit'))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "back_url_to_open" => $back_url_to_open, "search_criteria" => $search_criteria]);
+        } else { // si y'a eu un post, donc qu'on a appuye sur le bouton save
 
-            $info = $this::build_info_array($item, false);
-            $errors = $this::build_errors_array();
-            $errors = Item::validat_item($user->get_id(), $info, $errors);
-            if (
-                count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days']) == 0
-                && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0
-            ) {
-                Item::put_edition_item($user->get_id(), $info);
-                $this->redirect("item", "open", $info['id'], "from-items");
-            } else {
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors]);
+            $info = $this::build_info_array($item, false); // recherche des infos sur l'item
+            $errors = $this::build_errors_array(); // creation du tableau d'erreur
+            $errors = Item::validat_item($user->get_id(), $info, $errors); // validation de l'item
+            if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days']) == 0 && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0) { // si l'item respecte les regles metier
+                Item::put_edition_item($user->get_id(), $info); // mise a jour dans la DB
+                // si on a recu un critere de recherche
+                if (isset($_GET["param2"]) && $_GET["param2"] != "") {
+                    $search_criteria = $_GET["param2"];
+                    $this->redirect("item", "open", $info['id'], "from-items", $search_criteria); // redirection vers item/open/id/from-items/search_criteria
+                } else {
+                    $this->redirect("item", "open", $info['id'], "from-items"); // redirection vers item/open/id/from-items
+                }
+            } else { // si item ne respecte pas les regles metiers, on recharge la page avec les erreurs
+
+                $back_url_to_open = "item/open/" . $info['id'] . "/from-items";
+                // si on a recu un critere de recherche
+                if (isset($_GET["param2"]) && $_GET["param2"] != "") {
+                    $search_criteria = $_GET["param2"];
+                    $back_url_to_open = $back_url_to_open . "/" . $search_criteria; // url de back devient item/open/item_id/from-items/search_criteria
+                }
+
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "back_url_to_open" => $back_url_to_open, "search_criteria" => $search_criteria]);
             }
         }
     }
@@ -237,7 +268,7 @@ class ControllerItem extends Controller
 
         //critere de recherche
         $search_criteria = "";
-        if (isset($_GET["param1"]) && $_GET["param1"] != ""){ // si on arrive avec item/list/criteria_encoded
+        if (isset($_GET["param1"]) && $_GET["param1"] != "") { // si on arrive avec item/list/criteria_encoded
             $search_criteria = EncoderDecoder::url_safe_decode($_GET["param1"]); //on decode le critere de recherche
         }
         (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user" => $user, "from" => $from, "search_criteria" => $search_criteria]);
@@ -472,8 +503,9 @@ class ControllerItem extends Controller
         echo $item->get_period();
     }
 
-    public function get_encoded_data_service() : void {
-        if (isset($_GET["param1"]) && $_GET["param1"] != ""){
+    public function get_encoded_data_service(): void
+    {
+        if (isset($_GET["param1"]) && $_GET["param1"] != "") {
             echo EncoderDecoder::url_safe_encode($_GET["param1"]);
         }
     }
