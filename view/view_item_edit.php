@@ -50,11 +50,13 @@
                 }
             });
 
-            navbar_links.click(function(e) {
+            navbar_links.on('click', function(e) {
                 if (!is_pristine) {
                     e.preventDefault(); // empeche le submit
+                    let goTo = $(this).attr("href"); // $(this) ici et pas dans le click sinon this c'est leave_button donc pas de href dedans
                     leave_btn.click(function() { // on dit qu'au click du bouton Leave du modal, on redirige vers le href du bouton
-                        window.location.href = back_link.attr("href"); // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
+                        window.location.href = goTo // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
+
                     })
                     myModal.show();
                 }
