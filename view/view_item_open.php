@@ -213,7 +213,7 @@
               </a>
             </div>
             <div class="d-grid gap-2">
-              <a class="btn btn-outline-info" href="item/manage_images/<?= $item->get_id() ?>">
+              <a class="btn btn-outline-info" href="<?= $manage_images_url?>">
                 Manage Images
               </a>
             </div>

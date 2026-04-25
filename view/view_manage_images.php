@@ -17,7 +17,7 @@
         <!-- Barre au dessus de la page -->
         <nav class="navbar bg-navy-gray" data-bs-theme="dark">
             <div class="container-fluid">
-                <a class="navbar-brand text-blue" href="item/open/<?= $item->get_id() ?>"><i class="bi bi-arrow-left"></i> </a>
+                <a class="navbar-brand text-blue" href="item/open/<?= $item->get_id() ?>/from-items<?= $search_criteria == "" ? "" : "/".$search_criteria ?>"><i class="bi bi-arrow-left"></i> </a>
                 <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue"">Manage images <i class=" bi bi-cart4 fs-4 text-white"></i></span>
             </div>
         </nav>
@@ -31,7 +31,7 @@
             </div>
             <div class="card-body text-white" style="background-color: #27272a;">
                 <h6 class="card-title fw-bold">Select Images</h6>
-                <form method='post' action='item/manage_images/<?= $item->get_id() ?>' enctype='multipart/form-data'>
+                <form method='post' action='item/manage_images/<?= $item->get_id() . ($search_criteria == "" ? "" : "/" . $search_criteria)?>' enctype='multipart/form-data'>
                     <input type='file' class='form-control text-bg-dark' name='image' accept="image/x-png, image/gif, image/jpeg, .jpg, image/webp">
                     <p class="card-text text-secondary">You can select multiple images (JPG, PNG, GIF, WebP). Images will be added to the end of your current list.</p>
                     <input type='submit' class="btn btn-primary" value='Upload Images'>
@@ -59,7 +59,7 @@
                         <p>No images yet for this item. Upload some images above to get started.</p>
                     </div>
                 <?php } else { ?>
-                    <form method="post" action='item/manage_images/<?= $item->get_id() ?>'>
+                    <form method="post" action='item/manage_images/<?= $item->get_id() . ($search_criteria == "" ? "" : "/" . $search_criteria) ?>'>
                         <?php foreach ($item->get_pictures() as $picture) { ?>
                             <figure class='d-inline-block' style="margin: 10px;">
                                 <img src='<?= $picture->get_thumbnail_path() ?>' class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px;">

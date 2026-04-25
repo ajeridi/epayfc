@@ -63,6 +63,7 @@ class ControllerItem extends Controller
         $back_url = "item";
         $bids_url = "item/bid/";
         $edit_item_url = "item/edit/";
+        $manage_images_url = "item/manage_images/";
         // recuperera le critere de recherche
         $search_criteria = "";
 
@@ -70,6 +71,7 @@ class ControllerItem extends Controller
             $item = Item::get_item_by_id($_GET["param1"]);
             $bids_url = $bids_url . $item->get_id();
             $edit_item_url = $edit_item_url . $item->get_id();
+            $manage_images_url = $manage_images_url . $item->get_id();
             $pictures = $item->get_pictures();
 
             if (isset($_GET["param2"])) {
@@ -82,6 +84,7 @@ class ControllerItem extends Controller
                     $back_url = $back_url . "/" . $search_criteria;
                     $bids_url = $bids_url . "/" . $search_criteria;
                     $edit_item_url = $edit_item_url . "/" . $search_criteria;
+                    $manage_images_url = $manage_images_url . "/" . $search_criteria; 
                 }
             }
         } else {
@@ -103,7 +106,8 @@ class ControllerItem extends Controller
                 "priority" => $priority,
                 "back_url" => $back_url,
                 "bids_url" => $bids_url,
-                "edit_item_url" => $edit_item_url
+                "edit_item_url" => $edit_item_url,
+                "manage_images_url" => $manage_images_url
             ]);
         }
     }
@@ -317,32 +321,41 @@ class ControllerItem extends Controller
     {
         $user = $this->get_user_or_redirect();
         $errors = [];
+        $search_criteria = ""; // critere de recherche
+
         if (isset($_GET['param1']) && is_numeric($_GET['param1']) && $user->is_item_owner($_GET['param1'])) {    // pas oublier de check aussi si l'objet appartient au user connecte et que l'item est actif
             $item_id = $_GET['param1'];
             $item = Item::get_item_by_id($item_id);
-            if (!$item->is_open_item())
+
+            if (isset($_GET["param2"]) && $_GET["param2"] != ""){ // si on a un critere de recherche
+                $search_criteria = $_GET["param2"];
+            }
+
+            if (!$item->is_open_item()) // si l'item n'est pas un item actif, redirection vers index d'item
                 $this->redirect("item");
             if (isset($_FILES["image"]) && $_FILES["image"]["name"] != "") { // si on a upload une image
                 $image = $_FILES["image"];
                 $errors = ImageUtils::validate_image($image); // validation de l'image
                 if (count($errors) == 0) // si le fichier est valide on peut proceder a son upload
-                    $this->upload_image($item, $image);
+                    $this->upload_image($item, $image, $search_criteria);
             }
+
             if (isset($_POST["move"])) { // si on a clique sur la fleche de gauche
                 $this->swap_priority($item->get_id(), $_POST["move"]);
             } else if (isset($_POST["delete"])) {
                 $this->delete_image($item, $_POST["delete"]);
             }
+
             if (count($_POST) != 0) // si on requete post -> redirection vers GET sinon on affiche la page avec les erreurs
-                $this->redirect("item", "manage_images", "" . $item->get_id());
-            (new View("manage_images"))->show(["user" => $user, "item" => $item, "errors" => $errors]);
+                $this->redirect("item", "manage_images", "" . $item->get_id(), $search_criteria);
+            (new View("manage_images"))->show(["user" => $user, "item" => $item, "errors" => $errors, "search_criteria" => $search_criteria]);
         } else {
-            $this->redirect("item");
+            $this->redirect("item"); // si l'utilisateur n'a pas le droit d'acceder a cette page, redirection vers index d'item, donc browse
         }
     }
 
 
-    private function upload_image(Item $item, array $image): void
+    private function upload_image(Item $item, array $image, string $search_criteria): void
     {
         //verifier si un dossier existe dans uploads en regardant si l'item en question possede une image
         $this->create_dir_if_not_exists($item);
@@ -353,7 +366,8 @@ class ControllerItem extends Controller
         $this->save_new_images($formatted_images, $new_image_path);
         // on l'insere dans la db
         $item->upload_image($new_image_path);
-        $this->redirect("item", "manage_images", "" . $item->get_id());
+        // redirection PRG
+        $this->redirect("item", "manage_images", "" . $item->get_id(), $search_criteria);
     }
 
     private function create_dir_if_not_exists(Item $item): void
