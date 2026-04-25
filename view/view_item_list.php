@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="css/style.css">
 
 
-    <script src="lib\jquery-4.0.0.min.js" type="text/javascript"></script>
+    <script src="lib/jquery-4.0.0.min.js" type="text/javascript"></script>
     <script>
         let search_box, search_input;
         let active_items = <?= json_encode($active_items) ?>;

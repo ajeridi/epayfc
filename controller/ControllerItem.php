@@ -208,7 +208,7 @@ class ControllerItem extends Controller
             $errors = $this::build_errors_array();
             $info = $this::build_info_array($item, true);
 
-            (new View('item_edit'))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "back_url_to_open" => $back_url_to_open, "search_criteria" => $search_criteria]);
+            (new View('item_edit'))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "back_url_to_open" => $back_url_to_open, "search_criteria" => $search_criteria, "user" => $user]);
         } else { // si y'a eu un post, donc qu'on a appuye sur le bouton save
 
             $info = $this::build_info_array($item, false); // recherche des infos sur l'item
@@ -232,7 +232,7 @@ class ControllerItem extends Controller
                     $back_url_to_open = $back_url_to_open . "/" . $search_criteria; // url de back devient item/open/item_id/from-items/search_criteria
                 }
 
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "back_url_to_open" => $back_url_to_open, "search_criteria" => $search_criteria]);
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "back_url_to_open" => $back_url_to_open, "search_criteria" => $search_criteria, "user" => $user]);
             }
         }
     }
@@ -245,7 +245,7 @@ class ControllerItem extends Controller
         $errors = $this::build_errors_array();
         if (!$_POST) {
             $info = $this::build_info_array(null, true);
-            (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action]);
+            (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "user" => $user]);
         } else {
             $info = $this::build_info_array(null, false);
             $errors = Item::validat_item($user->get_id(), $info, $errors);
@@ -256,7 +256,7 @@ class ControllerItem extends Controller
                 $info['id'] = Item::put_edition_item($user->get_id(), $info);
                 $this->redirect("item", "open", $info['id']);
             } else {
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action]);
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "user" => $user]);
             }
         }
     }

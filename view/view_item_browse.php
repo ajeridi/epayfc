@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link rel="stylesheet" href="css/style.css">
 
-    <script src="lib\jquery-4.0.0.min.js" type="text/javascript"></script>
+    <script src="lib/jquery-4.0.0.min.js" type="text/javascript"></script>
     <script>
         let search_box, search_input;
         let items_participated_in = <?= json_encode($items_participated_in) ?>;
