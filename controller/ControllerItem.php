@@ -60,11 +60,15 @@ class ControllerItem extends Controller
 
         $from = "";
         $priority = 1;
+        // url de navigation preconstruits pour ne pas mettre trop de logique d'URL dans la vue
         $back_url = "item";
+        $bids_url = "item/bid/";
+        // recuperera le critere de recherche
         $search_criteria = "";
 
         if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) {
             $item = Item::get_item_by_id($_GET["param1"]);
+            $bids_url = $bids_url.$item->get_id();
             $pictures = $item->get_pictures();
 
             if (isset($_GET["param2"])) {
@@ -73,9 +77,10 @@ class ControllerItem extends Controller
                 if (isset($_GET["param3"]) && is_numeric($_GET["param3"])) {
                     $priority = $_GET["param3"];
                 }
-                else if (isset($_GET["param3"])) {
+                else if (isset($_GET["param3"]) && $_GET["param3"] != "") {
                     $search_criteria = $_GET["param3"];
                     $back_url = $back_url."/".$search_criteria;                  
+                    $bids_url = $bids_url."/".$search_criteria;
                 }
 
             }
@@ -88,7 +93,8 @@ class ControllerItem extends Controller
             $owner_picture = User::get_path_picture($item->get_owner());
             $owner_role = User::get_role_by_id($item->get_owner());
 
-            (new View("item_open"))->show(["item" => $item, "owner_picture" => $owner_picture, "owner_role" => $owner_role, "pictures" => $pictures, "user" => $user, "from" => $from, "priority" => $priority, "back_url" => $back_url]);
+            (new View("item_open"))->show(["item" => $item, "owner_picture" => $owner_picture, "owner_role" => $owner_role, "pictures" => $pictures, "user" => $user, "from" => $from, "priority" => $priority, 
+            "back_url" => $back_url, "bids_url" => $bids_url]);
         }
     }
 
@@ -96,12 +102,20 @@ class ControllerItem extends Controller
     {
         $user = $this->get_user_or_redirect();
         $current_date = AppTime::get_current_datetime();
+        $search_criteria = "";
         if ($_POST) {
             $item_id = $_GET['param1'];
             $amount = ($_POST['buy']) ? $_POST['buy'] : $_POST['min_bid'];
 
             Item::buy($user->get_id(), $item_id, $current_date, $amount);
-            $this->redirect("item", "open", $item_id);
+
+            // on regarde si le critere de recherce a ete envoye
+            if (isset($_GET["param2"]) && $_GET["param2"] != ""){
+                $search_criteria = $_GET["param2"];
+            }
+
+            // comme on sait que la seule maniere qu'on puisse bid est par browse, donc on met le from-browse dans le from
+            $this->redirect("item", "open", $item_id, "from-browse", $search_criteria);
         }
         $this->index();
     }
