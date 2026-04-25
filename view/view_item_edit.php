@@ -14,6 +14,7 @@
     <script>
         let myModal;
         let back_link, save_btn, leave_btn;
+        let navbar_links;
         let inputs;
         let is_pristine = true;
 
@@ -24,6 +25,7 @@
             back_link = $("#back_link");
             save_btn = $("#save_btn");
             leave_btn = $("#leave_button");
+            navbar_links = $("#navbar_user a");
             inputs = $("input");
 
 
@@ -46,7 +48,17 @@
                     })
                     myModal.show();
                 }
-            })
+            });
+
+            navbar_links.click(function(e) {
+                if (!is_pristine) {
+                    e.preventDefault(); // empeche le submit
+                    leave_btn.click(function() { // on dit qu'au click du bouton Leave du modal, on redirige vers le href du bouton
+                        window.location.href = back_link.attr("href"); // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
+                    })
+                    myModal.show();
+                }
+            });
         });
     </script>
 
