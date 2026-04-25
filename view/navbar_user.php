@@ -1,5 +1,5 @@
 <div class="fixed-bottom">
-    <nav class="navbar justify-content-center bg-navy-gray text-blue small nav-fill pt-3">
+    <nav id="navbar_user" class="navbar justify-content-center bg-navy-gray text-blue small nav-fill pt-3">
         <a class="nav-link active text-center" aria-current="page" href="item/browse">
             <figure>
                 <i class="bi bi-search"></i>
