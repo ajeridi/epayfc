@@ -18,7 +18,7 @@
         let inputs;
         let is_pristine = true;
 
-        let errTitle, errDescription, errDuration, errStartingBid, errBuyNow;
+        let errTitle, errDescription, errDuration, errStartingBid, errBuyNow, errDirectSale;
 
         let constants;
         let description_text;
@@ -38,6 +38,7 @@
             errDuration = $("#errDuration");
             errStartingBid = $("#errStartingBid");
             errBuyNow = $("#errBuyNow");
+            errDirectSale = $("#errDirectSale");
 
 
             constants = await $.getJSON("item/get_item_rules_service");
@@ -65,7 +66,7 @@
                     ok = validateBuyNow(field.val());
                 }
                 else if (field_id === "direct_sale"){
-                    
+                    ok = validateDirectSale(field.val());
                 }
                 // activation du bouton depends du ok des inputs
                 save_btn.prop('disabled', !ok) // desactiver le bouton save
@@ -130,16 +131,26 @@
             function validateStartingBid(starting_bid) {
                 errStartingBid.html("");
                 let ok = true;
+                let direct_sale = $("#direct_sale").val();
                 if (starting_bid != "") { // si starting_bid est rempli
                     if (isNaN(starting_bid) || Number(starting_bid) <= 0) { // s'il est pas numerique ou positif
-                        errStartingBid.append(constants.starting_bid); // message pour dire qu'il doit etre positif
+                        errStartingBid.append("<span>" + constants.starting_bid + "</span><br>"); // message pour dire qu'il doit etre positif
                         ok = false;
                     }
                     let buy_now = $("#buy_now").val(); // on va comparer le starting bid avec buy_now
                     if (buy_now != "" && Number(starting_bid) > Number(buy_now)) { // si buy now est rempli et que le starting bid est superieur au buy now
                         ok = false;
-                        errStartingBid.append("Starting bid can't be greather than buy now price");
+                        errStartingBid.append("<span>Starting bid can't be greather than buy now price</span><br>");
                     }
+                    // si direct sale est rempli et numerique ce n'est pas bon
+                    if (direct_sale != "" && !isNaN(direct_sale)){ // si direct sale est rempli et numerique
+                        errStartingBid.append("<span>" + constants.both + "</span>");
+                        ok = false;
+                    }
+                }
+                else if (direct_sale == ""){ // si starting_bid est vide et que  direct_sale est vide
+                    errStartingBid.append("<span>" + constants.option_required + "</span>");
+                    ok = false;
                 }
                 return ok;
             }
@@ -157,6 +168,35 @@
                         ok = false;
                         errBuyNow.append(constants.buy_now_sup_starting_bid);
                     }
+                     // si direct sale est rempli et numerique ce n'est pas bon
+                    let direct_sale = $("#direct_sale").val();
+                    if (direct_sale != "" && !isNaN(direct_sale)){ // si direct sale est rempli et numerique
+                        errBuyNow.append("<span>" + constants.both + "</span>");
+                        ok = false;
+                    }
+                }
+                return ok;
+            }
+
+            function validateDirectSale(price){
+                errDirectSale.html("");
+                let ok = true;
+                let starting_bid = $("#starting_bid").val();
+                if (price != ""){ // si direct sale est rempli
+                    if (isNaN(price) || Number(price) <= 0) { // s'il est pas numerique ou positif
+                        errDirectSale.append("<span>" + "Direct sale price must be a positive number" + "</span><br>"); // message pour dire qu'il doit etre positif
+                        ok = false;
+                    }
+                    // si starting bid ou buy_now sont rempli ce n'est pas ok
+                    let buy_now = $("#buy_now");
+                    if ((starting_bid != "" && !isNaN(starting_bid)) || (buy_now != "" && !isNaN(buy_now))){
+                        errDirectSale.append("<span>" + constants.both + "</span>");
+                        ok = false;
+                    } 
+                }
+                else if (starting_bid == ""){ // si directSale est vide et que starting bid est vide
+                    errDirectSale.append("<span>" + constants.option_required + "</span>");
+                    ok = false;
                 }
                 return ok;
             }
@@ -331,8 +371,8 @@
                                
                                 <div class="mb-3">
                                     <label for="saleprice" class="form-label text-white">Sale Price</label>
-                                    <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($info['saleprice'] == null) ? "placeholder=\"e.g. 150.00\"" : "value=" . $info['saleprice'] ?>>
-                                        <div class="errors">
+                                    <input id="direct_sale" type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($info['saleprice'] == null) ? "placeholder=\"e.g. 150.00\"" : "value=" . $info['saleprice'] ?>>
+                                        <div id="errDirectSale" class="errors">
                                             <?php if (count($errors['saleprice'])) { ?>
                                             <ul>
                                                 <?php
