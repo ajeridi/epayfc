@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>🛒 Manage Images - <?= $item->get_title() ?></title>
-    <base href="<?= $web_root ?>" ?>
+    <base href="<?= $web_root ?>" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -64,7 +64,7 @@
         let html = "";
         for (const picture of images){
             html += '<figure class="d-inline-block" style="margin: 10px;" data-id="' + picture.priority +'">';
-            html += '<img src="'+ picture.path + '" class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px;">';
+            html += '<img src="'+ picture.path + '" class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px; alt="image">';
             html += '<figcaption style="text-align: center;">';
             html += '<button type="submit" class="btn btn-secondary" name="move" value="' + (-1 * picture.priority) + '" ' + (picture.priority == 1 ? "disabled" : "") + '><i class="bi bi-arrow-left"></i></button>';
             html += ' <button type="submit" class="btn btn-secondary" name="move" value="' + picture.priority + '" ' + (picture.priority == images.length ? "disabled" : "") + '><i class="bi bi-arrow-right"></i></button>';
@@ -84,7 +84,7 @@
         <nav class="navbar bg-navy-gray" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand text-blue" href="item/open/<?= $item->get_id() ?>/from-items<?= $search_criteria == "" ? "" : "/".$search_criteria ?>"><i class="bi bi-arrow-left"></i> </a>
-                <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue"">Manage images <i class=" bi bi-cart4 fs-4 text-white"></i></span>
+                <span class="navbar-brand position-absolute top-50 start-50 translate-middle h1 text-blue">Manage images <i class=" bi bi-cart4 fs-4 text-white"></i></span>
             </div>
         </nav>
     </header>
@@ -96,7 +96,7 @@
                 Add New Images
             </div>
             <div class="card-body text-white" style="background-color: #27272a;">
-                <h6 class="card-title fw-bold">Select Images</h6>
+                <h3 class="card-title fw-bold" style="font-size: 0.97rem; font-weight: bold;">Select Images</h3>
                 <form method='post' action='item/manage_images/<?= $item->get_id() . ($search_criteria == "" ? "" : "/" . $search_criteria)?>' enctype='multipart/form-data'>
                     <input type='file' class='form-control text-bg-dark' name='image' accept="image/x-png, image/gif, image/jpeg, .jpg, image/webp">
                     <p class="card-text text-secondary">You can select multiple images (JPG, PNG, GIF, WebP). Images will be added to the end of your current list.</p>
@@ -107,9 +107,9 @@
                         <ul>
                             <?php foreach ($errors as $error) { ?>
                                 <li><?= $error ?></li>
-                        <?php }
-                        } ?>
+                        <?php } ?>
                         </ul>
+                        <?php } ?>
                 </div>
             </div>
         </div><br><br>
@@ -128,7 +128,7 @@
                     <form id="image_container" method="post" action='item/manage_images/<?= $item->get_id() . ($search_criteria == "" ? "" : "/" . $search_criteria) ?>'>
                         <?php foreach ($item->get_pictures() as $picture) { ?>
                             <figure class='d-inline-block' style="margin: 10px;" data-id="<?= $picture->get_priority() ?>">
-                                <img src='<?= $picture->get_thumbnail_path() ?>' class="rounded float-start"  height="100" style="margin-bottom: 8px;">
+                                <img src='<?= $picture->get_thumbnail_path() ?>' class="rounded float-start"  height="100" style="margin-bottom: 8px;" alt="image">
                                 <figcaption style="text-align: center;">
                                     <button type="submit" class="btn btn-secondary" name="move" value="<?= -1 * $picture->get_priority() ?>" <?= $picture->get_priority() == 1 ? "disabled" : "" ?>><i class="bi bi-arrow-left"></i></button>
                                     <button type="submit" class="btn btn-secondary" name="move" value="<?= $picture->get_priority() ?>" <?= $picture->get_priority() == $item->get_number_of_pictures() ? "disabled" : "" ?>><i class="bi bi-arrow-right"></i></button>
