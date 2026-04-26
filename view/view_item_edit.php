@@ -58,12 +58,20 @@
              *  a chaque input dans les fields inputs, on regarde quel input c'est puis on fait la validation
              */
             inputs.on('input blur', async function() {
-                await validateAll();
+                await validateFields($(this));
             })
 
             description_text.on('input blur', async function() {
-                await validateAll();
+                await validateDescription(description_text.val());
             });
+
+            save_btn.click(async function(e) {
+                
+                let allOK = await validateAll();  
+                if (!allOK){
+                    e.preventDefault();
+                }
+            })
 
 
 
@@ -104,6 +112,7 @@
                 let first = await validateAllFields();
                 let second = await validateDescription(description_text.val());
                 save_btn.prop('disabled', !(first && second));
+                return (first && second);
             }
 
 
@@ -156,6 +165,7 @@
                 }
                 description_text.toggleClass("is-invalid", !ok);
                 description_text.toggleClass("is-valid", ok);
+                save_btn.prop('disabled', !ok);
                 return ok;
             }
 
@@ -179,7 +189,7 @@
                         ok = false;
                     }
                 } else if (direct_sale == "") { // si starting_bid est vide et que  direct_sale est vide
-                    errStartingBid.append("<span>" + constants.option_required + "</span>");
+                    errStartingBid.append("<span>" + "Offer must be an auction or a direct sale, cannot be both" + "</span>");
                     ok = false;
                 }
                 return ok;
@@ -201,7 +211,7 @@
                     // si direct sale est rempli et numerique ce n'est pas bon
                     let direct_sale = $("#saleprice").val();
                     if (direct_sale != "" && !isNaN(direct_sale)) { // si direct sale est rempli et numerique
-                        errBuyNow.append("<span>" + constants.both + "</span>");
+                        errBuyNow.append("<span>" + "Offer must be either a direct sale or an auction, cannot be both" + "</span>");
                         ok = false;
                     }
                 }
@@ -224,7 +234,7 @@
                         ok = false;
                     }
                 } else if (starting_bid == "") { // si directSale est vide et que starting bid est vide
-                    errDirectSale.append("<span>" + constants.option_required + "</span>");
+                    errDirectSale.append("<span>" + "Offer must be a direct sale or an auction, cannot be both" + "</span>");
                     ok = false;
                 }
                 return ok;
