@@ -48,18 +48,34 @@
                 // si le input change, on est plus pristine
                 is_pristine = false;
             });
+            
+
+            $("textarea").on('change', function() {
+                is_pristine = false;
+            });
 
             /**
              *  a chaque input dans les fields inputs, on regarde quel input c'est puis on fait la validation
              */
             inputs.on('input blur', async function() {
+                await validateAll();
+            })
+
+            description_text.on('input blur', async function() {
+                await validateAll();
+            });
+
+
+
+            async function validateAllFields(){
                 let allOk = true;
                 for (const input of inputs.toArray()) { // for respecte mieux les await
                     let res = await validateFields($(input));
                     if (!res) allOk = false; // des qu'on rencontre un faux, on le sauve comme ca on sait qu'au moins un field est non valide
                 }
                 save_btn.prop('disabled', !allOk);
-            })
+                return allOk;
+            }
 
             async function validateFields(field) {
                 let ok = true;
@@ -83,10 +99,14 @@
                 return ok;
             }
 
-            description_text.on('input', async function() {
-                let ok = validateDescription(description_text.val());
-                save_btn.prop('disabled', !ok);
-            });
+
+            async function validateAll() {
+                let first = await validateAllFields();
+                console.log("first validation " + first);
+                let second = await validateDescription(description_text.val());
+                console.log("second validation" + second);
+                save_btn.prop('disabled', !(first && second));
+            }
 
 
             /**
@@ -209,12 +229,6 @@
                 }
                 return ok;
             }
-
-            $("textarea").on('change', function() {
-                is_pristine = false;
-            });
-
-
 
 
             back_link.click(function(e) {
