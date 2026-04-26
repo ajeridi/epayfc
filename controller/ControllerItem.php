@@ -617,7 +617,7 @@ class ControllerItem extends Controller
                 $item = Item::get_item_by_id($_POST["item_id"]); // recherche de l'item
                 if ($item && $item->get_owner() === $user->get_id()) { // si l'item existe et appartient a l'owner
                     $order = $_POST["order"];
-                    for ($i = 0; $i < count($order); $i++){
+                    for ($i = 0; $i < count($order); $i++) {
                         // chaque entree dans le tableau represente la priorite d'une image
                         // pour chaque image de priorite $order[$i], on lui donne une priorite de -1 * ($i+1)
                         // par exemple, image de p3, aura une priorite de -1 si elle est en debut de tableau
@@ -635,24 +635,21 @@ class ControllerItem extends Controller
         }
     }
 
-    
+
     /**
      * Service qui retourne un tableau json des images d'un item
      */
-    public function get_item_pictures_service() : void {
+    public function get_item_pictures_service(): void
+    {
         $user = $this->get_user_or_false();
         if ($user) { // si le user existe
             if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) { // si l'id entre existe et est numerique
                 $item = Item::get_item_by_id($_GET["param1"]); // recherche de l'item
-                if ($item && $item->get_owner() === $user->get_id()) { // si l'item existe et appartient a l'owner
-                        echo json_encode($item->get_pictures());
-                    }
-                }
-        }
-        else {
+                echo json_encode($item->get_pictures());
+            }
+        } else {
             http_response_code(403);
             echo json_encode(["error" => "User is not connected"]);
         }
-        
     }
 }
