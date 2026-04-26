@@ -50,10 +50,18 @@
                 item_id : item_id,
                 order: new_order
             },
-            function(response){
-                console.log(response);
+            async function(response){
+                await refreshImages(item_id);
             }
         )
+    }
+
+
+    // methode qui va rafrachir la section image container avec les images d'un item d'id item_id
+    async function refreshImages(item_id){
+        image_container.html(""); // nettoyage de la zone
+        let images = await $.getJSON("item/get_item_pictures_service/" + item_id);
+        console.log(images);
     }
 
 
