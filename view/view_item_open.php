@@ -9,6 +9,70 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <link rel="stylesheet" href="css/style.css">
+  <script src="lib/jquery-4.0.0.min.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="lib/jquery-ui.min.css">
+  <script src="lib/jquery-ui.min.js" type="text/javascript"></script>
+  <script src="lib/jquery.ui.touch-punch.js" type="text/javascript"></script>
+  <script>
+    let carousel; // https://www.w3schools.com/bootstrap/bootstrap_ref_js_carousel.asp
+    // https://getbootstrap.com/docs/5.3/components/carousel/#via-javascript
+
+    const item_id = <?= $item->get_id() ?>;
+
+    let pictures;
+
+    $(async function() {
+
+      carousel = $("#carousel");
+
+      carousel.addClass("carousel slide");
+
+      pictures = await $.getJSON("item/get_item_pictures_service/" + item_id);
+      console.log(pictures);
+
+      // creer le carousel
+      makeCarousel();
+    });
+
+    function makeCarousel() {
+      carousel.html("");
+      let html = "";
+      html += '<div class="carousel-inner"> ';
+
+      for (let i = 0; i < pictures.length; i++) {
+        if (i === 0) {
+          html += '<div class="carousel-item active"> ';
+          html += '<img src="' + pictures[0].path + '" class="d-block w-100" alt="image"> ';
+          html += '</div> ';
+        } else {
+          html += '<div class="carousel-item"> ';
+          html += '<img src="' + pictures[i].path + '" class="d-block w-100" alt="image">';
+          html += '</div>';
+        }
+      }
+      html += '  <button id="left_btn" class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">';
+      html += '<span class="carousel-control-prev-icon" aria-hidden="true"></span>';
+      html += '<span class="visually-hidden">Previous</span>';
+      html += '</button> ';
+      html += '<button id="right_btn" class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">'
+      html += '<span class="carousel-control-next-icon" aria-hidden="true"></span>';
+      html += '<span class="visually-hidden">Next</span>';
+      html += '</button>';
+
+      carousel.append(html);
+
+      // creer les action de carousel
+      $("#left_btn").click(function() {
+        carousel.carousel("prev");
+      });
+
+      $("#right_btn").click(function () {
+        carousel.carousel("next");
+      });
+    }
+  </script>
+
 
 </head>
 
@@ -32,7 +96,7 @@
 
         <!-- Card image + infos -->
         <div class="card card-dark border-0 overflow-hidden">
-          <div class="ratio ratio-16x9 bg-black-30">
+          <div id="carousel" class="ratio ratio-16x9 bg-black-30">
             <img <?= ($item->get_path($priority) == "") ? "src=uploads/items/default.jpg" :   "src=" . $item->get_path($priority) ?> class="w-100 h-100 object-fit-cover" alt="item image">
           </div>
 
@@ -137,7 +201,7 @@
       <fieldset <?php if ($user == false || $user->get_id() == $item->get_owner()) { ?> disabled <?php } ?>>
         <?php if ($item->get_starting_bid() != null) { ?>
           <?php if ($item->is_open_item()) { ?>
-            <form method="post" action="<?=$bids_url?>">
+            <form method="post" action="<?= $bids_url ?>">
               <div class="input-group input-dark mb-3">
                 <span class="input-group-text">€</span>
                 <input
@@ -213,7 +277,7 @@
               </a>
             </div>
             <div class="d-grid gap-2">
-              <a class="btn btn-outline-info" href="<?= $manage_images_url?>">
+              <a class="btn btn-outline-info" href="<?= $manage_images_url ?>">
                 Manage Images
               </a>
             </div>
