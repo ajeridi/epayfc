@@ -1,6 +1,6 @@
 <?php 
 
-class Bid extends Model {
+class Bid extends Model implements JsonSerializable{
     
     public function __construct(public int $owner ,
     private int $item,
@@ -16,7 +16,16 @@ class Bid extends Model {
     }
 
 
- 
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'owner' => $this->owner,
+            'item' => $this->item,
+            'created_at' => $this->created_at,
+            'amount' => $this->amount,
+            'pseudo' => $this->pseudo
+        ];
+    }
 
     public static function get_item_bids(int $item_id) : array {
         $query=self::execute("SELECT b.owner,b.item ,b.created_at,b.amount,u.pseudo FROM bids b join users u on b.owner = u.id  WHERE b.item = :item_id ORDER BY -b.created_at ",["item_id"=>$item_id]);
