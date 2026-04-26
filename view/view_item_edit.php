@@ -18,7 +18,7 @@
         let inputs;
         let is_pristine = true;
 
-        let errTitle, errDescription, errDuration, errStartingBid;
+        let errTitle, errDescription, errDuration, errStartingBid, errBuyNow;
 
         let constants;
         let description_text;
@@ -37,6 +37,7 @@
             errDescription = $("#errDescription");
             errDuration = $("#errDuration");
             errStartingBid = $("#errStartingBid");
+            errBuyNow = $("#errBuyNow");
 
 
             constants = await $.getJSON("item/get_item_rules_service");
@@ -61,7 +62,10 @@
                 } else if (field_id === "starting_bid") {
                     ok = validateStartingBid(field.val());
                 } else if (field_id === "buy_now") {
-                        
+                    ok = validateBuyNow(field.val());
+                }
+                else if (field_id === "direct_sale"){
+                    
                 }
                 // activation du bouton depends du ok des inputs
                 save_btn.prop('disabled', !ok) // desactiver le bouton save
@@ -132,9 +136,26 @@
                         ok = false;
                     }
                     let buy_now = $("#buy_now").val(); // on va comparer le starting bid avec buy_now
-                    if (buy_now != "" && starting_bid > buy_now) { // si buy now est rempli et que le starting bid est superieur au buy now
+                    if (buy_now != "" && Number(starting_bid) > Number(buy_now)) { // si buy now est rempli et que le starting bid est superieur au buy now
                         ok = false;
                         errStartingBid.append("Starting bid can't be greather than buy now price");
+                    }
+                }
+                return ok;
+            }
+
+            function validateBuyNow(buy_now) {
+                errBuyNow.html("");
+                let ok = true;
+                if (buy_now != "") { // si buy now est rempli
+                    if (isNaN(buy_now) || Number(buy_now) <= 0) { // s'il est pas numerique ou positif
+                        errBuyNow.append("<span>" + constants.buy_now_positif + "</span><br>"); // message pour dire qu'il doit etre positif
+                        ok = false;
+                    }
+                    let starting_bid = $("#starting_bid").val();
+                    if (starting_bid != "" && Number(buy_now) < Number(starting_bid)) { // si starting_bid est rempli et que le buy_now est inferieur au starting_bid
+                        ok = false;
+                        errBuyNow.append(constants.buy_now_sup_starting_bid);
                     }
                 }
                 return ok;
@@ -289,7 +310,7 @@
                                     <div class="mb-3">
                                         <label for="buy_now_price" class="form-label text-white">Instant Purchase Price</label><a class="text-light">(optional)</a>
                                         <input id="buy_now" type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($info['buy_now_price'] == null) ? "placeholder=\"e.g. 200.00\"" : "value=" . $info['buy_now_price'] ?> >
-                                         <div class="errors">
+                                         <div id="errBuyNow" class="errors">
                                             <?php if (count($errors['buy_now_price'])) { ?>
                                                 <ul>
                                                     <?php
