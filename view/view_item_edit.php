@@ -18,20 +18,70 @@
         let inputs;
         let is_pristine = true;
 
+        let errTitle;
+
+        let constants;
+        const info = <?= json_encode($info) ?>;
 
 
-        $(function() {
+        $(async function() {
             myModal = new bootstrap.Modal($("#myModal")); // il faut creer une instance de Modal
             back_link = $("#back_link");
             save_btn = $("#save_btn");
             leave_btn = $("#leave_button");
             navbar_links = $("#navbar_user a");
             inputs = $("input");
+            errTitle = $("#errTitle");
+
+
+            constants = await $.getJSON("item/get_item_rules_service");
 
 
             inputs.on('change', function() {
+                // si le input change, on est plus pristine
                 is_pristine = false;
             });
+
+            /**
+             *  a chaque input dans les fields inputs, on regarde quel input c'est puis on fait la validation
+             */
+            inputs.on('input', async function() {
+                let field = $(this); // on va rechercher l'element modifie
+                let ok = true;
+                if (field.attr("id") === "title_input") { //  si l'element modifie est le field du titre
+                    ok = await validateTitle(field.val());
+                }
+                // activation du bouton depends du ok des inputs
+                save_btn.prop('disabled', !ok) // desactiver le bouton save
+            })
+
+
+            /**
+             * validation du titre
+             */
+            async function validateTitle(title) {
+                errTitle.html(""); // nettoyage du div des erreurs
+                let ok = true;
+                if (title === "") {
+                    errTitle.append(constants.title_required);
+                    ok = false;
+                } else if (title.length < constants.title_min_length || title.length > constants.title_max_length) {
+                    errTitle.append(constants.length_title);
+                    ok = false;
+                } else {
+                    // comme en get l'url ne supporte pas les accent etc, on va envoyer par post 
+                    let is_unique = await $.post("item/check_title_unicity_service", {
+                        title: title,
+                        id: info.id
+                    }, function(response) {
+                        if (response === "false") {
+                            errTitle.append(constants.unicity_title);
+                            ok = false;
+                        }
+                    });
+                }
+                return ok;
+            }
 
             $("textarea").on('change', function() {
                 is_pristine = false;
@@ -108,8 +158,8 @@
 
                         <div class="mb-3">
                             <label for="itemtitle" class="form-label">Item Title *</label>
-                            <input type="text" class="form-label d-block  text-bg-dark" style="padding-right:80%" id="itemtitle" name="title" <?= ($info['title'] == null) ? "placeholder=\"EX:Iphon 13 Pro Max 256GB\"" : "value=\"" . $info['title'] . "\"" ?>>
-                            <div class="errors">
+                            <input id="title_input" type="text" class="form-label d-block  text-bg-dark" style="padding-right:80%" id="itemtitle" name="title" <?= ($info['title'] == null) ? "placeholder=\"EX:Iphon 13 Pro Max 256GB\"" : "value=\"" . $info['title'] . "\"" ?>>
+                            <div id="errTitle" class="errors">
                                 <?php if (count($errors['title'])) { ?>
                                     <ul>
                                         <?php

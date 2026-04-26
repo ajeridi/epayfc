@@ -414,7 +414,8 @@ class Item extends Model implements JsonSerializable
 
         return $errors;
     }
-    private static function unicite_title_for_owner(int $owner, string $title, int $id): bool
+    
+    public static function unicite_title_for_owner(int $owner, string $title, int $id): bool
     {
 
         $query = self::execute("SELECT * from items i where i.owner = :owner and i.title = :title ", ["owner" => $owner, "title" => $title]);
