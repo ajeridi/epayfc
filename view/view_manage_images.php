@@ -10,6 +10,38 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <script src="lib/jquery-4.0.0.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="lib/jquery-ui.min.css">
+    <script src="lib/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="lib/jquery.ui.touch-punch.js" type="text/javascript"></script>
+    <script>
+
+    /**
+     * Comment ca va marcher le drag and drop
+     * 
+     * Pour implement jquery ui, il faut definir un parent et ses enfants
+     * dans mon cas le parent est le form et chaque enfant est le figure
+     * 
+     * 
+     */
+
+    let image_container;
+
+    $(function() {
+        image_container = $("#image_container");
+
+        image_container.sortable({ // on dit que notre form est sortable
+            items: "figure" // que chaque element sortable est de type figure
+        });
+
+    });
+
+
+
+
+    </script>
+
 </head>
 
 <body class="bg-navy" data-bs-theme="dark">
@@ -59,7 +91,7 @@
                         <p>No images yet for this item. Upload some images above to get started.</p>
                     </div>
                 <?php } else { ?>
-                    <form method="post" action='item/manage_images/<?= $item->get_id() . ($search_criteria == "" ? "" : "/" . $search_criteria) ?>'>
+                    <form id="image_container" method="post" action='item/manage_images/<?= $item->get_id() . ($search_criteria == "" ? "" : "/" . $search_criteria) ?>'>
                         <?php foreach ($item->get_pictures() as $picture) { ?>
                             <figure class='d-inline-block' style="margin: 10px;">
                                 <img src='<?= $picture->get_thumbnail_path() ?>' class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px;">
