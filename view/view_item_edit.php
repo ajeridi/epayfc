@@ -18,9 +18,10 @@
         let inputs;
         let is_pristine = true;
 
-        let errTitle;
+        let errTitle, errDescription, errDuration;
 
         let constants;
+        let description_text;
         const info = <?= json_encode($info) ?>;
 
 
@@ -32,6 +33,9 @@
             navbar_links = $("#navbar_user a");
             inputs = $("input");
             errTitle = $("#errTitle");
+            description_text = $("#description_field");
+            errDescription = $("#errDescription");
+            errDuration = $("#errDuration");
 
 
             constants = await $.getJSON("item/get_item_rules_service");
@@ -48,12 +52,21 @@
             inputs.on('input', async function() {
                 let field = $(this); // on va rechercher l'element modifie
                 let ok = true;
-                if (field.attr("id") === "title_input") { //  si l'element modifie est le field du titre
+                let field_id = field.attr("id");
+                if (field_id === "title_input") { //  si l'element modifie est le field du titre
                     ok = await validateTitle(field.val());
+                }
+                else if (field_id === "duration_input"){
+                    ok = validateDuration(field.val());
                 }
                 // activation du bouton depends du ok des inputs
                 save_btn.prop('disabled', !ok) // desactiver le bouton save
             })
+
+            description_text.on('input', async function() {
+                let ok = validateDescription(description_text.val());
+                save_btn.prop('disabled', !ok);
+            });
 
 
             /**
@@ -79,6 +92,30 @@
                             ok = false;
                         }
                     });
+                }
+                return ok;
+            }
+
+            function validateDuration(duration){
+                errDuration.html("");
+                let ok = true;
+                if (duration === ""){
+                    ok = false;
+                    errDuration.append(constants.duration_required);
+                }
+                else if (isNaN(duration) || Number(duration) < Number(constants.duration_min) || Number(duration) > Number(constants.duration_max)){
+                    ok = false;
+                    errDuration.append(constants.duration_rules);
+                }
+                return ok;
+            }
+
+            function validateDescription(description){
+                errDescription.html("");
+                let ok = true;
+                if (description != "" && (description.length < constants.description_min_length)){
+                    ok = false;
+                    errDescription.append(constants.description_length);
                 }
                 return ok;
             }
@@ -173,8 +210,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-label d-block  text-bg-dark" id="description" name="description" style="padding-right:80%" <?= ($info['description'] == null) ? "placeholder=\"Describe your item in detail...\"  rows=\"3\">" : "rows=\"3\">" . $info['description'] ?></textarea>
-                                 <div class="errors">
+                            <textarea id="description_field" class="form-label d-block  text-bg-dark" id="description" name="description" style="padding-right:80%" <?= ($info['description'] == null) ? "placeholder=\"Describe your item in detail...\"  rows=\"3\">" : "rows=\"3\">" . $info['description'] ?></textarea>
+                                 <div id="errDescription" class="errors">
                                     <?php if (count($errors['description'])) { ?>
                                     <ul>
                                         <?php
@@ -188,8 +225,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="duration_days" class="form-label">Sale Duration (days)*</label>
-                                <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days" <?= ($info['duration_days'] == 0) ? "value=\"7\"" : "value=" . $info['duration_days'] ?>>
-                                <div class="errors">
+                                <input id="duration_input" type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days" <?= ($info['duration_days'] == 0) ? "value=\"7\"" : "value=" . $info['duration_days'] ?>>
+                                <div id="errDuration" class="errors">
                                     <?php if (count($errors['duration_days'])) { ?>
                                     <ul>
                                             <?php

@@ -361,7 +361,7 @@ class Item extends Model implements JsonSerializable
     }
     private static function check_duration_days(string $duration_days,array $errors) : array {
 
-        if (!preg_match("/^(?:[1-9]|[1-5][0-9]|60)$/", $duration_days)) {
+        if (!preg_match("/^(?:[1-9]|[1-5][0-9]|365)$/", $duration_days)) {
             $errors[] = Configuration::get("duration_days");
         }
         return $errors ;
@@ -414,7 +414,7 @@ class Item extends Model implements JsonSerializable
 
         return $errors;
     }
-    
+
     public static function unicite_title_for_owner(int $owner, string $title, int $id): bool
     {
 

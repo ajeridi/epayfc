@@ -546,6 +546,10 @@ class ControllerItem extends Controller
             $title_max_length = Configuration::get("title_max_length");
             $description_min_length = Configuration::get("description_min_lenght");
             $description_max_length = Configuration::get("description_max_lenght");
+            $duration_min = Configuration::get("duration_min");
+            $duration_max = Configuration::get("duration_max");
+            $duration_required = Configuration::get("duration_required");
+            $duration_rules = Configuration::get("duration_rules");
             $unicity_title = Configuration::get("unicity_title");
             $title_required = Configuration::get("title_required");
             $length_title = Configuration::get("lenght_title");
@@ -562,6 +566,10 @@ class ControllerItem extends Controller
                 "title_max_length" => $title_max_length,
                 "description_min_length" => $description_min_length,
                 "description_max_length" => $description_max_length,
+                "duration_required" => $duration_required,
+                "duration_rules" => $duration_rules,
+                "duration_min" => $duration_min,
+                "duration_max" => $duration_max,
                 "unicity_title" => $unicity_title,
                 "title_required" => $title_required,
                 "length_title" => $length_title,
