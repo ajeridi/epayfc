@@ -27,19 +27,53 @@
      */
 
     let image_container;
+    const item_id = <?= $item->get_id() ?>;
 
-    $(function() {
+    $(async function() {
         image_container = $("#image_container");
 
         image_container.sortable({ // on dit que notre form est sortable
-            items: "figure" // que chaque element sortable est de type figure
+            items: "figure", // que chaque element sortable est de type figure
+            update: async function(event, ui) { // methode a activer apres le drop
+                // chaque photo conservera son ancienne priorite,
+                // on recupere une liste de priorite des images, ou l'index + 1 est la nouvelle priorite et array[index] et l'ancienne
+                let sorted = image_container.sortable("toArray", {attribute: "data-id"});
+                await swap_image_priority(item_id, sorted); // on envoie le tableau des anciennes priorite dans le nouvel ordre
+            }
         });
-
     });
 
+    async function swap_image_priority(item_id, new_order){
+        // on va faire une requete post
+        await $.post("item/swap_image_priority_service", 
+            {
+                item_id : item_id,
+                order: new_order
+            },
+            async function(response){ // rafraichissement des images quand on met a jour la db
+                await refreshImages(item_id);
+            }
+        )
+    }
 
 
-
+    // methode qui va rafrachir la section image container avec les images d'un item d'id item_id
+    async function refreshImages(item_id){
+        image_container.html(""); // nettoyage de la zone
+        let images = await $.getJSON("item/get_item_pictures_service/" + item_id);
+        let html = "";
+        for (const picture of images){
+            html += '<figure class="d-inline-block" style="margin: 10px;" data-id="' + picture.priority +'">';
+            html += '<img src="'+ picture.path + '" class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px;">';
+            html += '<figcaption style="text-align: center;">';
+            html += '<button type="submit" class="btn btn-secondary" name="move" value="' + (-1 * picture.priority) + '" ' + (picture.priority == 1 ? "disabled" : "") + '><i class="bi bi-arrow-left"></i></button>';
+            html += ' <button type="submit" class="btn btn-secondary" name="move" value="' + picture.priority + '" ' + (picture.priority == images.length ? "disabled" : "") + '><i class="bi bi-arrow-right"></i></button>';
+            html += ' <button type="submit" class="btn btn-danger" name="delete" value="' + picture.priority + '"><i class="bi bi-x-lg"></i></button>';
+            html += '</figcaption>';
+            html += '</figure>';
+        }
+        image_container.append(html);
+    }
     </script>
 
 </head>
@@ -93,8 +127,8 @@
                 <?php } else { ?>
                     <form id="image_container" method="post" action='item/manage_images/<?= $item->get_id() . ($search_criteria == "" ? "" : "/" . $search_criteria) ?>'>
                         <?php foreach ($item->get_pictures() as $picture) { ?>
-                            <figure class='d-inline-block' style="margin: 10px;">
-                                <img src='<?= $picture->get_thumbnail_path() ?>' class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px;">
+                            <figure class='d-inline-block' style="margin: 10px;" data-id="<?= $picture->get_priority() ?>">
+                                <img src='<?= $picture->get_thumbnail_path() ?>' class="rounded float-start"  height="100" style="margin-bottom: 8px;">
                                 <figcaption style="text-align: center;">
                                     <button type="submit" class="btn btn-secondary" name="move" value="<?= -1 * $picture->get_priority() ?>" <?= $picture->get_priority() == 1 ? "disabled" : "" ?>><i class="bi bi-arrow-left"></i></button>
                                     <button type="submit" class="btn btn-secondary" name="move" value="<?= $picture->get_priority() ?>" <?= $picture->get_priority() == $item->get_number_of_pictures() ? "disabled" : "" ?>><i class="bi bi-arrow-right"></i></button>
