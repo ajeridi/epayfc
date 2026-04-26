@@ -102,9 +102,7 @@
 
             async function validateAll() {
                 let first = await validateAllFields();
-                console.log("first validation " + first);
                 let second = await validateDescription(description_text.val());
-                console.log("second validation" + second);
                 save_btn.prop('disabled', !(first && second));
             }
 
@@ -156,6 +154,8 @@
                     ok = false;
                     errDescription.append(constants.description_length);
                 }
+                description_text.toggleClass("is-invalid", !ok);
+                description_text.toggleClass("is-valid", ok);
                 return ok;
             }
 
@@ -314,7 +314,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-label d-block  text-bg-dark" id="description" name="description" style="padding-right:80%" <?= ($info['description'] == null) ? "placeholder=\"Describe your item in detail...\"  rows=\"3\">" : "rows=\"3\">" . $info['description'] ?></textarea>
+                            <textarea class="form-control d-block  text-bg-dark" id="description" name="description" style="padding-right:80%" <?= ($info['description'] == null) ? "placeholder=\"Describe your item in detail...\"  rows=\"3\">" : "rows=\"3\">" . $info['description'] ?></textarea>
                                  <div id="errDescription" class="errors">
                                     <?php if (count($errors['description'])) { ?>
                                     <ul>
@@ -329,7 +329,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="duration_days" class="form-label">Sale Duration (days)*</label>
-                                <input  type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days" <?= ($info['duration_days'] == 0) ? "value=\"7\"" : "value=" . $info['duration_days'] ?>>
+                                <input  type="text" class="form-control d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days" <?= ($info['duration_days'] == 0) ? "value=\"7\"" : "value=" . $info['duration_days'] ?>>
                                 <div id="errDuration" class="errors">
                                     <?php if (count($errors['duration_days'])) { ?>
                                     <ul>
@@ -357,7 +357,7 @@
                                
                                     <div class="mb-3">
                                         <label for="starting_bid" class="form-label text-white">Starting Bid</label>
-                                        <input id="starting_bid" type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%"  name="starting_bid" <?= ($info['starting_bid'] == null) ? "placeholder=\"e.g. 50.00\"" : "value=" . $info['starting_bid'] ?>>
+                                        <input id="starting_bid" type="text" class="form-control d-block  text-bg-dark" style ="padding-right:80%"  name="starting_bid" <?= ($info['starting_bid'] == null) ? "placeholder=\"e.g. 50.00\"" : "value=" . $info['starting_bid'] ?>>
                                          <div id="errStartingBid" class="errors">
                                             <?php if (count($errors['starting_bid'])) { ?>
                                                 <ul>
@@ -372,7 +372,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="buy_now_price" class="form-label text-white">Instant Purchase Price</label><a class="text-light">(optional)</a>
-                                        <input  type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($info['buy_now_price'] == null) ? "placeholder=\"e.g. 200.00\"" : "value=" . $info['buy_now_price'] ?> >
+                                        <input  type="text" class="form-control d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($info['buy_now_price'] == null) ? "placeholder=\"e.g. 200.00\"" : "value=" . $info['buy_now_price'] ?> >
                                          <div id="errBuyNow" class="errors">
                                             <?php if (count($errors['buy_now_price'])) { ?>
                                                 <ul>
@@ -394,7 +394,7 @@
                                
                                 <div class="mb-3">
                                     <label for="saleprice" class="form-label text-white">Sale Price</label>
-                                    <input  type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($info['saleprice'] == null) ? "placeholder=\"e.g. 150.00\"" : "value=" . $info['saleprice'] ?>>
+                                    <input  type="text" class="form-control d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($info['saleprice'] == null) ? "placeholder=\"e.g. 150.00\"" : "value=" . $info['saleprice'] ?>>
                                         <div id="errDirectSale" class="errors">
                                             <?php if (count($errors['saleprice'])) { ?>
                                             <ul>
