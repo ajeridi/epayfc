@@ -18,7 +18,7 @@ function cmp(Item $i1, Item $i2): int
         return 0;
     }
 
-    return ($dates1 > $dates2) ? 1 : -1;
+    return ($dates1 < $dates2) ? 1 : -1;
 }
 
 class Item extends Model implements JsonSerializable
