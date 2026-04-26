@@ -602,7 +602,6 @@ class ControllerItem extends Controller
                 echo json_encode($is_unique);
             }
         } else {
-            echo "Not allowed";
         }
     }
 
@@ -626,7 +625,6 @@ class ControllerItem extends Controller
                         Picture::update_priority($item->get_id(), $order[$i], $new_priority);
                     }
                     Picture::update_to_pos_priorities($item->get_id());
-                    echo "Swapped operation done";
                 }
             }
         } else {
