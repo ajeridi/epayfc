@@ -18,7 +18,7 @@
         let inputs;
         let is_pristine = true;
 
-        let errTitle, errDescription, errDuration;
+        let errTitle, errDescription, errDuration, errStartingBid;
 
         let constants;
         let description_text;
@@ -36,6 +36,7 @@
             description_text = $("#description_field");
             errDescription = $("#errDescription");
             errDuration = $("#errDuration");
+            errStartingBid = $("#errStartingBid");
 
 
             constants = await $.getJSON("item/get_item_rules_service");
@@ -55,9 +56,12 @@
                 let field_id = field.attr("id");
                 if (field_id === "title_input") { //  si l'element modifie est le field du titre
                     ok = await validateTitle(field.val());
-                }
-                else if (field_id === "duration_input"){
+                } else if (field_id === "duration_input") {
                     ok = validateDuration(field.val());
+                } else if (field_id === "starting_bid") {
+                    ok = validateStartingBid(field.val());
+                } else if (field_id === "buy_now") {
+                        
                 }
                 // activation du bouton depends du ok des inputs
                 save_btn.prop('disabled', !ok) // desactiver le bouton save
@@ -96,26 +100,42 @@
                 return ok;
             }
 
-            function validateDuration(duration){
+            function validateDuration(duration) {
                 errDuration.html("");
                 let ok = true;
-                if (duration === ""){
+                if (duration === "") {
                     ok = false;
                     errDuration.append(constants.duration_required);
-                }
-                else if (isNaN(duration) || Number(duration) < Number(constants.duration_min) || Number(duration) > Number(constants.duration_max)){
+                } else if (isNaN(duration) || Number(duration) < Number(constants.duration_min) || Number(duration) > Number(constants.duration_max)) {
                     ok = false;
                     errDuration.append(constants.duration_rules);
                 }
                 return ok;
             }
 
-            function validateDescription(description){
+            function validateDescription(description) {
                 errDescription.html("");
                 let ok = true;
-                if (description != "" && (description.length < constants.description_min_length)){
+                if (description != "" && (description.length < constants.description_min_length)) {
                     ok = false;
                     errDescription.append(constants.description_length);
+                }
+                return ok;
+            }
+
+            function validateStartingBid(starting_bid) {
+                errStartingBid.html("");
+                let ok = true;
+                if (starting_bid != "") { // si starting_bid est rempli
+                    if (isNaN(starting_bid) || Number(starting_bid) <= 0) { // s'il est pas numerique ou positif
+                        errStartingBid.append(constants.starting_bid); // message pour dire qu'il doit etre positif
+                        ok = false;
+                    }
+                    let buy_now = $("#buy_now").val(); // on va comparer le starting bid avec buy_now
+                    if (buy_now != "" && starting_bid > buy_now) { // si buy now est rempli et que le starting bid est superieur au buy now
+                        ok = false;
+                        errStartingBid.append("Starting bid can't be greather than buy now price");
+                    }
                 }
                 return ok;
             }
@@ -253,8 +273,8 @@
                                
                                     <div class="mb-3">
                                         <label for="starting_bid" class="form-label text-white">Starting Bid</label>
-                                        <input type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="starting_bid" name="starting_bid" <?= ($info['starting_bid'] == null) ? "placeholder=\"e.g. 50.00\"" : "value=" . $info['starting_bid'] ?>>
-                                         <div class="errors">
+                                        <input id="starting_bid" type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="starting_bid" name="starting_bid" <?= ($info['starting_bid'] == null) ? "placeholder=\"e.g. 50.00\"" : "value=" . $info['starting_bid'] ?>>
+                                         <div id="errStartingBid" class="errors">
                                             <?php if (count($errors['starting_bid'])) { ?>
                                                 <ul>
                                                     <?php
@@ -268,7 +288,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="buy_now_price" class="form-label text-white">Instant Purchase Price</label><a class="text-light">(optional)</a>
-                                        <input type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($info['buy_now_price'] == null) ? "placeholder=\"e.g. 200.00\"" : "value=" . $info['buy_now_price'] ?> >
+                                        <input id="buy_now" type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($info['buy_now_price'] == null) ? "placeholder=\"e.g. 200.00\"" : "value=" . $info['buy_now_price'] ?> >
                                          <div class="errors">
                                             <?php if (count($errors['buy_now_price'])) { ?>
                                                 <ul>
