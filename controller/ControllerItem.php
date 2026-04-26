@@ -1,5 +1,7 @@
 <?php
 
+use PSpell\Config;
+
 require_once  "framework/Controller.php";
 require_once "framework/Configuration.php";
 require_once "model/Item.php";
@@ -84,7 +86,7 @@ class ControllerItem extends Controller
                     $back_url = $back_url . "/" . $search_criteria;
                     $bids_url = $bids_url . "/" . $search_criteria;
                     $edit_item_url = $edit_item_url . "/" . $search_criteria;
-                    $manage_images_url = $manage_images_url . "/" . $search_criteria; 
+                    $manage_images_url = $manage_images_url . "/" . $search_criteria;
                 }
             }
         } else {
@@ -288,7 +290,7 @@ class ControllerItem extends Controller
             $item_id = Tools::sanitize($_GET['param1']);
             $item = Item::get_item_by_id($item_id);
 
-            if (isset($_GET["param2"]) && $_GET["param2"] != ""){ // si critere de recherche
+            if (isset($_GET["param2"]) && $_GET["param2"] != "") { // si critere de recherche
                 $search_criteria = $_GET["param2"];
             }
 
@@ -306,7 +308,7 @@ class ControllerItem extends Controller
         $item = Item::get_item_by_id($item_id);
 
         $search_criteria = "";
-        if (isset($_GET["param2"]) && $_GET["param2"] != ""){ // si critere de recherche
+        if (isset($_GET["param2"]) && $_GET["param2"] != "") { // si critere de recherche
             $search_criteria = $_GET["param2"];
         }
         if ($item->get_owner() != $user->get_id() || count($item->get_bids()) != 0 || !$item->is_open_item()) {
@@ -337,7 +339,7 @@ class ControllerItem extends Controller
             $item_id = $_GET['param1'];
             $item = Item::get_item_by_id($item_id);
 
-            if (isset($_GET["param2"]) && $_GET["param2"] != ""){ // si on a un critere de recherche
+            if (isset($_GET["param2"]) && $_GET["param2"] != "") { // si on a un critere de recherche
                 $search_criteria = $_GET["param2"];
             }
 
@@ -531,6 +533,76 @@ class ControllerItem extends Controller
     {
         if (isset($_GET["param1"]) && $_GET["param1"] != "") {
             echo EncoderDecoder::url_safe_encode($_GET["param1"]);
+        }
+    }
+
+    /**
+     * Service qui recupere les constantes d'un item depuis le fichier dev.ini
+     */
+    public function get_item_rules_service(): void
+    {
+        if ($this->get_user_or_false()) {
+            $title_min_length = Configuration::get("title_min_length");
+            $title_max_length = Configuration::get("title_max_length");
+            $description_min_length = Configuration::get("description_min_lenght");
+            $description_max_length = Configuration::get("description_max_lenght");
+            $duration_min = Configuration::get("duration_min");
+            $duration_max = Configuration::get("duration_max");
+            $duration_required = Configuration::get("duration_required");
+            $duration_rules = Configuration::get("duration_rules");
+            $unicity_title = Configuration::get("unicity_title");
+            $title_required = Configuration::get("title_required");
+            $length_title = Configuration::get("lenght_title");
+            $description_length = Configuration::get("description_lenght");
+            $duration_days = Configuration::get("duration_days");
+            $starting_bid = Configuration::get("starting_bid");
+            $buy_now_positif = Configuration::get("buy_now_positif");
+            $buy_now_sup_starting_bid = Configuration::get("buy_now_sup_starting_bid");
+            $both = Configuration::get("both");
+            $option_required = Configuration::get("option_required");
+
+            $json = json_encode([
+                "title_min_length" => $title_min_length,
+                "title_max_length" => $title_max_length,
+                "description_min_length" => $description_min_length,
+                "description_max_length" => $description_max_length,
+                "duration_required" => $duration_required,
+                "duration_rules" => $duration_rules,
+                "duration_min" => $duration_min,
+                "duration_max" => $duration_max,
+                "unicity_title" => $unicity_title,
+                "title_required" => $title_required,
+                "length_title" => $length_title,
+                "description_length" => $description_length,
+                "duration_days" => $duration_days,
+                "starting_bid" => $starting_bid,
+                "buy_now_positif" => $buy_now_positif,
+                "buy_now_sup_starting_bid" => $buy_now_sup_starting_bid,
+                "both" => $both,
+                "option_required" => $option_required
+            ]);
+
+            echo $json;
+        }
+    }
+
+    /**
+     * Service qui va verifier l'unicite du titre d'un item pour l'utilisateur connecte
+     */
+    function check_title_unicity_service(): void
+    {
+        $user = $this->get_user_or_false();
+        if ($user) {
+            if ((isset($_POST["title"]) && $_POST["title"] != "") && (isset($_POST["id"]) && $_POST["id"] != "")) {
+                $title = $_POST["title"];
+                // si le titre a des espaces sous forme de '+' on les remets en espaces
+                $item_id = $_POST["id"];
+                $is_unique = Item::unicite_title_for_owner($user->get_id(), $title, $item_id);
+
+                echo json_encode($is_unique);
+            }
+        } else {
+            echo "Not allowed";
         }
     }
 }
