@@ -33,7 +33,7 @@
             navbar_links = $("#navbar_user a");
             inputs = $("input");
             errTitle = $("#errTitle");
-            description_text = $("#description_field");
+            description_text = $("#description");
             errDescription = $("#errDescription");
             errDuration = $("#errDuration");
             errStartingBid = $("#errStartingBid");
@@ -52,25 +52,36 @@
             /**
              *  a chaque input dans les fields inputs, on regarde quel input c'est puis on fait la validation
              */
-            inputs.on('input', async function() {
-                let field = $(this); // on va rechercher l'element modifie
+            inputs.on('input blur', async function() {
+                let allOk = true;
+                for (const input of inputs.toArray()) { // for respecte mieux les await
+                    let res = await validateFields($(input));
+                    if (!res) allOk = false; // des qu'on rencontre un faux, on le sauve comme ca on sait qu'au moins un field est non valide
+                }
+                save_btn.prop('disabled', !allOk);
+            })
+
+            async function validateFields(field) {
                 let ok = true;
                 let field_id = field.attr("id");
-                if (field_id === "title_input") { //  si l'element modifie est le field du titre
+                if (field_id === "itemtitle") { //  si l'element modifie est le field du titre
                     ok = await validateTitle(field.val());
-                } else if (field_id === "duration_input") {
+                } else if (field_id === "duration_days") {
                     ok = validateDuration(field.val());
                 } else if (field_id === "starting_bid") {
                     ok = validateStartingBid(field.val());
-                } else if (field_id === "buy_now") {
+                } else if (field_id === "buy_now_price") {
                     ok = validateBuyNow(field.val());
-                }
-                else if (field_id === "direct_sale"){
+                } else if (field_id === "saleprice") {
                     ok = validateDirectSale(field.val());
                 }
+
+                field.toggleClass("is-invalid", !ok);
+                field.toggleClass("is-valid", ok);
                 // activation du bouton depends du ok des inputs
                 save_btn.prop('disabled', !ok) // desactiver le bouton save
-            })
+                return ok;
+            }
 
             description_text.on('input', async function() {
                 let ok = validateDescription(description_text.val());
@@ -131,24 +142,23 @@
             function validateStartingBid(starting_bid) {
                 errStartingBid.html("");
                 let ok = true;
-                let direct_sale = $("#direct_sale").val();
+                let direct_sale = $("#saleprice").val();
                 if (starting_bid != "") { // si starting_bid est rempli
                     if (isNaN(starting_bid) || Number(starting_bid) <= 0) { // s'il est pas numerique ou positif
                         errStartingBid.append("<span>" + constants.starting_bid + "</span><br>"); // message pour dire qu'il doit etre positif
                         ok = false;
                     }
-                    let buy_now = $("#buy_now").val(); // on va comparer le starting bid avec buy_now
+                    let buy_now = $("#buy_now_price").val(); // on va comparer le starting bid avec buy_now
                     if (buy_now != "" && Number(starting_bid) > Number(buy_now)) { // si buy now est rempli et que le starting bid est superieur au buy now
                         ok = false;
                         errStartingBid.append("<span>Starting bid can't be greather than buy now price</span><br>");
                     }
                     // si direct sale est rempli et numerique ce n'est pas bon
-                    if (direct_sale != "" && !isNaN(direct_sale)){ // si direct sale est rempli et numerique
+                    if (direct_sale != "" && !isNaN(direct_sale)) { // si direct sale est rempli et numerique
                         errStartingBid.append("<span>" + constants.both + "</span>");
                         ok = false;
                     }
-                }
-                else if (direct_sale == ""){ // si starting_bid est vide et que  direct_sale est vide
+                } else if (direct_sale == "") { // si starting_bid est vide et que  direct_sale est vide
                     errStartingBid.append("<span>" + constants.option_required + "</span>");
                     ok = false;
                 }
@@ -168,9 +178,9 @@
                         ok = false;
                         errBuyNow.append(constants.buy_now_sup_starting_bid);
                     }
-                     // si direct sale est rempli et numerique ce n'est pas bon
-                    let direct_sale = $("#direct_sale").val();
-                    if (direct_sale != "" && !isNaN(direct_sale)){ // si direct sale est rempli et numerique
+                    // si direct sale est rempli et numerique ce n'est pas bon
+                    let direct_sale = $("#saleprice").val();
+                    if (direct_sale != "" && !isNaN(direct_sale)) { // si direct sale est rempli et numerique
                         errBuyNow.append("<span>" + constants.both + "</span>");
                         ok = false;
                     }
@@ -178,23 +188,22 @@
                 return ok;
             }
 
-            function validateDirectSale(price){
+            function validateDirectSale(price) {
                 errDirectSale.html("");
                 let ok = true;
                 let starting_bid = $("#starting_bid").val();
-                if (price != ""){ // si direct sale est rempli
+                if (price != "") { // si direct sale est rempli
                     if (isNaN(price) || Number(price) <= 0) { // s'il est pas numerique ou positif
                         errDirectSale.append("<span>" + "Direct sale price must be a positive number" + "</span><br>"); // message pour dire qu'il doit etre positif
                         ok = false;
                     }
                     // si starting bid ou buy_now sont rempli ce n'est pas ok
-                    let buy_now = $("#buy_now");
-                    if ((starting_bid != "" && !isNaN(starting_bid)) || (buy_now != "" && !isNaN(buy_now))){
+                    let buy_now = $("#buy_now_price").val();
+                    if ((starting_bid != "" && !isNaN(starting_bid)) || (buy_now != "" && !isNaN(buy_now))) {
                         errDirectSale.append("<span>" + constants.both + "</span>");
                         ok = false;
-                    } 
-                }
-                else if (starting_bid == ""){ // si directSale est vide et que starting bid est vide
+                    }
+                } else if (starting_bid == "") { // si directSale est vide et que starting bid est vide
                     errDirectSale.append("<span>" + constants.option_required + "</span>");
                     ok = false;
                 }
@@ -276,7 +285,7 @@
 
                         <div class="mb-3">
                             <label for="itemtitle" class="form-label">Item Title *</label>
-                            <input id="title_input" type="text" class="form-label d-block  text-bg-dark" style="padding-right:80%" id="itemtitle" name="title" <?= ($info['title'] == null) ? "placeholder=\"EX:Iphon 13 Pro Max 256GB\"" : "value=\"" . $info['title'] . "\"" ?>>
+                            <input type="text" class="form-control d-block  text-bg-dark" style="padding-right:80%" id="itemtitle" name="title" <?= ($info['title'] == null) ? "placeholder=\"EX:Iphon 13 Pro Max 256GB\"" : "value=\"" . $info['title'] . "\"" ?>>
                             <div id="errTitle" class="errors">
                                 <?php if (count($errors['title'])) { ?>
                                     <ul>
@@ -291,7 +300,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea id="description_field" class="form-label d-block  text-bg-dark" id="description" name="description" style="padding-right:80%" <?= ($info['description'] == null) ? "placeholder=\"Describe your item in detail...\"  rows=\"3\">" : "rows=\"3\">" . $info['description'] ?></textarea>
+                            <textarea class="form-label d-block  text-bg-dark" id="description" name="description" style="padding-right:80%" <?= ($info['description'] == null) ? "placeholder=\"Describe your item in detail...\"  rows=\"3\">" : "rows=\"3\">" . $info['description'] ?></textarea>
                                  <div id="errDescription" class="errors">
                                     <?php if (count($errors['description'])) { ?>
                                     <ul>
@@ -306,7 +315,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="duration_days" class="form-label">Sale Duration (days)*</label>
-                                <input id="duration_input" type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days" <?= ($info['duration_days'] == 0) ? "value=\"7\"" : "value=" . $info['duration_days'] ?>>
+                                <input  type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="duration_days" name="duration_days" <?= ($info['duration_days'] == 0) ? "value=\"7\"" : "value=" . $info['duration_days'] ?>>
                                 <div id="errDuration" class="errors">
                                     <?php if (count($errors['duration_days'])) { ?>
                                     <ul>
@@ -334,7 +343,7 @@
                                
                                     <div class="mb-3">
                                         <label for="starting_bid" class="form-label text-white">Starting Bid</label>
-                                        <input id="starting_bid" type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%" id="starting_bid" name="starting_bid" <?= ($info['starting_bid'] == null) ? "placeholder=\"e.g. 50.00\"" : "value=" . $info['starting_bid'] ?>>
+                                        <input id="starting_bid" type="text" class="form-label d-block  text-bg-dark" style ="padding-right:80%"  name="starting_bid" <?= ($info['starting_bid'] == null) ? "placeholder=\"e.g. 50.00\"" : "value=" . $info['starting_bid'] ?>>
                                          <div id="errStartingBid" class="errors">
                                             <?php if (count($errors['starting_bid'])) { ?>
                                                 <ul>
@@ -349,7 +358,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="buy_now_price" class="form-label text-white">Instant Purchase Price</label><a class="text-light">(optional)</a>
-                                        <input id="buy_now" type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($info['buy_now_price'] == null) ? "placeholder=\"e.g. 200.00\"" : "value=" . $info['buy_now_price'] ?> >
+                                        <input  type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="buy_now_price" name="buy_now_price" <?= ($info['buy_now_price'] == null) ? "placeholder=\"e.g. 200.00\"" : "value=" . $info['buy_now_price'] ?> >
                                          <div id="errBuyNow" class="errors">
                                             <?php if (count($errors['buy_now_price'])) { ?>
                                                 <ul>
@@ -371,7 +380,7 @@
                                
                                 <div class="mb-3">
                                     <label for="saleprice" class="form-label text-white">Sale Price</label>
-                                    <input id="direct_sale" type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($info['saleprice'] == null) ? "placeholder=\"e.g. 150.00\"" : "value=" . $info['saleprice'] ?>>
+                                    <input  type="text" class="form-label d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($info['saleprice'] == null) ? "placeholder=\"e.g. 150.00\"" : "value=" . $info['saleprice'] ?>>
                                         <div id="errDirectSale" class="errors">
                                             <?php if (count($errors['saleprice'])) { ?>
                                             <ul>
