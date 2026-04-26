@@ -605,4 +605,33 @@ class ControllerItem extends Controller
             echo "Not allowed";
         }
     }
+
+    /**
+     * Service qui va swap la priorite d'une image vers une nouvelle priorite
+     */
+    function swap_image_priority_service(): void
+    {
+        $user = $this->get_user_or_false();
+        if ($user) { // si le user existe
+            if (isset($_POST["item_id"]) && is_numeric($_POST["item_id"])) { // si l'id entre existe et est numerique
+                $item = Item::get_item_by_id($_POST["item_id"]); // recherche de l'item
+                if ($item && $item->get_owner() === $user->get_id()) { // si l'item existe et appartient a l'owner
+                    $order = $_POST["order"];
+                    for ($i = 0; $i < count($order); $i++){
+                        // chaque entree dans le tableau represente la priorite d'une image
+                        // pour chaque image de priorite $order[$i], on lui donne une priorite de -1 * ($i+1)
+                        // par exemple, image de p3, aura une priorite de -1 si elle est en debut de tableau
+                        // puis une fois que tous les element ont une nouvelle priorite, on remet les priorite en positif
+                        $new_priority = -1 * ($i + 1);
+                        Picture::update_priority($item->get_id(), $order[$i], $new_priority);
+                    }
+                    Picture::update_to_pos_priorities($item->get_id());
+                    echo "Swapped operation done";
+                }
+            }
+        } else {
+            http_response_code(403);
+            echo json_encode(["error" => "User is not connected"]);
+        }
+    }
 }

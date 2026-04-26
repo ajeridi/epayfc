@@ -113,9 +113,20 @@ class Picture extends Model implements JsonSerializable
         }
     }
 
-    private static function update_priority(int $item_id, int $old_priority, int $new_priority): void
+    public static function update_priority(int $item_id, int $old_priority, int $new_priority): void
     {
         $sql = "UPDATE item_pictures SET priority = :new_priority WHERE priority = :old_priority AND item = :item_id;";
         $query = self::execute($sql, ["new_priority" => $new_priority, "old_priority" => $old_priority, "item_id" => $item_id]);
     }
+
+    /**
+     * Converti les priorites negative des images d'un item en priorite positif
+     */
+    public static function update_to_pos_priorities(int $item_id){
+        $sql = "UPDATE item_pictures SET priority = - priority WHERE item = :item_id";
+        $query = self::execute($sql, ["item_id" => $item_id]);
+    }
+
+
+
 }

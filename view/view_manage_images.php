@@ -27,15 +27,34 @@
      */
 
     let image_container;
+    const item_id = <?= $item->get_id() ?>;
 
-    $(function() {
+    $(async function() {
         image_container = $("#image_container");
 
         image_container.sortable({ // on dit que notre form est sortable
-            items: "figure" // que chaque element sortable est de type figure
+            items: "figure", // que chaque element sortable est de type figure
+            update: async function(event, ui) { // methode a activer apres le drop
+                // chaque photo conservera son ancienne priorite,
+                // on recupere une liste de priorite des images, ou l'index + 1 est la nouvelle priorite et array[index] et l'ancienne
+                let sorted = image_container.sortable("toArray", {attribute: "data-id"});
+                await swap_image_priority(item_id, sorted); // on envoie le tableau des anciennes priorite dans le nouvel ordre
+            }
         });
-
     });
+
+    async function swap_image_priority(item_id, new_order){
+        // on va faire une requete post
+        await $.post("item/swap_image_priority_service", 
+            {
+                item_id : item_id,
+                order: new_order
+            },
+            function(response){
+                console.log(response);
+            }
+        )
+    }
 
 
 
@@ -93,7 +112,7 @@
                 <?php } else { ?>
                     <form id="image_container" method="post" action='item/manage_images/<?= $item->get_id() . ($search_criteria == "" ? "" : "/" . $search_criteria) ?>'>
                         <?php foreach ($item->get_pictures() as $picture) { ?>
-                            <figure class='d-inline-block' style="margin: 10px;">
+                            <figure class='d-inline-block' style="margin: 10px;" data-id="<?= $picture->get_priority() ?>">
                                 <img src='<?= $picture->get_thumbnail_path() ?>' class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px;">
                                 <figcaption style="text-align: center;">
                                     <button type="submit" class="btn btn-secondary" name="move" value="<?= -1 * $picture->get_priority() ?>" <?= $picture->get_priority() == 1 ? "disabled" : "" ?>><i class="bi bi-arrow-left"></i></button>
