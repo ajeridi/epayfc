@@ -654,9 +654,15 @@ class ControllerItem extends Controller
                     }
                     Picture::update_to_pos_priorities($item->get_id());
                 }
+                else{
+                    http_response_code(403); // item appartient pas a l'owner, forbidden
+                }
+            }
+            else {
+                http_response_code(400); // bad request si pas de params
             }
         } else {
-            http_response_code(403);
+            http_response_code(401); // Unauthorized
             echo json_encode(["error" => "User is not connected"]);
         }
     }
