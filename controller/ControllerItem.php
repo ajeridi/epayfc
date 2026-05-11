@@ -548,6 +548,10 @@ class ControllerItem extends Controller
         echo $item->get_period();
     }
 
+
+    /**
+     * Service qui va encoder le critère de recherche
+     */
     public function get_encoded_data_service(): void
     {
         if (isset($_GET["param1"]) && $_GET["param1"] != "") {
@@ -602,6 +606,8 @@ class ControllerItem extends Controller
             ]);
 
             echo $json;
+        } else {
+            http_response_code(401); // Si utilisateur non connecté "Unauthorized
         }
     }
 
