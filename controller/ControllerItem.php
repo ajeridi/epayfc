@@ -623,10 +623,13 @@ class ControllerItem extends Controller
                 // si le titre a des espaces sous forme de '+' on les remets en espaces
                 $item_id = $_POST["id"];
                 $is_unique = Item::unicite_title_for_owner($user->get_id(), $title, $item_id);
-
                 echo json_encode($is_unique);
             }
+            else{
+                http_response_code(400); // pas de paramètres donc bad request
+            }
         } else {
+            http_response_code(401); // Unauthorized
         }
     }
 
