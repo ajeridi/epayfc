@@ -272,7 +272,7 @@
         <div class="section-title mb-3">Seller Information</div>
 
         <div class="d-flex align-items-center gap-3">
-          <div class="avatar rounded-circle"><img src="<?= $owner_picture ?>" class="w-100" alt="profile picture"></div>
+          <div class="avatar rounded-circle"><img src=<?= $owner_picture == null ? "https://cdn.jsdelivr.net/npm/bootstrap-icons/icons/person-circle.svg" : "$owner_picture"?> class="w-100" alt="pic"></div>
           <div>
             <div class="fw-semibold"><?= $item->get_pseudo()  ?></div>
             <div class="text-muted small"><?= $owner_role ?></div>
