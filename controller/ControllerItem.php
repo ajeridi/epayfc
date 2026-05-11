@@ -471,9 +471,12 @@ class ControllerItem extends Controller
     // SERVICES
     public function is_highest_bidder_service(): void
     {
-        if ($this->get_user_or_false()) {
+        $user = $this->get_user_or_false();
+        if ($user) {
             $item_id = "";
             $user_id = "";
+
+            // recherche des paramètres
             if (isset($_GET["param1"]) && $_GET["param1"] != "") {
                 $item_id = $_GET["param1"];
             }
@@ -481,10 +484,15 @@ class ControllerItem extends Controller
                 $user_id = $_GET["param2"];
             }
 
-            $item = Item::get_item_by_id($item_id);
-            echo $item->is_highest_bidder($user_id);
+            if ($item_id == "" || $user_id == "") { // si item ou user toujours pas valide
+                http_response_code(400); // Paramètres reçu non valides
+            } else { // on fait la query
+                $item = Item::get_item_by_id($item_id);
+                echo $item->is_highest_bidder($user_id);
+            }
+        } else {
+            http_response_code(401); // erreur "Unauthorized"
         }
-        echo false;
     }
 
 
