@@ -663,5 +663,8 @@ class ControllerItem extends Controller
             $item = Item::get_item_by_id($_GET["param1"]); // recherche de l'item
             echo json_encode($item->get_pictures());
         }
+        else{
+            http_response_code(400); //Bad request
+        }
     }
 }
