@@ -469,6 +469,10 @@ class ControllerItem extends Controller
 
 
     // SERVICES
+
+    /**
+     * Service qui vérifie si un utilisateur est le highest bidder
+     */
     public function is_highest_bidder_service(): void
     {
         $user = $this->get_user_or_false();
@@ -496,6 +500,11 @@ class ControllerItem extends Controller
     }
 
 
+    /**
+     * Service qui verifie si l'utilisateur connecté est le bidder d'un item
+     * On cherche l'item, puis on regarde parmi ses bids si il en existe un tel que
+     * owner = id_user_connecté
+     */
     public function has_bidder_service(): void
     {
         if ($this->get_user_or_false()) {
@@ -510,8 +519,10 @@ class ControllerItem extends Controller
 
             $item = Item::get_item_by_id($item_id);
             echo $item->has_bidder($user_id);
+        } else {
+            http_response_code(401); // erreur "Unauthorized"
         }
-        echo false;
+        //echo false;
     }
 
     public function is_open_item_service(): void
@@ -647,15 +658,10 @@ class ControllerItem extends Controller
      */
     public function get_item_pictures_service(): void
     {
-        $user = $this->get_user_or_false();
-        if ($user) { // si le user existe
-            if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) { // si l'id entre existe et est numerique
-                $item = Item::get_item_by_id($_GET["param1"]); // recherche de l'item
-                echo json_encode($item->get_pictures());
-            }
-        } else {
-            http_response_code(403);
-            echo json_encode(["error" => "User is not connected"]);
+        // pas besoin de check si un utilisateur est connecté vu qu'un invité peut aussi voir les images 
+        if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) { // si l'id entre existe et est numerique
+            $item = Item::get_item_by_id($_GET["param1"]); // recherche de l'item
+            echo json_encode($item->get_pictures());
         }
     }
 }
