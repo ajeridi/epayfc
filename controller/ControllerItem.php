@@ -469,11 +469,18 @@ class ControllerItem extends Controller
 
 
     // SERVICES
+
+    /**
+     * Service qui vérifie si un utilisateur est le highest bidder
+     */
     public function is_highest_bidder_service(): void
     {
-        if ($this->get_user_or_false()) {
+        $user = $this->get_user_or_false();
+        if ($user) {
             $item_id = "";
             $user_id = "";
+
+            // recherche des paramètres
             if (isset($_GET["param1"]) && $_GET["param1"] != "") {
                 $item_id = $_GET["param1"];
             }
@@ -481,13 +488,23 @@ class ControllerItem extends Controller
                 $user_id = $_GET["param2"];
             }
 
-            $item = Item::get_item_by_id($item_id);
-            echo $item->is_highest_bidder($user_id);
+            if ($item_id == "" || $user_id == "") { // si item ou user toujours pas valide
+                http_response_code(400); // Paramètres reçu non valides
+            } else { // on fait la query
+                $item = Item::get_item_by_id($item_id);
+                echo $item->is_highest_bidder($user_id);
+            }
+        } else {
+            http_response_code(401); // erreur "Unauthorized"
         }
-        echo false;
     }
 
 
+    /**
+     * Service qui verifie si l'utilisateur connecté est le bidder d'un item
+     * On cherche l'item, puis on regarde parmi ses bids si il en existe un tel que
+     * owner = id_user_connecté
+     */
     public function has_bidder_service(): void
     {
         if ($this->get_user_or_false()) {
@@ -502,8 +519,10 @@ class ControllerItem extends Controller
 
             $item = Item::get_item_by_id($item_id);
             echo $item->has_bidder($user_id);
+        } else {
+            http_response_code(401); // erreur "Unauthorized"
         }
-        echo false;
+        //echo false;
     }
 
     public function is_open_item_service(): void
@@ -529,6 +548,10 @@ class ControllerItem extends Controller
         echo $item->get_period();
     }
 
+
+    /**
+     * Service qui va encoder le critère de recherche
+     */
     public function get_encoded_data_service(): void
     {
         if (isset($_GET["param1"]) && $_GET["param1"] != "") {
@@ -583,6 +606,8 @@ class ControllerItem extends Controller
             ]);
 
             echo $json;
+        } else {
+            http_response_code(401); // Si utilisateur non connecté "Unauthorized
         }
     }
 
@@ -598,11 +623,13 @@ class ControllerItem extends Controller
                 // si le titre a des espaces sous forme de '+' on les remets en espaces
                 $item_id = $_POST["id"];
                 $is_unique = Item::unicite_title_for_owner($user->get_id(), $title, $item_id);
-
                 echo json_encode($is_unique);
             }
+            else{
+                http_response_code(400); // pas de paramètres donc bad request
+            }
         } else {
-            echo "Not allowed";
+            http_response_code(401); // Unauthorized
         }
     }
 
@@ -626,11 +653,16 @@ class ControllerItem extends Controller
                         Picture::update_priority($item->get_id(), $order[$i], $new_priority);
                     }
                     Picture::update_to_pos_priorities($item->get_id());
-                    echo "Swapped operation done";
+                }
+                else{
+                    http_response_code(403); // item appartient pas a l'owner, forbidden
                 }
             }
+            else {
+                http_response_code(400); // bad request si pas de params
+            }
         } else {
-            http_response_code(403);
+            http_response_code(401); // Unauthorized
             echo json_encode(["error" => "User is not connected"]);
         }
     }
@@ -641,15 +673,13 @@ class ControllerItem extends Controller
      */
     public function get_item_pictures_service(): void
     {
-        $user = $this->get_user_or_false();
-        if ($user) { // si le user existe
-            if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) { // si l'id entre existe et est numerique
-                $item = Item::get_item_by_id($_GET["param1"]); // recherche de l'item
-                echo json_encode($item->get_pictures());
-            }
-        } else {
-            http_response_code(403);
-            echo json_encode(["error" => "User is not connected"]);
+        // pas besoin de check si un utilisateur est connecté vu qu'un invité peut aussi voir les images 
+        if (isset($_GET["param1"]) && is_numeric($_GET["param1"])) { // si l'id entre existe et est numerique
+            $item = Item::get_item_by_id($_GET["param1"]); // recherche de l'item
+            echo json_encode($item->get_pictures());
+        }
+        else{
+            http_response_code(400); //Bad request
         }
     }
 }

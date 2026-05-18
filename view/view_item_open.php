@@ -33,9 +33,9 @@
       // creer le carousel
       makeCarousel();
       // on dit que pour chaque thumbnail, on se met sur l'element du carousel ayant un id priorite - 1
-      $("a.thumb").click(function (e){ // on assigne un event au click des <a class="thumb">
+      $("a.thumb").click(function(e) { // on assigne un event au click des <a class="thumb">
         let index = $(this).data("priority"); // on cherche leur index (priorite - 1), attention a bien utiliser this et non l'ensemble des <a class"thumb">
-        carousel.carousel(index-1); // on navigue dans le carousel vers l'index;
+        carousel.carousel(index - 1); // on navigue dans le carousel vers l'index;
         $("a.thumb").removeClass("active"); // on enleve le highlight sur tous les <a>
         $(this).addClass("active"); // et on highlight le thumbnail clique
         e.preventDefault();
@@ -46,11 +46,17 @@
       carousel.html("");
       let html = "";
       html += '<div class="carousel-inner"> ';
-
+      
+      if (pictures.length == 0) {
+          html += '<div class="carousel-item active"> ';
+            html += '<img src="uploads/items/default.jpg" class="d-block w-100 alt=image">';
+          html += '</div> ';
+      }
+      else {
       for (let i = 0; i < pictures.length; i++) {
         if (i === 0) {
           html += '<div class="carousel-item active"> ';
-          html += '<img src="' + pictures[0].path + '" class="d-block w-100" alt="image"> ';
+            html += '<img src="' + pictures[0].path + '" class="d-block w-100" alt="image"> ';
           html += '</div> ';
         } else {
           html += '<div class="carousel-item"> ';
@@ -66,6 +72,7 @@
       html += '<span class="carousel-control-next-icon" aria-hidden="true"></span>';
       html += '<span class="visually-hidden">Next</span>';
       html += '</button>';
+    }
 
       carousel.append(html);
 
@@ -74,7 +81,7 @@
         carousel.carousel("prev");
       });
 
-      $("#right_btn").click(function () {
+      $("#right_btn").click(function() {
         carousel.carousel("next");
       });
     }
@@ -137,7 +144,7 @@
           <div class="thumbs d-flex gap-2 flex-wrap">
             <?php
             foreach ($pictures as $picture) { ?>
-              <a data-priority="<?= $picture->get_priority()?>" class="thumb <?= $picture->get_priority() == 1 ? 'active' : '' ?>" href="item/open/<?= $item->get_id() ?>/from-<?= $from ?>/<?= $picture->get_priority() ?>">
+              <a data-priority="<?= $picture->get_priority() ?>" class="thumb <?= $picture->get_priority() == 1 ? 'active' : '' ?>" href="item/open/<?= $item->get_id() ?>/from-<?= $from ?>/<?= $picture->get_priority() ?>">
                 <img src="<?= $picture->get_thumbnail_path() ?>" alt="thumb">
               </a>
             <?php } ?>
@@ -265,7 +272,7 @@
         <div class="section-title mb-3">Seller Information</div>
 
         <div class="d-flex align-items-center gap-3">
-          <div class="avatar rounded-circle"><img src="<?= $owner_picture ?>" class="w-100"></div>
+          <div class="avatar rounded-circle"><img src=<?= $owner_picture == null ? "https://cdn.jsdelivr.net/npm/bootstrap-icons/icons/person-circle.svg" : "$owner_picture"?> class="w-100" alt="pic"></div>
           <div>
             <div class="fw-semibold"><?= $item->get_pseudo()  ?></div>
             <div class="text-muted small"><?= $owner_role ?></div>
