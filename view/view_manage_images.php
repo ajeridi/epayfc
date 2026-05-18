@@ -64,7 +64,7 @@
         let html = "";
         for (const picture of images){
             html += '<figure class="d-inline-block" style="margin: 10px;" data-id="' + picture.priority +'">';
-            html += '<img src="'+ picture.path + '" class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px; alt="image">';
+            html += '<img src="'+ picture.thumbnail_path + '" class="rounded float-start" witdh="100" height="100" style="margin-bottom: 8px; alt="image">';
             html += '<figcaption style="text-align: center;">';
             html += '<button type="submit" class="btn btn-secondary" name="move" value="' + (-1 * picture.priority) + '" ' + (picture.priority == 1 ? "disabled" : "") + '><i class="bi bi-arrow-left"></i></button>';
             html += ' <button type="submit" class="btn btn-secondary" name="move" value="' + picture.priority + '" ' + (picture.priority == images.length ? "disabled" : "") + '><i class="bi bi-arrow-right"></i></button>';

@@ -22,7 +22,8 @@ class Picture extends Model implements JsonSerializable
         return [
             'item' => $this->item,
             'priority' => $this->priority,
-            'path' => $this->path
+            'path' => $this->path,
+            'thumbnail_path' => $this->get_thumbnail_path()
         ];
     }
 
