@@ -16,6 +16,7 @@
     <script src="scripts/item_card.js" type="text/javascript"></script>
     <script src="scripts/search_bar_category_filter.js" type="text/javascript"></script>
     <script src="scripts/helper.js" type="text/javascript"></script>
+    <script src="scripts/item_list.js" type="text/javascript"></script>
     <script>
         let search_box, search_input, category_list;
         let active_items = <?= json_encode($active_items) ?>;
@@ -27,58 +28,6 @@
         let search_criteria = <?= json_encode($search_criteria) ?>;
         let selected_category = <?= json_encode($selected_category) ?>;
         let categories = <?= json_encode($categories) ?>;
-
-        $(async function() {
-            search_box = $("#search"); // on prend la reference vers l'element qui va contenir la search bar
-            createSearchBar(); // on cree la searchbar d'abord, puis apres on prend la ref vers le input
-            search_input = $("#search_input");
-            createCategoryFilter(); // creation du filtre de categorie
-            category_list = $("#category_list");
-
-            active_items_container = $("#active_items");
-            closed_unsold_items_container = $("#closed_unsold_items");
-            sold_items_container = $("#sold_items");
-
-            if (search_criteria != "") {
-                search_input.val(search_criteria);
-            }
-
-            if (selected_category != "") {
-                category_list.val(selected_category);
-            }
-
-            // creation des carte des items
-            await displayAllItemCategories(search_input.val(), category_list.val());
-
-            search_input.on('input', async function() {
-                await displayAllItemCategories(search_input.val(), category_list.val());
-            })
-
-            //filtrage lors de la selection d'une categorie
-            category_list.on('change', function() {
-                displayAllItemCategories(search_input.val(), category_list.val());
-            })
-        });
-
-        async function displayAllItemCategories(search_criteria, selected_category) {
-            await displayItems(search_criteria, selected_category, active_items, active_items_container);
-            await displayItems(search_criteria, selected_category, closed_unsold_items, closed_unsold_items_container);
-            await displayItems(search_criteria, selected_category, sold_items, sold_items_container);
-        }
-
-        async function displayItems(search_criteria, selected_category, items, container) {
-            container.html("");
-            for (let item of items) { // for respecte mieux le await que le forEach
-                if ((search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase())) &&
-                    hasCategory(item, selected_category)) {
-                    let card = await createItemCard(item);
-                    container.append(card);
-                }
-            }
-            if (container.html() === "") {
-                container.html('<p>No items found</p>');
-            }
-        }
     </script>
 </head>
 
