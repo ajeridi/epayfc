@@ -53,6 +53,11 @@
             search_box.html(html);
         }
 
+        function createCategoryFilter() {
+            let html = '<select class="form-select" aria-label="Default select example">';
+
+        }
+
         async function displayItemsParticipatedIn(search_criteria) {
             // va display les carte des items
             for (let item of items_participated_in) { // for respecte mieux le await que le forEach
@@ -164,7 +169,7 @@
     </header>
     <main style="margin-top: 100px; margin-bottom: 200px;">
 
-        <!-- Barre de recherche -->
+        <!-- Barre de recherche  et filtre de categories-->
         <div id="search" class="input-group mb-3 w-75 container" data-bs-theme="dark">
         </div>
 
