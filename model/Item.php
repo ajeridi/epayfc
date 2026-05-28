@@ -6,6 +6,7 @@ require_once "framework/Model.php";
 require_once "utils/AppTime.php";
 require_once "model/Bid.php";
 require_once "model/Picture.php";
+require_once "model/Category.php";
 
 function cmp(Item $i1, Item $i2): int
 {
@@ -35,7 +36,8 @@ class Item extends Model implements JsonSerializable
         private ?float $buy_now_price = null,
         private ?float $starting_bid = null,
         private ?array $bids = [],
-        private ?array $pictures = []
+        private ?array $pictures = [],
+        private ?array $categories = [],
     ) {
         $this->id = $id;
         $this->title = $title;
@@ -46,6 +48,7 @@ class Item extends Model implements JsonSerializable
         $this->description = $description;
         $this->buy_now_price = $buy_now_price;
         $this->starting_bid = $starting_bid;
+        $this->categories = $categories;
     }
 
     public function jsonSerialize(): mixed
@@ -129,6 +132,7 @@ class Item extends Model implements JsonSerializable
             );
             $item->bids = Bid::get_item_bids($item->id);
             $item->pictures = Picture::get_pictures($item->id);
+            $item->categories = Category::get_item_categories($item->id);
             return $item;
         }
     }
