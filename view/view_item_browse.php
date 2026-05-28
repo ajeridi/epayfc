@@ -117,7 +117,7 @@
         async function createItemCard(item) {
 
             let html = '<div class="col-auto">';
-            let criteria = await $.get("item/get_encoded_data_service/" + search_input.val());
+            let criteria = await $.get("item/get_encoded_data_service/" + search_input.val() + "/" + category_list.val()); // encodage du critere de recherche et du filtre
             html += '<a href="item/open/' + item.id + (from == "" ? '' : '/' + from)+ (search_input.val() === "" ? "" : '/' + criteria) + '" style="text-decoration: none;">';
             html += '<div class="card" style="width: 18rem;">';
             html += '<img ' + (!item.pictures || item.pictures.length === 0 || item.pictures[0].path === "" ? "src=uploads/items/default.jpg" : "src=" + item.pictures[0].thumbnail_path) + ' class="card-img-top" style="height: 175px; object-fit:cover;" alt="image item">';

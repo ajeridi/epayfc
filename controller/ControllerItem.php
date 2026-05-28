@@ -38,6 +38,7 @@ class ControllerItem extends Controller
         $user = $this->get_user_or_false();
         $from = "from-browse";
         $search_criteria = "";
+        $selected_category = "";
 
         if ($user != false) { // si $user == false nous sommes en mode invité
             $items_participated_in = Item::get_items_participatedIn($user->get_id());
@@ -48,7 +49,9 @@ class ControllerItem extends Controller
         }
 
         if (isset($_GET["param1"]) && $_GET["param1"] != "") { // si on arrive sur browse avec un critere de recherche
-            $search_criteria = EncoderDecoder::url_safe_decode($_GET["param1"]); // decodage du critere de recherche pour le mettre dans le champs de recherche
+            $split= explode("+", EncoderDecoder::url_safe_decode($_GET["param1"])); // decodage du critere de recherche pour le mettre dans le champs de recherche
+            $selected_category = $split[0] ?? "";
+            $search_criteria = $split[1] ?? "";
         }
 
         //recherche des categories
@@ -58,6 +61,7 @@ class ControllerItem extends Controller
                                             "other_available_items" => $other_available_items, 
                                             "user" => $user, "from" => $from, 
                                             "search_criteria" => $search_criteria,
+                                            "selected_category" => $selected_category,
                                             "categories" => $categories]);
     }
 
@@ -557,13 +561,28 @@ class ControllerItem extends Controller
 
 
     /**
-     * Service qui va encoder le critère de recherche
+     * Service qui va encoder le critère de recherche et la categorie du filtre
      */
     public function get_encoded_data_service(): void
     {
+        $encoded_string = "";
+        $search = "";
+        $selected_category="";
+        // si critere de recherche encoded, on l'encode
         if (isset($_GET["param1"]) && $_GET["param1"] != "") {
-            echo EncoderDecoder::url_safe_encode($_GET["param1"]);
+            $search = $_GET["param1"];
         }
+        if (isset($_GET["param2"]) && $_GET["param2"] != "") {
+            $selected_category = $_GET["param2"];    
+        }
+        
+        $encoded_string = EncoderDecoder::url_safe_encode($search."+".$selected_category);
+
+        echo json_encode([
+            "encoded_criteria" => $encoded_string
+        ]);
+
+
     }
 
     /**
