@@ -112,6 +112,10 @@ class Item extends Model implements JsonSerializable
     public function get_pictures(): array | null {
         return $this->pictures;
     }
+
+    public function get_categories() : array {
+        return $this->categories;
+    }
     
     private static function build_Item(array | bool $array): Item
     {
