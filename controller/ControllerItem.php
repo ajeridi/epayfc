@@ -50,8 +50,8 @@ class ControllerItem extends Controller
 
         if (isset($_GET["param1"]) && $_GET["param1"] != "") { // si on arrive sur browse avec un critere de recherche
             $split= explode("+", EncoderDecoder::url_safe_decode($_GET["param1"])); // decodage du critere de recherche pour le mettre dans le champs de recherche
-            $selected_category = $split[0] ?? "";
-            $search_criteria = $split[1] ?? "";
+            $search_criteria = $split[0];
+            $selected_category = $split[1];
         }
 
         //recherche des categories
@@ -568,8 +568,9 @@ class ControllerItem extends Controller
         $encoded_string = "";
         $search = "";
         $selected_category="";
-        // si critere de recherche encoded, on l'encode
-        if (isset($_GET["param1"]) && $_GET["param1"] != "") {
+        
+        // si critere de recherche encoded, on l'encode (-1 a l'iteration 3, car pour plusieurs parametres, "" n'est pas pris en compte)
+        if (isset($_GET["param1"]) && $_GET["param1"] != "-1") {
             $search = $_GET["param1"];
         }
         if (isset($_GET["param2"]) && $_GET["param2"] != "") {
