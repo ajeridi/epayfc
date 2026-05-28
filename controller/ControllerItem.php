@@ -51,7 +51,14 @@ class ControllerItem extends Controller
             $search_criteria = EncoderDecoder::url_safe_decode($_GET["param1"]); // decodage du critere de recherche pour le mettre dans le champs de recherche
         }
 
-        (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, "other_available_items" => $other_available_items, "user" => $user, "from" => $from, "search_criteria" => $search_criteria]);
+        //recherche des categories
+        $categories = Category::get_categories();
+
+        (new View("item_browse"))->show(["items_participated_in" => $items_participated_in, 
+                                            "other_available_items" => $other_available_items, 
+                                            "user" => $user, "from" => $from, 
+                                            "search_criteria" => $search_criteria,
+                                            "categories" => $categories]);
     }
 
 

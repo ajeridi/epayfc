@@ -13,22 +13,26 @@
 
     <script src="lib/jquery-4.0.0.min.js" type="text/javascript"></script>
     <script>
-        let search_box, search_input;
+        let search_box, search_input, category_list;
         let items_participated_in = <?= json_encode($items_participated_in) ?>;
         let other_available_items = <?= json_encode($other_available_items) ?>;
         let items_participated_in_container, other_available_items_container;
         let user = <?= json_encode($user) ?>;
         let from = <?= json_encode($from) ?>;
         let search_criteria = <?= json_encode($search_criteria) ?>;
+        let categories = <?= json_encode($categories) ?>;
 
         $(function() {
             search_box = $("#search"); // on prend la reference vers l'element qui va contenir la search bar
             createSearchBar(); // on cree la searchbar d'abord, puis apres on prend la ref vers le input
             search_input = $("#search_input");
+            createCategoryFilter(); // creation du filtre de categorie
+            category_list = $("#category_list");
             items_participated_in_container = $("#items_participated_in");
             other_available_items_container = $("#other_available_items");
             
 
+            // si critere de recherche existant, on remplit le champs
             if (search_criteria != ""){
                 search_input.val(search_criteria);
             }
@@ -36,8 +40,14 @@
             displayItems(search_input.val());
 
 
+            // filtrage lors du input dans la barre de recherche
             search_input.on('input', async function() {
-                displayItems(search_input.val());
+                displayItems(search_input.val(), category_list.val());
+            })
+
+            //filtrage lors de la selection d'une categorie
+            category_list.on('change', function(){
+                displayItems(search_input.val(), category_list.val());
             })
         });
 
@@ -49,13 +59,19 @@
         }
 
         function createSearchBar() {
-            let html = '<span class="input-group-text" id="searchHelp"><i class="bi bi-search"></i></span><input id="search_input" type="text" class="form-control d-block" name="search" placeholder="Search items..." aria-label="Search" aria-describedby="searchHelp" value="">';
+            let html = '<span class="input-group-text" id="searchHelp"><i class="bi bi-search"></i></span><input id="search_input" type="text" class="form-control d-block w-75 me-2" name="search" placeholder="Search items..." aria-label="Search" aria-describedby="searchHelp" value="">';
             search_box.html(html);
         }
 
-        function createCategoryFilter() {
-            let html = '<select class="form-select" aria-label="Default select example">';
+        function createCategoryFilter() { //https://getbootstrap.com/docs/5.0/forms/select/
+            let html = '<select id="category_list" class="form-select" aria-label="Categories filter">';
+            html += '<option selected value="0">All</option>';
+            for (let category of categories){
+                html += '<option value="'+ category.id + '">' + category.name + '</option>';
+            }
+            html += '</select>';
 
+            search_box.append(html);
         }
 
         async function displayItemsParticipatedIn(search_criteria) {
@@ -71,9 +87,10 @@
             }
         }
 
-        async function displayOtherAvailableItems(search_criteria) {
+        async function displayOtherAvailableItems(search_criteria, selected_category) {
             for (let item of other_available_items) {
-                if (search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase())) {
+                if (search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase())
+                || hasCategory(item, selected_category)) {
                     let card = await createItemCard(item);
                     other_available_items_container.append(card);
                 }
@@ -81,6 +98,11 @@
             if (other_available_items_container.html() === ""){
                 other_available_items_container.html('<p>No items found</p>');
             }
+        }
+
+        // methode qui verifie si un item possede la categorie selectionnee
+        function hasCategory(item, selected_category){
+            for (let category of item.categories)
         }
 
         // ca affichait promise parce que je ne respectais pas les await

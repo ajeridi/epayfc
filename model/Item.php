@@ -65,7 +65,8 @@ class Item extends Model implements JsonSerializable
             'buy_now_price' => $this->buy_now_price,
             'starting_bid' => $this->starting_bid,
             'bids' => $this->bids,
-            'pictures' => $this->pictures
+            'pictures' => $this->pictures,
+            'categories' => $this->categories
         ];
     }
 
