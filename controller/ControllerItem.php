@@ -65,6 +65,36 @@ class ControllerItem extends Controller
                                             "categories" => $categories]);
     }
 
+    public function list(): void
+    {
+        $user = $this->get_user_or_redirect();
+        $active_items = Item::get_user_active_item($user->get_id());
+        $closed_unsold_items = Item::get_user_closed_unsold_item($user->get_id());
+        $sold_items = Item::get_user_sold_item($user->get_id());
+        $from = "from-items";
+
+        //critere de recherche
+        $search_criteria = "";
+        $selected_category = "";
+        if (isset($_GET["param1"]) && $_GET["param1"] != "") { // si on arrive avec item/list/criteria_encoded
+            $split= explode("+", EncoderDecoder::url_safe_decode($_GET["param1"])); // decodage du critere de recherche pour le mettre dans le champs de recherche
+            $search_criteria = $split[0];
+            $selected_category = $split[1];
+        }
+
+       //recherche des categories
+        $categories = Category::get_categories(); 
+
+        (new View("item_list"))->show(["active_items" => $active_items, 
+                                        "closed_unsold_items" => $closed_unsold_items, 
+                                        "sold_items" => $sold_items, 
+                                        "user" => $user, 
+                                        "from" => $from, 
+                                        "categories" => $categories,
+                                        "search_criteria" => $search_criteria,
+                                        "selected_category" => $selected_category]);
+    }
+
 
     public function open(): void
     {
@@ -276,21 +306,7 @@ class ControllerItem extends Controller
 
 
 
-    public function list(): void
-    {
-        $user = $this->get_user_or_redirect();
-        $active_items = Item::get_user_active_item($user->get_id());
-        $closed_unsold_items = Item::get_user_closed_unsold_item($user->get_id());
-        $sold_items = Item::get_user_sold_item($user->get_id());
-        $from = "from-items";
-
-        //critere de recherche
-        $search_criteria = "";
-        if (isset($_GET["param1"]) && $_GET["param1"] != "") { // si on arrive avec item/list/criteria_encoded
-            $search_criteria = EncoderDecoder::url_safe_decode($_GET["param1"]); //on decode le critere de recherche
-        }
-        (new View("item_list"))->show(["active_items" => $active_items, "closed_unsold_items" => $closed_unsold_items, "sold_items" => $sold_items, "user" => $user, "from" => $from, "search_criteria" => $search_criteria]);
-    }
+    
 
 
     public function delete(): void
