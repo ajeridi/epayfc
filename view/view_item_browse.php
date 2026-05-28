@@ -37,7 +37,7 @@
                 search_input.val(search_criteria);
             }
             // creation des carte des items
-            displayItems(search_input.val());
+            displayItems(search_input.val(), category_list.val());
 
 
             // filtrage lors du input dans la barre de recherche
@@ -51,11 +51,11 @@
             })
         });
 
-        async function displayItems(search_criteria) {
+        async function displayItems(search_criteria, selected_category) {
             items_participated_in_container.html("");
             other_available_items_container.html("");
-            displayItemsParticipatedIn(search_criteria);
-            displayOtherAvailableItems(search_criteria);
+            displayItemsParticipatedIn(search_criteria, selected_category);
+            displayOtherAvailableItems(search_criteria, selected_category);
         }
 
         function createSearchBar() {
@@ -74,10 +74,11 @@
             search_box.append(html);
         }
 
-        async function displayItemsParticipatedIn(search_criteria) {
+        async function displayItemsParticipatedIn(search_criteria, selected_category) {
             // va display les carte des items
             for (let item of items_participated_in) { // for respecte mieux le await que le forEach
-                if (search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase())) {
+                if ((search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase()))
+                && hasCategory(item, selected_category)) {
                     let card = await createItemCard(item);
                     items_participated_in_container.append(card);
                 }
@@ -89,8 +90,8 @@
 
         async function displayOtherAvailableItems(search_criteria, selected_category) {
             for (let item of other_available_items) {
-                if (search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase())
-                || hasCategory(item, selected_category)) {
+                if ((search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase()))
+                    && hasCategory(item, selected_category)) {
                     let card = await createItemCard(item);
                     other_available_items_container.append(card);
                 }
@@ -102,7 +103,11 @@
 
         // methode qui verifie si un item possede la categorie selectionnee
         function hasCategory(item, selected_category){
-            for (let category of item.categories)
+            if (selected_category == 0) return true; // si "all" est selectionne
+            for (let category of item.categories){
+                if (category.id == selected_category) return true;
+            }
+            return false;
         }
 
         // ca affichait promise parce que je ne respectais pas les await
