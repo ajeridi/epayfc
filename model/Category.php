@@ -2,7 +2,7 @@
 
 require_once "framework/Model.php";
 
-class Category extends Model
+class Category extends Model implements JsonSerializable
 {
     public function __construct(
         private int $id,
@@ -27,6 +27,16 @@ class Category extends Model
         return $this->priority;
     }
 
+    public function jsonSerialize(): mixed
+    {
+        // converti une categorie en json
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'priority' => $this->priority
+        ];
+    }
+
 
     public static function get_item_categories(int $item_id) : array {
         $sql = "SELECT c.* FROM item_categories it 
@@ -43,6 +53,18 @@ class Category extends Model
             $categories[] = new Category($category['id'], $category['name'], $category['priority']);
         }
 
+        return $categories;
+    }
+
+    public static function get_categories() : array {
+        $query = self::execute("SELECT * FROM Categories", []);
+        $result = $query->fetchAll();
+
+        $categories = [];
+        foreach($result as $category){
+            $categories[] = new Category($category['id'], $category['name'], $category['priority']);
+        }
+        
         return $categories;
     }
 
