@@ -36,8 +36,7 @@ class Category extends Model implements JsonSerializable
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'priority' => $this->priority,
-            'is_empty' => $this->is_empty,
+            'priority' => $this->priority,                                                                                  
         ];
     }
 
