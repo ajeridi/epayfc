@@ -67,6 +67,34 @@ $(document).on("blur", ".js-edit-input", async function () {
     });
 });
 
+$(document).on("click", "#jsAddCategoryBtn", function () {
+    if ($("#jsNewCategoryRow").length > 0) {
+        return;
+    }
+
+    $("#jsAddCategoryBtn").closest("div").before(`
+        <div id="jsNewCategoryRow" class="row align-items-center mt-2 mb-2">
+            <div class="col-8 d-flex align-items-center gap-2">
+                <input type="text"
+                       id="jsNewCategoryInput"
+                       class="form-control form-control-sm d-inline-block"
+                       style="width: 220px;"
+                       placeholder="Category name">
+
+                <span id="jsNewCategoryError" class="text-danger ms-2"></span>
+            </div>
+
+            <div class="col-4 text-end">
+                <button type="button" id="jsCancelAddCategoryBtn" class="btn btn-secondary btn-sm">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    `);
+
+    $("#jsNewCategoryInput").focus();
+});
+
 
 function renderCategories(categories) {
     const list = $("#jsCategoryList");
