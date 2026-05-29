@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="lib/jquery-ui.min.css">
     <script src="lib/jquery-ui.min.js" type="text/javascript"></script>
     <script src="lib/jquery.ui.touch-punch.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script>
         const categories = <?= json_encode($categories) ?>;
     </script>
@@ -73,6 +74,32 @@
     <footer>
         <?php require 'navbar_user.php'; ?>
     </footer>
+    <!-- Modale Boostrap -->
+    <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog">
+        <div class="modal-content bg-navy-gray text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to delete category
+                <strong id="deleteCategoryName"></strong> ?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                <button type="button" id="confirmDeleteCategoryBtn" class="btn btn-danger">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>

@@ -1,4 +1,8 @@
 let categoryList;
+let deleteModal;
+let categoryToDeleteId = null;
+let categoryToDeleteRow = null;
+
 $(function () {
     categoryList = $("#jsCategoryList");
 
@@ -7,6 +11,8 @@ $(function () {
     $("#form hr").hide();
 
     $("#new_category").closest(".row").hide();
+
+    deleteModal = new bootstrap.Modal(document.getElementById("deleteCategoryModal"));
 
     renderCategories(categories);
     activateSortable();
@@ -137,6 +143,18 @@ $(document).on("blur", "#jsNewCategoryInput", async function () {
         input.addClass("is-invalid");
         errorZone.text("Save error.");
     });
+});
+
+$(document).on("click", ".js-delete-btn", function () {
+    const row = $(this).closest(".js-category-row");
+    const name = row.find(".js-category-name").data("name");
+
+    categoryToDeleteId = row.data("id");
+    categoryToDeleteRow = row;
+
+    $("#deleteCategoryName").text(name);
+
+    deleteModal.show();
 });
 
 
