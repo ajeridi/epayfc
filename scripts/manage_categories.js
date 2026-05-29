@@ -157,6 +157,35 @@ $(document).on("click", ".js-delete-btn", function () {
     deleteModal.show();
 });
 
+$(document).on("click", "#confirmDeleteCategoryBtn", async function () {
+    if (categoryToDeleteId === null) {
+        return;
+    }
+
+    await $.post(
+        "category/delete_service",
+        {
+            id: categoryToDeleteId
+        },
+        function (response) {
+            if (response.success) {
+                categoryToDeleteRow.remove();
+
+                categoryToDeleteId = null;
+                categoryToDeleteRow = null;
+
+                deleteModal.hide();
+            } else {
+                alert(response.error);
+            }
+        },
+        "json"
+    ).fail(function (xhr) {
+        console.log(xhr.responseText);
+        alert("Delete error.");
+    });
+});
+
 
 function renderCategories(categories) {
     const list = $("#jsCategoryList");

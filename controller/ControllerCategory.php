@@ -182,4 +182,46 @@ class ControllerCategory extends Controller
             "name" => $name
         ]);
     }
+
+    public function delete_service(): void
+    {
+        $user = $this->get_user_or_redirect();
+
+        header("Content-Type: application/json");
+
+        if ($user->get_role() !== "admin") {
+            http_response_code(403);
+            echo json_encode([
+                "success" => false,
+                "error" => "Forbidden"
+            ]);
+            return;
+        }
+
+        $id = intval($_POST["id"] ?? 0);
+
+        if ($id <= 0) {
+            echo json_encode([
+                "success" => false,
+                "error" => "Invalid category"
+            ]);
+            return;
+        }
+
+        $category = Category::get_category_by_id($id);
+
+        if (!$category->is_empty()) {
+            echo json_encode([
+                "success" => false,
+                "error" => "Category is not empty"
+            ]);
+            return;
+        }
+
+        $category->delete();
+
+        echo json_encode([
+            "success" => true
+        ]);
+    }
 }
