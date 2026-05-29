@@ -430,8 +430,9 @@
                         <div class="mb-3">
                             <p>You can select up to 3 categories.</p>
                             <?php 
-                                foreach($categories as $category){ // https://wastedpotential.com/html-multi-checkbox-set-the-correct-way-to-group-checkboxes/
-                                    echo '<input type="checkbox" name="chk_group[]" value="'.$category->get_id().'"/> '. $category->get_name().'<br />';
+                                foreach($categories as $category){ // https://wastedpotential.com/html-multi-checkbox-set-the-correct-way-to-group-checkboxes/ , https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/checkbox#using_checkbox_inputs
+                                    $checked = in_array($category->get_id(), $info["categories"] ?? []); // regarde si l'item appartient a la categorie, pour check deja le checkbox
+                                    echo '<input type="checkbox" name="chk_group[]" value="'.$category->get_id().'"'. ($checked ? 'checked' : '') .'/> '. $category->get_name().'<br />';
                                 }
                             ?>
                     </div>    
