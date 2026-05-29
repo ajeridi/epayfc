@@ -146,4 +146,40 @@ class ControllerCategory extends Controller
             "error" => $error
         ]);
     }
+
+    public function save_name_service(): void
+    {
+        $user = $this->get_user_or_redirect();
+
+        header("Content-Type: application/json");
+
+        if ($user->get_role() !== "admin") {
+            http_response_code(403);
+            echo json_encode([
+                "success" => false,
+                "error" => "Forbidden"
+            ]);
+            return;
+        }
+
+        $id = intval($_POST["id"] ?? 0);
+        $name = Tools::sanitize($_POST["name"] ?? "");
+
+        $error = $this->validate_name($id, $name);
+
+        if ($error !== null) {
+            echo json_encode([
+                "success" => false,
+                "error" => $error
+            ]);
+            return;
+        }
+
+        $this->save_name($id, $name);
+
+        echo json_encode([
+            "success" => true,
+            "name" => $name
+        ]);
+    }
 }

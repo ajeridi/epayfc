@@ -29,41 +29,41 @@ $(document).on("click", ".js-edit-btn", function () {
 $(document).on("blur", ".js-edit-input", async function () {
     const input = $(this);
     const row = input.closest(".js-category-row");
+    const nameSpan = row.find(".js-category-name");
     const errorZone = row.find(".js-category-error");
 
     const id = row.data("id");
     const newName = input.val().trim();
 
-    errorZone.text("");
     input.removeClass("is-invalid");
+    errorZone.text("");
 
-    // validation synchrone
     if (newName.length < 3 || newName.length > 25) {
         input.addClass("is-invalid");
         errorZone.text("Category name length must be between 3 and 25 characters.");
         return;
     }
 
-    // validation asynchrone
     await $.post(
-        "category/validate_name_service",
+        "category/save_name_service",
         {
             id: id,
             name: newName
         },
         function (response) {
-            if (!response.valid) {
+            if (response.success) {
+                nameSpan.data("name", response.name);
+                nameSpan.html(escapeHtml(response.name));
+            } else {
                 input.addClass("is-invalid");
                 errorZone.text(response.error);
-            } else {
-                console.log("valid");
             }
         },
         "json"
     ).fail(function (xhr) {
         console.log(xhr.responseText);
         input.addClass("is-invalid");
-        errorZone.text("Validation error.");
+        errorZone.text("Save error.");
     });
 });
 
