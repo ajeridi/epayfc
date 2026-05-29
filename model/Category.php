@@ -8,22 +8,25 @@ class Category extends Model implements JsonSerializable
         private int $id,
         private string $name,
         private int $priority
-    ){
+    ) {
         $this->id = $id;
         $this->name = $name;
         $this->priority = $priority;
     }
 
     //getters
-    public function get_id() : int {
+    public function get_id(): int
+    {
         return $this->id;
     }
 
-    public function get_name() : string {
+    public function get_name(): string
+    {
         return $this->name;
     }
 
-    public function get_priority() : int {
+    public function get_priority(): int
+    {
         return $this->priority;
     }
 
@@ -38,7 +41,8 @@ class Category extends Model implements JsonSerializable
     }
 
 
-    public static function get_item_categories(int $item_id) : array {
+    public static function get_item_categories(int $item_id): array
+    {
         $sql = "SELECT c.* FROM item_categories it 
                     JOIN categories c on it.category = c.id 
                     WHERE item = :item_id
@@ -49,23 +53,38 @@ class Category extends Model implements JsonSerializable
 
         $categories = [];
 
-        foreach ($response as $category){
+        foreach ($response as $category) {
             $categories[] = new Category($category['id'], $category['name'], $category['priority']);
         }
 
         return $categories;
     }
 
-    public static function get_categories() : array {
+    public static function get_categories(): array
+    {
         $query = self::execute("SELECT * FROM Categories", []);
         $result = $query->fetchAll();
 
         $categories = [];
-        foreach($result as $category){
+        foreach ($result as $category) {
             $categories[] = new Category($category['id'], $category['name'], $category['priority']);
         }
-        
         return $categories;
     }
 
+    public static function get_categories_ordered_by_priority() : array 
+    {
+        $query = self::execute("SELECT * FROM categories ORDER BY priority ASC", []);
+        $result = $query->fetchAll();
+
+        return self::create_array_of_categories($result);
+    }
+
+    private static function create_array_of_categories(array $query_result) : array {
+        $categories = [];
+         foreach ($query_result as $category) {
+            $categories[] = new Category($category['id'], $category['name'], $category['priority']);
+        }
+        return $categories;
+    }
 }

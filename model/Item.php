@@ -408,6 +408,13 @@ class Item extends Model implements JsonSerializable
          return $errors ;
 
     }
+
+    // methode qui va checker si le nombre de categories selectionne est ok
+    private static function check_number_of_selected_categories(array $selected_categories, array $errors) : array{
+        if (sizeof($selected_categories) > Configuration::get("max_number_of_selected_categories")) 
+            $errors[] = Configuration::get("max_number_of_selected_categories_error_message");
+        return $errors;
+    }
     
 
 
@@ -420,6 +427,7 @@ class Item extends Model implements JsonSerializable
         $errors['starting_bid']=self::check_starting_bid($info['starting_bid'],$errors['starting_bid']);
         $errors['buy_now_price']=self::check_buy_now_price($info['buy_now_price'],$info['starting_bid'],$info['saleprice'],$errors['buy_now_price'],true);
         $errors['saleprice']=self::check_buy_now_price($info['buy_now_price'],$info['starting_bid'],$info['saleprice'],$errors['saleprice'],false);
+        $errors['categories'] = self::check_number_of_selected_categories($info['categories'], $errors['categories']);
 
         return $errors;
     }
@@ -460,6 +468,9 @@ class Item extends Model implements JsonSerializable
                 'created_at' => $current_date_time
             ]);
             $id_nv = self::lastInsertId();
+            // si categories, insertion dans item_categories
+            if (count($info['categories']))
+                self::save_item_categories($id_nv, $info['categories']);
             return $id_nv;
         } else {
             self::execute("UPDATE items SET title=:title,description=:description,buy_now_price=:buy_now_price,duration_days=:duration_days,
@@ -471,7 +482,19 @@ class Item extends Model implements JsonSerializable
                 'buy_now_price' => $buy_now_price,
                 'id' => $id
             ]);
+            // si categories, insertion dans item_categories
+            if (count($info['categories']))
+                self::save_item_categories($id, $info['categories']);
             return $id;
+        }
+    }
+
+    private static function save_item_categories(int $item_id, array $categories) : void {
+        // nettoyage de item_categories pour l'item
+        $query = self::execute("Delete from item_categories where item = :item_id", ["item_id" => $item_id]);
+        // pour chaque categorie, ajout dans item_categories
+        foreach ($categories as $category){
+            $query = self::execute("INSERT INTO item_categories(item, category) VALUES(:item_id, :category)", ["item_id" => $item_id, "category" => $category]);
         }
     }
    
@@ -587,5 +610,13 @@ class Item extends Model implements JsonSerializable
                 return true;
         }
         return false;
+    }
+
+    public function get_categories_ids() : array {
+        $ids = [];
+        foreach ($this->categories as $category){
+            $ids[] = $category->get_id();
+        }
+        return $ids;
     }
 }
