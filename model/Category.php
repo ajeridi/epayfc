@@ -108,6 +108,12 @@ class Category extends Model implements JsonSerializable
         $to = $this->get_priority()-1;
         $this->swap_priorities($from, $to);
     }
+    
+    public function move_down() : void {
+        $from = $this->get_priority();
+        $to = $this->get_priority()+1;
+        $this->swap_priorities($from, $to);
+    }
 
     // methode qui swap deux priorites
     private function swap_priorities(int $from, int $to) : void {

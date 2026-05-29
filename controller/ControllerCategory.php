@@ -27,6 +27,11 @@ class ControllerCategory extends Controller
                 $this->move_up($category_id); // update dans la db
                 $this->redirect("category", "manage"); // redirect (PRG);
             }
+           else if (isset($_POST['down'])){ // si on appuye sur le bouton up
+                $category_id = $_POST['down'];
+                $this->move_down($category_id); // update dans la db
+                $this->redirect("category", "manage"); // redirect (PRG);
+            } 
         }
 
         $categories = Category::get_categories_ordered_by_priority();        
@@ -36,5 +41,10 @@ class ControllerCategory extends Controller
     private function move_up(int $id){
         $category = Category::get_category_by_id($id);
         $category->move_up();
+    }
+    
+    private function move_down(int $id){
+        $category = Category::get_category_by_id($id);
+        $category->move_down();
     }
 }
