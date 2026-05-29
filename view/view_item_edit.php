@@ -12,7 +12,7 @@
     <script src="lib/jquery-4.0.0.min.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script>
-        let myModal;
+        let myModal, categorySelectModal;
         let back_link, save_btn, leave_btn;
         let navbar_links;
         let inputs;
@@ -23,10 +23,13 @@
         let constants;
         let description_text;
         const info = <?= json_encode($info) ?>;
+        let categories;
 
 
         $(async function() {
             myModal = new bootstrap.Modal($("#myModal")); // il faut creer une instance de Modal
+            categorySelectModal = new bootstrap.Modal($("#categoriesModal"));
+            categories = $("input[name='chk_group[]"); // tous les inputs qui ont comme name='chk_group[]'
             back_link = $("#back_link");
             save_btn = $("#save_btn");
             leave_btn = $("#leave_button");
@@ -262,6 +265,22 @@
                     myModal.show();
                 }
             });
+
+            function numberOfSelectedCategories() {
+                let total = 0;
+                categories.each(function() { // pour chaque <input>
+                    if ($(this).is(':checked')) total++; // si a l'attribut checked
+                })
+                return total;
+            }
+
+            // lors de la selection d'une categorie, il faut verifier si le nombre de categories selectionne est  > 3, si c'est le cas, annuler la selection et afficher la modale
+            categories.on('click', function(e) {
+                if (numberOfSelectedCategories() > 3){
+                    e.preventDefault();
+                    categorySelectModal.show();
+                }
+            })
         });
     </script>
 
@@ -283,6 +302,24 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button id="leave_button" type="button" class="btn btn-primary">Leave</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale pour les categories -->
+    <div class="modal fade" id="categoriesModal" data-bs-theme="dark" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Category Limit</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    You cannot select more than  3 categories.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
