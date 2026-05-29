@@ -17,7 +17,7 @@
                    <h1 >Are you sure ?</h1>
                 </div>
                 <div class="card-body bg-dark text-white text-center " style="padding: 15px;" >
-                    <p >Are you really want to delete item <b style="text-decoration: solid;">"<?= $title ?>"</b> by <?= $owner ?> and all of its dependencies ?</p>
+                    <p >Are you sure you really want to delete item <b style="text-decoration: solid;">"<?= $title ?>"</b> by <?= $owner ?> and all of its dependencies ?</p>
                     <p style="text-align: center;">This process cannot bo undone.</p>
                     <div class="row " style="padding: 35px;">
                         <div class="col">

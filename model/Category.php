@@ -155,4 +155,8 @@ class Category extends Model implements JsonSerializable
             self::execute("INSERT INTO categories(name, priority) VALUES(:name, (SELECT MAX(c.priority) from categories c) + 1)",["name" => $this->name]);
         }
     }
+
+    public function delete() : void {
+        self::execute("DELETE FROM categories WHERE id = :id", ["id" => $this->id]);
+    }
 }

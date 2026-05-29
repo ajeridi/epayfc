@@ -43,6 +43,11 @@ class ControllerCategory extends Controller
                     $this->redirect("category", "manage");
                 }
             }
+            else if (isset($_POST["delete"])){ //si on appuye sur le bouton delete
+                $category = Category::get_category_by_id($_POST['delete']);
+                (new View('delete_category'))->show(["category" => $category]);
+                return;
+            }
         }
 
         $categories = Category::get_categories_ordered_by_priority();        
@@ -70,5 +75,17 @@ class ControllerCategory extends Controller
         $category = Category::get_category_by_id($id);
         $category->set_name($new_name);
         $category->persist();
+    }
+
+    public function delete() : void {
+        $user = $this->get_user_or_redirect();
+        if ($user->get_role() !== "admin") $this->redirect("item");
+        if (isset($_GET['param1']) && is_numeric($_GET["param1"])){
+            $category = Category::get_category_by_id($_GET['param1']);
+            $category->delete();
+            $this->redirect("category", "manage");
+        }else {
+            $this->redirect("category", "manage");
+        }
     }
 }
