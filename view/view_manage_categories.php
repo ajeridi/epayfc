@@ -29,7 +29,7 @@
                 <?php foreach($categories as $category){ ?>
                     <div class="row mt-2 mb-2">
                         <div class="col-7">
-                            <input type="text" class="form-control" value="<?= $category->get_name() ?>">
+                            <input type="text" class="form-control" name=<?= "category_".$category->get_id() ?> value="<?= $category->get_name() ?>">
                         </div>
                         <div class="col-3">
                             <button type="submit" class="btn btn-secondary" name="up" value="<?= $category->get_priority() ?>" <?= $category->get_priority() == 1 ? "disabled" : "" ?>>Up</i></button>
@@ -39,6 +39,15 @@
                         </div>
                     </div>
                 <?php } ?>
+                <hr class="mt-4 mb-4" style="border: 1px solid #ccc;">
+                <div class="row">
+                    <div class="col-9">
+                        <input type="text" class="form-control" name="new_category" value="" placeholder="Category name">
+                    </div>
+                    <div class="col-1">
+                        <button type="submit" class="btn btn-primary" name="add" value="1"><i class="bi bi-plus"></i></button>
+                    </div>
+                </div>
             </form>
         </div>
 
