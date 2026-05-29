@@ -46,12 +46,16 @@
                 <hr class="mt-4 mb-4" style="border: 1px solid #ccc;">
                 <div class="row">
                     <div class="col-9">
-                        <input type="text" class="form-control" name="new_category" value="" placeholder="Category name">
+                        <input type="text" class="form-control" name="category_0" value="<?= $post["category_". 0] ?? "" ?>" placeholder="Category name">
                     </div>
                     <div class="col-1">
-                        <button type="submit" class="btn btn-primary" name="add" value="1"><i class="bi bi-plus"></i></button>
+                        <button type="submit" class="btn btn-primary" name="save" value="0"><i class="bi bi-plus"></i></button>
                     </div>
                 </div>
+                <!-- Erreur sur la nouvelle categorie -->
+                <?php if (isset($errors["category_". 0])) { ?> 
+                    <p class="text-danger"><?= $errors["category_". 0] ?></p>
+                <?php } ?>
             </form>
         </div>
 

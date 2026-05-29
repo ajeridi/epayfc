@@ -34,7 +34,7 @@ class ControllerCategory extends Controller
                 $this->move_down($category_id); // update dans la db
                 $this->redirect("category", "manage"); // redirect (PRG);
             }
-            else if (isset($_POST['save'])){ // si on appuye sur le bouton save 
+            else if (isset($_POST['save'])){ // si on appuye sur le bouton save / ou add, meme mecanisme
                 $id = $_POST['save'];
                 $new_name = Tools::sanitize($_POST['category_'.$id]);
                 $errors["category_".$id] = $this->validate_name($id, $new_name);
@@ -65,15 +65,19 @@ class ControllerCategory extends Controller
     }
 
     private function validate_name(int $id, string $new_name) : string | null{
-        $category = Category::get_category_by_id($id);
+        if ($id == 0) $category = new Category(0, '', 0); // si id = 0, nouvelle categorie 
+        else $category = Category::get_category_by_id($id); // sinon on va chercher la categorie existante
         $error = $category->validate_name($new_name);
 
         return $error;
     }
 
     private function save_name(int $id, string $new_name){
-        $category = Category::get_category_by_id($id);
-        $category->set_name($new_name);
+        if ($id == 0) $category = new Category($id, $new_name, 0);
+        else {
+            $category = Category::get_category_by_id($id);
+            $category->set_name($new_name);
+        }
         $category->persist();
     }
 
