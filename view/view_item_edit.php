@@ -48,7 +48,7 @@
                 // si le input change, on est plus pristine
                 is_pristine = false;
             });
-            
+
 
             $("textarea").on('change', function() {
                 is_pristine = false;
@@ -66,16 +66,16 @@
             });
 
             save_btn.click(async function(e) {
-                
-                let allOK = await validateAll();  
-                if (!allOK){
+
+                let allOK = await validateAll();
+                if (!allOK) {
                     e.preventDefault();
                 }
             })
 
 
 
-            async function validateAllFields(){
+            async function validateAllFields() {
                 let allOk = true;
                 for (const input of inputs.toArray()) { // for respecte mieux les await
                     let res = await validateFields($(input));
@@ -422,6 +422,21 @@
                     </div>
                 </div>
             </div>
+            <!-- Partie categories -->
+            <div class="container fw-bold ">
+                <div class="card bg-dark mb-3  border-0 overflow-hidden">
+                    <div class="card-header bg-primary text-white  " style="--bs-bg-opacity: .10">Categories</div>
+                    <div class="card-body text-light border-0 ">
+                        <div class="mb-3">
+                            <p>You can select up to 3 categories.</p>
+                            <?php 
+                                foreach($categories as $category){ // https://wastedpotential.com/html-multi-checkbox-set-the-correct-way-to-group-checkboxes/
+                                    echo '<input type="checkbox" name="chk_group[]" value="'.$category->get_id().'"/> '. $category->get_name().'<br />';
+                                }
+                            ?>
+                    </div>    
+                </div>
+            </div>  
         </form> 
     </main>
     <footer>

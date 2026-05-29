@@ -588,4 +588,12 @@ class Item extends Model implements JsonSerializable
         }
         return false;
     }
+
+    public function get_categories_ids() : array {
+        $ids = [];
+        foreach ($this->categories as $category){
+            $ids[] = $category->get_id();
+        }
+        return $ids;
+    }
 }
