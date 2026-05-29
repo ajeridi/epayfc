@@ -7,7 +7,7 @@ class Category extends Model implements JsonSerializable
     public function __construct(
         private int $id,
         private string $name,
-        private int $priority
+        private int $priority,
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -36,7 +36,8 @@ class Category extends Model implements JsonSerializable
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'priority' => $this->priority
+            'priority' => $this->priority,
+            'is_empty' => $this->is_empty,
         ];
     }
 
@@ -86,5 +87,12 @@ class Category extends Model implements JsonSerializable
             $categories[] = new Category($category['id'], $category['name'], $category['priority']);
         }
         return $categories;
+    }
+
+    public function is_empty() : bool {
+        $query = self::execute("SELECT count(*) = 0 from item_categories where category = :category_id", ["category_id" => $this->id]);
+
+        $result = $query->fetchColumn();
+        return $result;
     }
 }

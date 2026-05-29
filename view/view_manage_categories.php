@@ -22,7 +22,25 @@
             </div>
         </nav>
     </header>
-    <main style="margin-top: 100px; margin-bottom: 200px;">
+    <main style="margin-top: 100px; margin-bottom: 200px;" data-bs-theme="dark">
+    
+        <div class="container pt-2 pb-2" style="background-color: #26262a; border: 1px solid #26262a; border-radius: 10px;">
+            <form method="post" action="category/manage">
+                <?php foreach($categories as $category){ ?>
+                    <div class="row mt-2 mb-2">
+                        <div class="col-7">
+                            <input type="text" class="form-control" value="<?= $category->get_name() ?>">
+                        </div>
+                        <div class="col-3">
+                            <button type="submit" class="btn btn-secondary" name="up" value="<?= $category->get_priority() ?>" <?= $category->get_priority() == 1 ? "disabled" : "" ?>>Up</i></button>
+                            <button type="submit" class="btn btn-secondary" name="down" value="<?= $category->get_priority() ?>" <?= $category->get_priority() == count($categories) ? "disabled" : "" ?>>Down</i></button>
+                            <button type="submit" class="btn btn-success" name="save" value="<?= $category->get_id() ?>">Save</i></button>
+                            <button type="submit" class="btn btn-danger" name="delete" value="<?= $category->get_id() ?>" <?= $category->is_empty() == false ? "disabled" : "" ?>>Delete</i></button>
+                        </div>
+                    </div>
+                <?php } ?>
+            </form>
+        </div>
 
     </main>
     <footer>
