@@ -23,9 +23,12 @@ class ControllerUser extends Controller
             $email = "mamichel@epfc.eu";
         } elseif ($_GET['param1'] == 3) {
             $email = "quhouben@epfc.eu";
-        } else {
+        } elseif ($_GET['param1'] == 4) {
             $email = "xapigeolet@epfc.eu";
+        }else {
+            $email = "admin@epfc.eu";
         }
+
 
         $this->log_user(User::get_user_by_email($email), "item", "browse");
     }

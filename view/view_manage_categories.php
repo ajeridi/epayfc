@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🛒 Manage categories</title>
+    <base href="<?= $web_root ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="lib/jquery-4.0.0.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="lib/jquery-ui.min.css">
+    <script src="lib/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="lib/jquery.ui.touch-punch.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script>
+        const categories = <?= json_encode($categories) ?>;
+    </script>
+    <script src="scripts/manage_categories.js" type="text/javascript"></script>
+</head>
+
+<body class="bg-navy">
+    <header>
+        <!-- Barre au dessus de la page -->
+        <nav class="navbar bg-navy-gray fixed-top" data-bs-theme="dark">
+            <div class="container-fluid justify-content-center">
+                <span class="navbar-brand mb-0 h1 text-blue">Categories <i class="bi bi-cart4 fs-4 text-white"></i></span>
+            </div>
+        </nav>
+    </header>
+    <main style="margin-top: 100px; margin-bottom: 200px;" data-bs-theme="dark">
+
+        <div class="container pt-2 pb-2" style="background-color: #26262a; border: 1px solid #26262a; border-radius: 10px;">
+            <form id="form" method="post" action="category/manage">
+                <div id="jsCategoryList"></div>
+                <div id="editZone">
+                    <?php foreach ($categories as $category) { ?>
+                        <div class="row mt-2 mb-2">
+                            <div class="col-7">
+                                <input type="text" class="form-control" name=<?= "category_" . $category->get_id() ?> value="<?= $_POST['category_' . $category->get_id()] ?? $category->get_name() ?>">
+                            </div>
+                            <div class="col-3 submitButtons">
+                                <button type="submit" class="btn btn-secondary" name="up" value="<?= $category->get_id() ?>" <?= $category->get_priority() == 1 ? "disabled" : "" ?>>Up</i></button>
+                                <button type="submit" class="btn btn-secondary" name="down" value="<?= $category->get_id() ?>" <?= $category->has_max_priority() ? "disabled" : "" ?>>Down</i></button>
+                                <button type="submit" class="btn btn-success editBtn" name="save" value="<?= $category->get_id() ?>">Save</i></button>
+                                <button type="submit" class="btn btn-danger" name="delete" value="<?= $category->get_id() ?>" <?= $category->is_empty() == false ? "disabled" : "" ?>>Delete</i></button>
+                            </div>
+                        </div>
+
+                        <?php if (isset($errors["category_" . $category->get_id()])) { ?>
+                            <p class="text-danger"><?= $errors["category_" . $category->get_id()] ?></p>
+                        <?php } ?>
+                    <?php } ?>
+                </div>
+                <hr class="mt-4 mb-4" style="border: 1px solid #ccc;">
+                <div class="row">
+                    <div class="col-9">
+                        <input id="new_category" type="text" class="form-control" name="category_0" value="<?= $post["category_" . 0] ?? "" ?>" placeholder="Category name">
+                    </div>
+                    <div class="col-1">
+                        <button type="submit" class="btn btn-primary" name="save" value="0"><i class="bi bi-plus"></i></button>
+                    </div>
+                </div>
+                <!-- Erreur sur la nouvelle categorie -->
+                <?php if (isset($errors["category_" . 0])) { ?>
+                    <p class="text-danger"><?= $errors["category_" . 0] ?></p>
+                <?php } ?>
+            </form>
+        </div>
+
+    </main>
+    <footer>
+        <?php require 'navbar_user.php'; ?>
+    </footer>
+    <!-- Modale Boostrap -->
+    <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog">
+        <div class="modal-content bg-navy-gray text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to delete category
+                <strong id="deleteCategoryName"></strong> ?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                <button type="button" id="confirmDeleteCategoryBtn" class="btn btn-danger">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
