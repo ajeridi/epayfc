@@ -192,6 +192,7 @@ class ControllerItem extends Controller
         $errors['starting_bid'] = [];
         $errors['buy_now_price'] = [];
         $errors['saleprice'] = [];
+        $errors['categories'] = [];
         return $errors;
     }
     private function build_info_array(Item | null  $item, bool $first): array
@@ -212,7 +213,7 @@ class ControllerItem extends Controller
                 $info['saleprice'] =  $first ? $item->get_buy_now_price() : $info['saleprice'] = Tools::sanitize($_POST['saleprice']);
                 $info['buy_now_price'] = $first ? null : $info['buy_now_price'] = Tools::sanitize($_POST['buy_now_price']);
             }
-            $info['categories'] = $first ? $item->get_categories_ids() : Tools::sanitize($_POST['chk_group']);
+            $info['categories'] = $first ? $item->get_categories_ids() : $_POST['chk_group'] ?? [];
         } else {
 
             $info['id'] = 0;
@@ -222,7 +223,7 @@ class ControllerItem extends Controller
             $info['starting_bid'] = $first ? null : Tools::sanitize($_POST['starting_bid']);
             $info['buy_now_price'] = $first ? null : Tools::sanitize($_POST['buy_now_price']);
             $info['saleprice'] = $first ? null : Tools::sanitize($_POST['saleprice']);
-            $info['categories'] = $first ? null : Tools::sanitize($_POST['chk_group']);
+            $info['categories'] = $first ? null : $_POST['chk_group'] ?? [];
         }
 
         return $info;
@@ -236,6 +237,7 @@ class ControllerItem extends Controller
         $search_criteria = "";
         $categories = [];
 
+        // securisation
         if (!isset($_GET['param1']) || !is_numeric($_GET['param1'])) {
             $this->index();
         } else {
@@ -246,8 +248,6 @@ class ControllerItem extends Controller
                 return;
             }
         }
-
-
 
         // si pas de post, on vient d'arriver sur la page donc on va vers la vue item/edit
         if (!$_POST) {
@@ -260,7 +260,7 @@ class ControllerItem extends Controller
                 $back_url_to_open = $back_url_to_open . "/" . $search_criteria; // url de back devient item/open/item_id/from-items/search_criteria
             }
             $errors = $this::build_errors_array();
-            $info = $this::build_info_array($item, true);
+            $info = $this::build_info_array($item, true); // creation d'un tableau contenant les donnees de l'item (first=true)
 
             // recherche des categories triees par ordre de priorite
             $categories = Category::get_categories_ordered_by_priority();
@@ -271,7 +271,7 @@ class ControllerItem extends Controller
             $info = $this::build_info_array($item, false); // recherche des infos sur l'item
             $errors = $this::build_errors_array(); // creation du tableau d'erreur
             $errors = Item::validat_item($user->get_id(), $info, $errors); // validation de l'item
-            if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days']) == 0 && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0) { // si l'item respecte les regles metier
+            if (count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days']) == 0 && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0 && count($errors['categories']) == 0) { // si l'item respecte les regles metier
                 Item::put_edition_item($user->get_id(), $info); // mise a jour dans la DB
                 // si on a recu un critere de recherche
                 if (isset($_GET["param2"]) && $_GET["param2"] != "") {
@@ -292,7 +292,7 @@ class ControllerItem extends Controller
                 // recherche des categories triees par ordre de priorite
                 $categories = Category::get_categories_ordered_by_priority();
 
-                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "back_url_to_open" => $back_url_to_open, "search_criteria" => $search_criteria, "user" => $user, $categories]);
+                (new View("item_edit"))->show(['info' => $info, 'errors' => $errors, 'action' => $action, "back_url_to_open" => $back_url_to_open, "search_criteria" => $search_criteria, "user" => $user, "categories" => $categories]);
             }
         }
     }
@@ -313,7 +313,7 @@ class ControllerItem extends Controller
             $errors = Item::validat_item($user->get_id(), $info, $errors);
             if (
                 count($errors['title']) == 0 && count($errors['description']) == 0 &&  count($errors['duration_days']) == 0
-                && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0
+                && count($errors['saleprice']) == 0 && count($errors['buy_now_price']) == 0 && count($errors['starting_bid']) == 0 && count($errors['categories']) == 0
             ) {
                 $info['id'] = Item::put_edition_item($user->get_id(), $info);
                 $this->redirect("item", "open", $info['id']);

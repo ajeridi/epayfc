@@ -405,17 +405,16 @@
                                 <div class="mb-3">
                                     <label for="saleprice" class="form-label text-white">Sale Price</label>
                                     <input  type="text" class="form-control d-block text-bg-dark" style ="padding-right:80%" id="saleprice" name="saleprice" <?= ($info['saleprice'] == null) ? "placeholder=\"e.g. 150.00\"" : "value=" . $info['saleprice'] ?>>
-                                        <div id="errDirectSale" class="errors">
-                                            <?php if (count($errors['saleprice'])) { ?>
-                                            <ul>
-                                                <?php
-                                                foreach ($errors['saleprice'] as $str) { ?>
-                                                    <li><?= $str ?></li>
-
-                                                <?php } ?>
-                                            </ul>
+                                    <div id="errDirectSale" class="errors">
+                                        <?php if (count($errors['saleprice'])) { ?>
+                                        <ul>
+                                            <?php
+                                            foreach ($errors['saleprice'] as $str) { ?>
+                                                <li class="ms-0"><?= $str ?></li>
                                             <?php } ?>
-                                        </div>
+                                        </ul>
+                                        <?php } ?>
+                                    </div>
                                 </div>     
                             </div>
                         </div>
@@ -435,6 +434,18 @@
                                     echo '<input type="checkbox" name="chk_group[]" value="'.$category->get_id().'"'. ($checked ? 'checked' : '') .'/> '. $category->get_name().'<br />';
                                 }
                             ?>
+
+                            <div id="errCategories" class="errors">
+                                <!-- Affichage des erreurs -->
+                                <?php if (count($errors['categories'])) { ?> 
+                                <ul class="errors">
+                                    <?php
+                                    foreach ($errors['categories'] as $str) { ?>
+                                        <li><?= $str ?></li>
+                                    <?php } ?>
+                                </ul>
+                                <?php } ?>
+                            </div>
                     </div>    
                 </div>
             </div>  
