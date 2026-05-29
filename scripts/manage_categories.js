@@ -99,6 +99,46 @@ $(document).on("click", "#jsCancelAddCategoryBtn", function () {
     $("#jsNewCategoryRow").remove();
 });
 
+$(document).on("blur", "#jsNewCategoryInput", async function () {
+    const input = $(this);
+    const newName = input.val().trim();
+    const errorZone = $("#jsNewCategoryError");
+
+    input.removeClass("is-invalid");
+    errorZone.text("");
+
+    if (newName === "") {
+        return;
+    }
+
+    if (newName.length < 3 || newName.length > 25) {
+        input.addClass("is-invalid");
+        errorZone.text("Category name length must be between 3 and 25 characters.");
+        return;
+    }
+
+    await $.post(
+        "category/save_name_service",
+        {
+            id: 0,
+            name: newName
+        },
+        function (response) {
+            if (response.success) {
+                location.reload();
+            } else {
+                input.addClass("is-invalid");
+                errorZone.text(response.error);
+            }
+        },
+        "json"
+    ).fail(function (xhr) {
+        console.log(xhr.responseText);
+        input.addClass("is-invalid");
+        errorZone.text("Save error.");
+    });
+});
+
 
 function renderCategories(categories) {
     const list = $("#jsCategoryList");
