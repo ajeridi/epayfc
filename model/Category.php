@@ -40,7 +40,9 @@ class Category extends Model implements JsonSerializable
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'priority' => $this->priority,                                                                                  
+            'priority' => $this->priority,
+            'is_empty' => $this->is_empty(),
+            'has_max_priority' => $this->has_max_priority()                                                                                  
         ];
     }
 
