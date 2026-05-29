@@ -25,6 +25,10 @@ class Category extends Model implements JsonSerializable
         return $this->name;
     }
 
+    public function set_name(string $name) : void {
+        $this->name = $name;
+    }
+
     public function get_priority(): int
     {
         return $this->priority;
@@ -121,5 +125,34 @@ class Category extends Model implements JsonSerializable
         self::execute("UPDATE categories SET priority = -1 * :new_priority WHERE priority = :old_priority", ["new_priority" => $to, "old_priority" => $from]);
         self::execute("UPDATE categories SET priority = -1 * :old_priority WHERE priority = :new_priority", ["new_priority" => $to, "old_priority" => $from]);
         self::execute("UPDATE categories SET priority = -1 * priority WHERE priority < 0", []);
+    }
+
+    //methode qui va valider le nom d'une categorie
+    public function validate_name(string $new_name) : string | null {
+        $min_length = Configuration::get("min_category_name_length");
+        $max_length = Configuration::get("max_category_name_length");
+
+        if (strlen($new_name) < $min_length  || strlen($new_name) > $max_length) 
+            return "Category name length must be between ".$min_length." and ".$max_length." characters.";
+        if (!self::is_unique($new_name)){
+            return "Category name must be unique";
+        }
+        return null;
+    }
+
+    private function is_unique(string $new_name) : bool {
+        if ($new_name === $this->name) return true; // si le nouveau nom est celui de la categorie, le nom est unique
+        $query = self::execute("select NOT EXISTS(select 1 from categories WHERE lower(name) = lower(:new_name)) as is_unique", ["new_name" => $new_name]);
+
+        return $query->fetchColumn();
+    }
+
+    public function persist() : void {
+        if ($this->id != 0){
+            self::execute("UPDATE categories SET name = :name, priority = :priority WHERE id = :id", ["id" => $this->id, "name" => $this->name, "priority" => $this->priority]);
+        }
+        else {
+            self::execute("INSERT INTO categories(name, priority) VALUES(:name, (SELECT MAX(c.priority) from categories c) + 1)",["name" => $this->name]);
+        }
     }
 }

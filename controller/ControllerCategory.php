@@ -15,6 +15,8 @@ class ControllerCategory extends Controller
     public function manage() : void {
         $user = $this->get_user_or_redirect();
         $categories = [];
+        $errors = [];
+        
 
         if ($user->get_role() !== "admin"){
             $this->redirect("item");
@@ -27,15 +29,24 @@ class ControllerCategory extends Controller
                 $this->move_up($category_id); // update dans la db
                 $this->redirect("category", "manage"); // redirect (PRG);
             }
-           else if (isset($_POST['down'])){ // si on appuye sur le bouton up
+            else if (isset($_POST['down'])){ // si on appuye sur le bouton down
                 $category_id = $_POST['down'];
                 $this->move_down($category_id); // update dans la db
                 $this->redirect("category", "manage"); // redirect (PRG);
-            } 
+            }
+            else if (isset($_POST['save'])){ // si on appuye sur le bouton save 
+                $id = $_POST['save'];
+                $new_name = Tools::sanitize($_POST['category_'.$id]);
+                $errors["category_".$id] = $this->validate_name($id, $new_name);
+                if ($errors["category_".$id] == null){ // si pas d'erreur, persist et redirection
+                    $this->save_name($id, $new_name);
+                    $this->redirect("category", "manage");
+                }
+            }
         }
 
         $categories = Category::get_categories_ordered_by_priority();        
-        (new View("manage_categories"))->show(["user" => $user, "categories" => $categories]);
+        (new View("manage_categories"))->show(["user" => $user, "categories" => $categories, "errors" => $errors, "post" => $_POST]);
     }
 
     private function move_up(int $id){
@@ -46,5 +57,18 @@ class ControllerCategory extends Controller
     private function move_down(int $id){
         $category = Category::get_category_by_id($id);
         $category->move_down();
+    }
+
+    private function validate_name(int $id, string $new_name) : string | null{
+        $category = Category::get_category_by_id($id);
+        $error = $category->validate_name($new_name);
+
+        return $error;
+    }
+
+    private function save_name(int $id, string $new_name){
+        $category = Category::get_category_by_id($id);
+        $category->set_name($new_name);
+        $category->persist();
     }
 }

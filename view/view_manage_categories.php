@@ -29,7 +29,7 @@
                 <?php foreach($categories as $category){ ?>
                     <div class="row mt-2 mb-2">
                         <div class="col-7">
-                            <input type="text" class="form-control" name=<?= "category_".$category->get_id() ?> value="<?= $category->get_name() ?>">
+                            <input type="text" class="form-control" name=<?= "category_".$category->get_id() ?> value="<?= $_POST['category_'.$category->get_id()] ?? $category->get_name() ?>">
                         </div>
                         <div class="col-3">
                             <button type="submit" class="btn btn-secondary" name="up" value="<?= $category->get_id() ?>" <?= $category->get_priority() == 1 ? "disabled" : "" ?>>Up</i></button>
@@ -38,6 +38,10 @@
                             <button type="submit" class="btn btn-danger" name="delete" value="<?= $category->get_id() ?>" <?= $category->is_empty() == false ? "disabled" : "" ?>>Delete</i></button>
                         </div>
                     </div>
+
+                    <?php if (isset($errors["category_".$category->get_id()])) { ?> 
+                                <p class="text-danger"><?= $errors["category_".$category->get_id()] ?></p>
+                            <?php } ?>
                 <?php } ?>
                 <hr class="mt-4 mb-4" style="border: 1px solid #ccc;">
                 <div class="row">
