@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="lib/jquery-4.0.0.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="lib/jquery-ui.min.css">
+    <script src="lib/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="lib/jquery.ui.touch-punch.js" type="text/javascript"></script>
     <script>
         const categories = <?= json_encode($categories) ?>;
     </script>

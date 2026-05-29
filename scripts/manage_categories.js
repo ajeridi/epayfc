@@ -1,4 +1,7 @@
+let categoryList;
 $(function () {
+    categoryList = $("#jsCategoryList");
+
     $("#editZone").hide();
 
     $("#form hr").hide();
@@ -6,6 +9,7 @@ $(function () {
     $("#new_category").closest(".row").hide();
 
     renderCategories(categories);
+    activateSortable();
 });
 
 function renderCategories(categories) {
@@ -55,4 +59,19 @@ function createCategoryRow(category) {
 
 function escapeHtml(text) {
     return $("<div>").text(text).html();
+}
+
+function activateSortable() {
+    categoryList.sortable({
+        items: ".js-category-row",
+        handle: ".drag-handle",
+
+        update: async function () {
+            let newOrder = categoryList.sortable("toArray", {
+                attribute: "data-id"
+            });
+
+            //await updateCategoriesPriority(newOrder);
+        }
+    });
 }
