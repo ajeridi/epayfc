@@ -10,6 +10,19 @@ $(function () {
 
     renderCategories(categories);
     activateSortable();
+
+    $(document).on("click", ".js-edit-btn", function () {
+        const row = $(this).closest(".js-category-row");
+        const nameSpan = row.find(".js-category-name");
+
+        const currentName = nameSpan.data("name");
+
+        nameSpan.html(`
+            <input type="text" class="form-control form-control-sm js-edit-input" value="${escapeHtml(currentName)}">
+        `);
+
+        row.find(".js-edit-input").focus();
+    });
 });
 
 function renderCategories(categories) {
@@ -37,7 +50,7 @@ function createCategoryRow(category) {
             <div class="col-8 d-flex align-items-center gap-2">
                 <span class="text-secondary drag-handle" style="cursor: grab;">⋮⋮</span>
 
-                <span class="js-category-name text-white">
+                <span class="js-category-name text-white" data-name="${escapeHtml(category.name)}">
                     ${escapeHtml(category.name)} (${category.priority})
                 </span>
 
@@ -76,12 +89,12 @@ function activateSortable() {
     });
 }
 
-async function updateCategoriesPriority(newOrder){
+async function updateCategoriesPriority(newOrder) {
     await $.post("category/update_priorities_service",
         {
             order: newOrder
         },
-        function(response){
+        function (response) {
             console.log(response);
         },
         "json"
