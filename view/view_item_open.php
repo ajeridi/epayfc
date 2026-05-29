@@ -119,6 +119,17 @@
               <div>
                 <div class="h5 mb-1"><?= $item->get_title() ?></div>
                 <div class="text-muted small mb-2"><?= $item->get_description() ?></div>
+                <!-- Categories -->
+                <div class="text-muted small mb-2">
+                  <span class="text-muted fw-bold">Categories:</span>
+                  <ul style="position: relative; right: 15px;">
+                    <?php
+                      foreach($item->get_categories() as $category){
+                        echo "<li>".$category->get_name()."</li>";
+                      }
+                    ?>
+                  </ul>
+                </div>
                 <div class="text-muted small">
                   <div><span class="label">Start:</span> <?= $item->get_created_at() ?></div>
                   <?php
@@ -272,7 +283,7 @@
         <div class="section-title mb-3">Seller Information</div>
 
         <div class="d-flex align-items-center gap-3">
-          <div class="avatar rounded-circle"><img src="<?= $owner_picture ?>" class="w-100" alt="profile picture"></div>
+          <div class="avatar rounded-circle"><img src=<?= $owner_picture == null ? "https://cdn.jsdelivr.net/npm/bootstrap-icons/icons/person-circle.svg" : "$owner_picture"?> class="w-100" alt="pic"></div>
           <div>
             <div class="fw-semibold"><?= $item->get_pseudo()  ?></div>
             <div class="text-muted small"><?= $owner_role ?></div>

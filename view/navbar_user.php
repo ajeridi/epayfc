@@ -20,8 +20,16 @@
                     <i class="bi bi-plus"></i>
                     <figcaption class="text-center">Add offer</figcaption>
                 </figure>
-
             </a>
+            <?php if ($user->get_role() === "admin") { ?>
+                <a class="nav-link" href="category/manage">
+                    <figure>
+                        <i class="bi bi-ui-radios-grid"></i>
+                        <figcaption class="text-center">Categories</figcaption>
+                    </figure>
+                </a>
+            <?php } ?>
+
             <a class="nav-link" href="user/profile">
                 <figure>
                     <i class="bi bi-gear"></i>
