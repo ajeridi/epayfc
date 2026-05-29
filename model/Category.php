@@ -41,6 +41,13 @@ class Category extends Model implements JsonSerializable
     }
 
 
+    public static function get_category_by_id(int $id) : Category {
+        $query = self::execute("SELECT * FROM categories WHERE id = :id", ["id" => $id]);
+        $result = $query->fetch();
+
+        return new Category($result['id'], $result['name'], $result['priority']);
+    }
+
     public static function get_item_categories(int $item_id): array
     {
         $sql = "SELECT c.* FROM item_categories it 
@@ -93,5 +100,20 @@ class Category extends Model implements JsonSerializable
 
         $result = $query->fetchColumn();
         return $result;
+    }
+
+    // methode qui fait monter un categorie, donc diminue sa priorite de 1
+    public function move_up() : void {
+        $from = $this->get_priority();
+        $to = $this->get_priority()-1;
+        $this->swap_priorities($from, $to);
+    }
+
+    // methode qui swap deux priorites
+    private function swap_priorities(int $from, int $to) : void {
+        // donc on peut dire que celui du dessus prend -$from et celui du bas -$to, puis remettre les priorite < 0 en positif
+        self::execute("UPDATE categories SET priority = -1 * :new_priority WHERE priority = :old_priority", ["new_priority" => $to, "old_priority" => $from]);
+        self::execute("UPDATE categories SET priority = -1 * :old_priority WHERE priority = :new_priority", ["new_priority" => $to, "old_priority" => $from]);
+        self::execute("UPDATE categories SET priority = -1 * priority WHERE priority < 0", []);
     }
 }
