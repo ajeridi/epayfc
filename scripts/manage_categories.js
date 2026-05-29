@@ -71,7 +71,19 @@ function activateSortable() {
                 attribute: "data-id"
             });
 
-            //await updateCategoriesPriority(newOrder);
+            await updateCategoriesPriority(newOrder);
         }
     });
+}
+
+async function updateCategoriesPriority(newOrder){
+    await $.post("category/update_priorities_service",
+        {
+            order: newOrder
+        },
+        function(response){
+            console.log(response);
+        },
+        "json"
+    );
 }
