@@ -158,5 +158,15 @@ class Category extends Model implements JsonSerializable
 
     public function delete() : void {
         self::execute("DELETE FROM categories WHERE id = :id", ["id" => $this->id]);
+        // update des categories au dela de la categorie supprimee (-1 a leur priorite) * 1 pour eviter la contrainte
+        self::execute("UPDATE categories SET priority = (priority-1) * -1 WHERE priority > :priority", ['priority' => $this->get_priority()]);
+        self::execute("UPDATE categories SET priority = -1 * priority WHERE priority < 0", []);
+
+
+    }
+
+    public function has_max_priority() : bool {
+        $query = self::execute("SELECT (MAX(priority) = :priority) FROM `categories` ", ["priority" => $this->priority]);
+        return $query->fetchColumn();
     }
 }

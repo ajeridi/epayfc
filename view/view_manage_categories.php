@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-3">
                             <button type="submit" class="btn btn-secondary" name="up" value="<?= $category->get_id() ?>" <?= $category->get_priority() == 1 ? "disabled" : "" ?>>Up</i></button>
-                            <button type="submit" class="btn btn-secondary" name="down" value="<?= $category->get_id() ?>" <?= $category->get_priority() == count($categories) ? "disabled" : "" ?>>Down</i></button>
+                            <button type="submit" class="btn btn-secondary" name="down" value="<?= $category->get_id() ?>" <?= $category->has_max_priority() ? "disabled" : "" ?>>Down</i></button>
                             <button type="submit" class="btn btn-success" name="save" value="<?= $category->get_id() ?>">Save</i></button>
                             <button type="submit" class="btn btn-danger" name="delete" value="<?= $category->get_id() ?>" <?= $category->is_empty() == false ? "disabled" : "" ?>>Delete</i></button>
                         </div>
