@@ -120,4 +120,30 @@ class ControllerCategory extends Controller
 
         echo json_encode(["success" => true]);
     }
+
+    public function validate_name_service(): void
+    {
+        $user = $this->get_user_or_redirect();
+
+        header("Content-Type: application/json");
+
+        if ($user->get_role() !== "admin") {
+            http_response_code(403);
+            echo json_encode([
+                "valid" => false,
+                "error" => "Forbidden"
+            ]);
+            return;
+        }
+
+        $id = intval($_POST["id"] ?? 0);
+        $name = Tools::sanitize($_POST["name"] ?? "");
+
+        $error = $this->validate_name($id, $name);
+
+        echo json_encode([
+            "valid" => $error === null,
+            "error" => $error
+        ]);
+    }
 }
