@@ -95,6 +95,10 @@ $(document).on("click", "#jsAddCategoryBtn", function () {
     $("#jsNewCategoryInput").focus();
 });
 
+$(document).on("click", "#jsCancelAddCategoryBtn", function () {
+    $("#jsNewCategoryRow").remove();
+});
+
 
 function renderCategories(categories) {
     const list = $("#jsCategoryList");
