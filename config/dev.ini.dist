@@ -1,0 +1,62 @@
+; Development configuration 
+
+[DB]
+dbtype = mysql
+dbhost = 127.0.0.1
+dbname = prwb_2526_a08
+dbuser = your_user
+dbpassword = your_password
+mysql_path = "path/to/mysql/bin/"
+
+[Controllers]
+default_controller = test
+
+[Web]
+web_root = "/prwb_2526_a08/"
+
+[Sanitization]
+;insafe_inputs[] = markdown_body
+;insafe_inputs[] = boards
+
+[Rules]
+title_min_length = 3; ; à adapter...
+title_max_length = 255;
+description_min_lenght=3;
+description_max_lenght=255;
+max_file_size = 5242880;
+name_min_length = 3;
+name_max_length = 30;
+picture_resolution = 1080;
+thumbnail_resolution = 360;
+duration_min = 1;
+duration_max = 365;
+unicity_title= "This title already exist, Please choose another one !";
+title_required="Title is required";
+lenght_title="Title length must be between 3 and 255 characters";
+description_lenght="Description length must be at least 3 characters long";
+duration_days= "Duration is required and must be a positive integer between 1 and 365";
+duration_required = "Duration is required";
+duration_rules = "Duration must be a positive integer between 1 and 365";
+starting_bid= "Starting bid must be a positive number ";
+buy_now_positif="Buy now price must be a positive number";
+buy_now_sup_starting_bid= "The buy now price must be greater than the starting bid"
+both="Cannot create both auction and direct sale";
+option_required="option required";
+max_number_of_selected_categories = 3;
+max_number_of_selected_categories_error_message = "You cannot select more than 3 categories.";
+min_category_name_length = 3;
+max_category_name_length = 25;
+
+[JavaScript]
+disable_js = false
+; les chemins actifs malgré la désactivation de JS
+; Chemins relatifs locaux
+;enabled_paths[] = "css/bootstrap-5.3.3-dist/js/bootstrap.min.js"
+;enabled_paths[] = "lib/popper.min.js"
+; URLs CDN 
+enabled_paths[] = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+enabled_paths[] = "https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"
+
+
+
+

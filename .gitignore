@@ -65,4 +65,4 @@ cookies.txt
 database/**/*private_dump.sql
 database/**/*private_images_backup/
 
-
+config/dev.ini
