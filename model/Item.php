@@ -51,9 +51,8 @@ class Item extends Model implements JsonSerializable
         $this->categories = $categories;
     }
 
-    public function jsonSerialize(): mixed
+   public function jsonSerialize(): mixed
     {
-        // converti un item en json
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -66,7 +65,9 @@ class Item extends Model implements JsonSerializable
             'starting_bid' => $this->starting_bid,
             'bids' => $this->bids,
             'pictures' => $this->pictures,
-            'categories' => $this->categories
+            'categories' => $this->categories,
+            'is_open' => $this->is_open_item(),
+            'period' => $this->get_period()
         ];
     }
 
