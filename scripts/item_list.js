@@ -31,17 +31,23 @@ $(async function () {
 });
 
 async function displayAllItemCategories(search_criteria, selected_category) {
-    await displayItems(search_criteria, selected_category, active_items, active_items_container);
-    await displayItems(search_criteria, selected_category, closed_unsold_items, closed_unsold_items_container);
-    await displayItems(search_criteria, selected_category, sold_items, sold_items_container);
+    let encoded = "";
+    if (search_criteria !== "" || selected_category !== "0") {
+        let criteria = await $.getJSON("item/get_encoded_data_service/" + (search_criteria === "" ? "-1" : search_criteria) + "/" + selected_category);
+        encoded = criteria.encoded_criteria;
+    }
+
+    displayItems(search_criteria, selected_category, active_items, active_items_container, encoded);
+    displayItems(search_criteria, selected_category, closed_unsold_items, closed_unsold_items_container, encoded);
+    displayItems(search_criteria, selected_category, sold_items, sold_items_container, encoded);
 }
 
-async function displayItems(search_criteria, selected_category, items, container) {
+function displayItems(search_criteria, selected_category, items, container, encoded) {
     container.html("");
-    for (let item of items) { // for respecte mieux le await que le forEach
+    for (let item of items) {
         if ((search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase())) &&
             hasCategory(item, selected_category)) {
-            let card = await createItemCard(item);
+            let card = createItemCard(item, encoded);
             container.append(card);
         }
     }

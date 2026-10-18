@@ -36,16 +36,23 @@ $(function () {
 async function displayItems(search_criteria, selected_category) {
     items_participated_in_container.html("");
     other_available_items_container.html("");
-    displayItemsParticipatedIn(search_criteria, selected_category);
-    displayOtherAvailableItems(search_criteria, selected_category);
+
+    // 1 seule requête AJAX pour toute la page au lieu de 75
+    let encoded = "";
+    if (search_criteria !== "" || selected_category !== "0") {
+        let criteria = await $.getJSON("item/get_encoded_data_service/" + (search_criteria === "" ? "-1" : search_criteria) + "/" + selected_category);
+        encoded = criteria.encoded_criteria;
+    }
+
+    displayItemsParticipatedIn(search_criteria, selected_category, encoded);
+    displayOtherAvailableItems(search_criteria, selected_category, encoded);
 }
 
-async function displayItemsParticipatedIn(search_criteria, selected_category) {
-    // va display les carte des items
-    for (let item of items_participated_in) { // for respecte mieux le await que le forEach
+function displayItemsParticipatedIn(search_criteria, selected_category, encoded) {
+    for (let item of items_participated_in) {
         if ((search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase()))
             && hasCategory(item, selected_category)) {
-            let card = await createItemCard(item);
+            let card = createItemCard(item, encoded);
             items_participated_in_container.append(card);
         }
     }
@@ -54,11 +61,11 @@ async function displayItemsParticipatedIn(search_criteria, selected_category) {
     }
 }
 
-async function displayOtherAvailableItems(search_criteria, selected_category) {
+function displayOtherAvailableItems(search_criteria, selected_category, encoded) {
     for (let item of other_available_items) {
         if ((search_criteria === "" || item.title.toLowerCase().includes(search_criteria.toLowerCase()) || item.description.toLowerCase().includes(search_criteria.toLowerCase()) || item.pseudo.toLowerCase().includes(search_criteria.toLowerCase()))
             && hasCategory(item, selected_category)) {
-            let card = await createItemCard(item);
+            let card = createItemCard(item, encoded);
             other_available_items_container.append(card);
         }
     }
