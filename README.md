@@ -101,3 +101,18 @@ EPayFC/
 * **Database:** MySQL 8.0 / MariaDB 10.5+
 * **Frontend:** HTML5, CSS3, Bootstrap 5.3, JavaScript (ES6+), jQuery, jQuery UI
 * **Web Server:** Apache 
+
+--- 
+
+## 👤 Author
+
+* **Aymen JERIDI** – Final-year student in Bachelor in Applied Computer Science (Application Development) at EPFC, Brussels
+
+---
+
+## ⚠️ Disclaimer & Academic Notice
+
+**Educational Purpose Only**: This software project is an academic prototype developed exclusively for coursework evaluation, architectural demonstration, and pedagogical assessment. It is **not intended for commercial deployment or production environments**.
+
+* **Security Keys & Passwords**: Any secrets, cryptographic salts, and tokens present in repository scripts are strictly reserved for local development, grading benchmarks, and unit testing environments.
+* **Demonstration Data**: All venue information, client records, and simulated reservations in the dataset are fictional mock fixtures created solely to demonstrate database consistency and user interface workflows.
