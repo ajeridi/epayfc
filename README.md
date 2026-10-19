@@ -6,7 +6,7 @@
 [![Architecture](https://img.shields.io/badge/Architecture-Custom%20Lightweight%20MVC-informational)](#-software-architecture)
 [![Security](https://img.shields.io/badge/Security-PDO%20%7C%20RBAC%20%7C%20CSP%20%7C%20Bcrypt-success)](#-security--data-integrity)
 
-> **Full-stack web platform for dynamic online auctions, classified item management, and direct sales, built with a custom-engineered PHP MVC framework, robust relational persistence (MySQL/MariaDB), role-based authorization, and asynchronous client-side interactions.**
+> **Full-stack web platform for dynamic online auctions, classified item management, and direct sales, built with a custom PHP MVC framework, a MySQL/MariaDB database, role-based authorization, and AJAX interactions on the client side.**
 
 > This project was carried out as part of the course entitled **« Projet de développement web »** (EPFC Brussels), where we learned how to develop on the server side in PHP and on the client side in HTML, JavaScript, and CSS, using AJAX requests to ensure the dynamism of the interface.
 ---
@@ -15,9 +15,9 @@
 
 **EPayFC** is a modular academic web platform designed to manage the complete lifecycle of competitive item auctions and direct sales ("Buy It Now"). 
 
-Built around a **custom lightweight Model-View-Controller (MVC) core**, the platform demonstrates rigorous separation of concerns, secure server-side session handling, input sanitization, and structured data persistence.
+Built around a **custom lightweight Model-View-Controller (MVC) core**, the platform separates models, views and controllers, and handles sessions, input sanitization and data persistence on the server side.
 
-### ✨ Comprehensive Features List
+### ✨ Features
 
 #### 🛒 1. Catalog & Bidding Experience (Buyers / Guests)
 * **Instant Multicriteria Search (AJAX):** Asynchronous live filtering by keywords (matching titles, descriptions, or seller usernames) and category filters without page reloads.
@@ -26,7 +26,7 @@ Built around a **custom lightweight Model-View-Controller (MVC) core**, the plat
   * **Direct Sales ("Buy It Now"):** Instant item acquisition at a fixed price.
   * **Hybrid Listings:** Bidding auctions featuring an optional buyout ceiling threshold (`buy_now_price`).
 * **Bid Tracking & Visual Indicators:** Contextual badges dynamically computed for authenticated buyers (`Highest Bidder`, `Bidder`, `Auction`, `Buy Now`).
-* **URL Search State Preservation:** Query terms and selected filters are compressed and URL-safe encoded (`EncoderDecoder`), ensuring seamless back-and-forth navigation without losing search state.
+* **URL Search State Preservation:** Query terms and selected filters are compressed and URL-safe encoded (`EncoderDecoder`), so the search state is kept when navigating back and forth.
 * **Guest Access:** Transparent catalog browsing and item inspection for non-authenticated visitors, with bidding restricted to members.
 
 #### 📦 2. Selling & Listing Management (Sellers)
@@ -51,7 +51,7 @@ Built around a **custom lightweight Model-View-Controller (MVC) core**, the plat
 
 #### ⚙️ 4. Administration & Developer Tools
 * **Taxonomy Management (`category/manage` - Admin Only):** Add, rename (inline edit on blur), and reorder categories via drag-and-drop with instant AJAX priority recalculation. Empty categories can be safely deleted.
-* **Time-Warp Engine (`AppTime`):** Session-based time offset controls (`+1h`, `+1d`, `+1w`, `Reset`) allowing developers to test auction deadlines and automated status shifts deterministically without touching the server system clock.
+* **Time Simulation (`AppTime`):** Session-based time offset controls (`+1h`, `+1d`, `+1w`, `Reset`) to test auction deadlines and status changes without touching the server clock.
 * **Data Installer & Reset (`setup`):** One-click automated database schema re-creation, seed data loading, upload directory restoration, and automatic date recalibration relative to current simulation time.
 
 ---
@@ -67,7 +67,7 @@ Built around a **custom lightweight Model-View-Controller (MVC) core**, the plat
 
 ## 🏗️ Software Architecture
 
-The codebase enforces a clean separation of concerns, decoupling domain entities, routing, security layers, and presentation:
+The code is organized by responsibility (domain entities, routing, security, presentation):
 
 ```text
 EPayFC/
@@ -86,12 +86,12 @@ EPayFC/
 
 ## 🔒 Security & Data Integrity
 
-* **SQL Injection Immunity:** 100% of database interactions are abstracted via PDO using parameterized prepared statements.
-* **Role-Based Access Control (RBAC):** Strict permission separation between standard users and administrators. Administrative routes and JSON endpoints are safeguarded on the server side with HTTP 403 responses.
-* **Directory Cloaking & Defense-in-Depth:** Hierarchical `.htaccess` configurations enforce `Deny from all` on core directories (`/config`, `/controller`, `/framework`, `/model`, `/utils`, `/view`, `/database`), preventing unauthorized direct HTTP script execution.
-* **Input Sanitization & XSS Neutralization:** Centralized data-cleaning pipelines validate and sanitize input streams prior to reaching controller and model logic.
-* **Secure File Upload Pipeline:** Strict server-side MIME type verification, dimension checks, cryptographic file renaming, and execution isolation for all uploaded media.
-* **Password Hashing:** User authentication leverages modern cryptographic algorithms (`password_hash` with Bcrypt).
+* **SQL Injection Prevention:** Queries built from user input use PDO prepared statements with bound parameters.
+* **Role-Based Access Control (RBAC):** Permissions are separated between standard users and administrators. Administrative routes and JSON endpoints are checked on the server side and return HTTP 403 when access is denied.
+* **Directory Protection:** `.htaccess` files apply `Deny from all` to the core directories (`/config`, `/controller`, `/framework`, `/model`, `/utils`, `/view`, `/database`), so their scripts cannot be called directly over HTTP.
+* **Input Sanitization:** The router sanitizes all incoming request data (`htmlspecialchars`) before it reaches controllers and models, to reduce XSS risks.
+* **File Uploads:** Only image types are accepted (JPG, PNG, GIF, WebP); images are re-encoded with GD and stored under unique file names.
+* **Password Hashing:** Passwords are hashed with `password_hash` (Bcrypt).
 
 ---
 
