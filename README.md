@@ -113,6 +113,3 @@ EPayFC/
 ## ⚠️ Disclaimer & Academic Notice
 
 **Educational Purpose Only**: This software project is an academic prototype developed exclusively for coursework evaluation, architectural demonstration, and pedagogical assessment. It is **not intended for commercial deployment or production environments**.
-
-* **Security Keys & Passwords**: Any secrets, cryptographic salts, and tokens present in repository scripts are strictly reserved for local development, grading benchmarks, and unit testing environments.
-* **Demonstration Data**: All venue information, client records, and simulated reservations in the dataset are fictional mock fixtures created solely to demonstrate database consistency and user interface workflows.
