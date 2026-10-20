@@ -3,10 +3,10 @@
 [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php)](https://www.php.net/)
 [![Database](https://img.shields.io/badge/Database-MySQL%20%2F%20MariaDB-4479A1?logo=mysql)](https://www.mysql.com/)
 [![Frontend](https://img.shields.io/badge/UI-Bootstrap%205.3%20%7C%20jQuery-7952B3?logo=bootstrap)](https://getbootstrap.com/)
-[![Architecture](https://img.shields.io/badge/Architecture-Custom%20Lightweight%20MVC-informational)](#-software-architecture)
+[![Architecture](https://img.shields.io/badge/Architecture-MVC%20%7C%20EPFC%20course%20framework-informational)](#-software-architecture)
 [![Security](https://img.shields.io/badge/Security-PDO%20%7C%20RBAC%20%7C%20CSP%20%7C%20Bcrypt-success)](#-security--data-integrity)
 
-> **Full-stack web platform for dynamic online auctions, classified item management, and direct sales, built with a custom PHP MVC framework, a MySQL/MariaDB database, role-based authorization, and AJAX interactions on the client side.**
+> **Full-stack web platform for dynamic online auctions, classified item management, and direct sales, built on the lightweight PHP MVC framework provided by the EPFC teaching staff, a MySQL/MariaDB database, role-based authorization, and AJAX interactions on the client side.**
 
 > This project was carried out as part of the course entitled **« Projet de développement web »** (EPFC Brussels), where we learned how to develop on the server side in PHP and on the client side in HTML, JavaScript, and CSS, using AJAX requests to ensure the dynamism of the interface.
 ---
@@ -15,7 +15,7 @@
 
 **EPayFC** is a modular academic web platform designed to manage the complete lifecycle of competitive item auctions and direct sales ("Buy It Now"). 
 
-Built around a **custom lightweight Model-View-Controller (MVC) core**, the platform separates models, views and controllers, and handles sessions, input sanitization and data persistence on the server side.
+Built around a **lightweight Model-View-Controller (MVC) framework** provided by the course instructors, the platform separates models, views and controllers, and handles sessions, input sanitization and data persistence on the server side.
 
 ### ✨ Features
 
@@ -73,7 +73,7 @@ The code is organized by responsibility (domain entities, routing, security, pre
 EPayFC/
 ├── config/             # System parameters and business rule definitions
 ├── controller/         # Request handling & orchestration (Item, User, Category, Time, Setup)
-├── framework/          # Autonomous MVC Core (Router, Controller, Model, View, Tools)
+├── framework/          # MVC framework provided by the course (Router, Controller, Model, View, Tools)
 ├── model/              # Domain entities & database persistence (Item, Bid, User, Category, Picture)
 ├── utils/              # Specialized utilities (AppTime, ImageUtils, Sanitization)
 ├── view/               # Modular PHP presentation templates and partials
