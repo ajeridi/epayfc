@@ -77,7 +77,7 @@ class Category extends Model implements JsonSerializable
 
     public static function get_categories(): array
     {
-        $query = self::execute("SELECT * FROM Categories", []);
+        $query = self::execute("SELECT * FROM categories", []);
         $result = $query->fetchAll();
 
         $categories = [];
