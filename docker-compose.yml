@@ -1,0 +1,17 @@
+services:
+  db:
+    image: mariadb:10.11
+    environment:
+      MARIADB_ROOT_PASSWORD: root   # identique à dbpassword dans config/docker.ini
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  app:
+    build: .
+    ports:
+      - "8080:80"                   # http://localhost:8080
+    depends_on:
+      db:
+        condition: service_healthy  # attend que MariaDB accepte les connexions
